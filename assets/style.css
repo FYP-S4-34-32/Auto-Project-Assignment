@@ -1,0 +1,117 @@
+html { overflow-y: scroll; } 
+
+body {
+    font-family: 'Francois One', sans-serif;
+    font-size: 15px; 
+}
+
+.p {
+    text-align: center;
+    line-height: 100px;
+}
+
+#spanFooter {
+    color: white;
+    font-weight: 10;
+}
+
+#downloads {
+    font-weight: 1;
+}
+
+#divBody{
+    height: 900px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#div1{
+    height: 180px; 
+    background: rgba(56, 55, 55, 0.779);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#div2{
+    height: 70px; 
+    background: rgba(9, 9, 9, 0.869);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#div3{
+    height: 800px;  
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#divDownloads {
+    height: 700px;
+    display: flex;
+    flex-direction: column; 
+    text-align: left;
+    font-size: 14px;
+}
+
+#divFooter { 
+    height: 130px; 
+    background: rgba(119, 117, 117, 0.779);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+a:link, a:visited{
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+#menuTable{
+    background-color: transparent;
+    justify-content: left; 
+}
+
+#menuTable th{
+    width: 500px;
+    background-color: transparent;
+    text-align: centre;
+}
+
+#AboutUsTable{
+    height: 50%;
+    background-color: transparent;
+    justify-content: center;
+}
+
+#AboutUsTable td{
+    width: 333px; 
+    height: 35%;
+    background-color: transparent;  
+    text-align: center;  
+    justify-content: center;
+}
+
+#downloadsTable{ 
+    height: 30%;
+    background-color: transparent;   
+    justify-content: left;
+}
+
+#downloadsTable td{ 
+    width: 13px;
+    height: 117.5px;
+    background-color: transparent;  
+    text-align: left;
+}
+
