@@ -19,7 +19,7 @@ body {
     font-weight: 1;
 }
 
-#divBody{
+.divBody{
     height: 1700px;
     display: flex;
     flex-direction: column;
@@ -105,18 +105,18 @@ a:link, a:visited{
 }
 
 #downloadsTable{  
-    width: auto;
+    width: 50%;
     background-color: transparent;   
     align-self: center;
     justify-content: center;
-    margin-left: 10%;
+    margin-left: 0%;
 }
 
 #downloadsTable td{ 
     width: 270px;
     height: 50px;
     background-color: transparent;  
-    text-align: left;
+    text-align: center;
     align-self: center;
 }
 
