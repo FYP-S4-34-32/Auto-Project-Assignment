@@ -3,14 +3,11 @@ html {
     text-align: center;
 } 
  
-.p{
-    text-align: center;
-    line-height: 100px;  
-    margin-top: 1ch;
-    line-height: 1.35;
-    max-inline-size: 40ch;
-    margin: auto;
-    font-size: 17px; 
+p{
+    text-align: center;  
+    line-height: 1.35; 
+    font-size: 14px; 
+    font-weight: bold;
 }
 
 #spanFooter {
@@ -28,13 +25,13 @@ header {
     position: sticky;
     top: 0;
     left: 0;
-  z-index: 9999;
+    z-index: 9999;
 }
 
 body {
     background: rgb(17, 17, 17);   
     color: rgb(255, 255, 255);
-    min-inline-size: 30%; 
+    min-inline-size: 10%; 
     box-sizing: border-box; 
     place-content: center;  
     font-family: "system-ui";
@@ -42,7 +39,7 @@ body {
 }
 
 .divBody{ 
-    height: 1300px;
+    height: 1500px;
     display: flex;   
     flex-direction: column;
     justify-content: center;
@@ -158,6 +155,8 @@ a:link, a:visited{
     background-color: transparent;  
     text-align: center;
     align-self: center;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 /* --------------------------------------- */
@@ -250,7 +249,7 @@ a:link, a:visited{
 /* Title of the card */
 .title{ 
     position: relative;  
-    font-size: 17px;
+    font-size: 20px;
 }
 
 /* Timeline dot  */
