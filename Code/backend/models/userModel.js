@@ -49,7 +49,8 @@ userSchema.statics.signup = async function(email, password) {
     // hash the password
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({ email, password: hash })
+    // const user = await this.create({ email, password: hash })
+    const user = await this.create({ email, password })
 
     return user
 }
@@ -68,11 +69,17 @@ userSchema.statics.login = async function(email, password) {
         throw Error('Invalid login credentials')
     }
 
-    // if user found - try to match password
-    const match = await bcrypt.compare(password, user.password) // (password passed in, password in the db)
+    // // if user found - try to match password
+    // const match = await bcrypt.compare(password, user.password) // (password passed in, password in the db)
 
-    // if no match
-    if (!match) {
+    // // if no match
+    // if (!match) {
+    //     throw Error('Invalid login credentials')
+    // }
+
+    // for development only - change to hash above before deployment
+    if (password !== user.password)
+    {
         throw Error('Invalid login credentials')
     }
 
