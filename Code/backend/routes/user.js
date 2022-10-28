@@ -14,7 +14,7 @@ router.post('/login', loginUser)
 router.post('/signup', signupUser)
 
 // homepage route - GET because we are retrieving data *JUST FOR TESTING
-router.get('/', getUserInfo)
+router.get('/:email', getUserInfo)
 
 // export router
 module.exports = router

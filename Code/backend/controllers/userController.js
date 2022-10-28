@@ -1,6 +1,8 @@
 // import mongoose schema - to interact with User's collections
 const User = require('../models/userModel')
 
+const mongoose = require('mongoose')
+
 // json web token
 const jwt = require('jsonwebtoken')
 
@@ -44,11 +46,13 @@ const signupUser = async (req, res) => {
 
 // getUserInfo - TESTING
 const getUserInfo = async (req, res) => {
-    const user_id = req.user._id
+    const { email } = req.params
+    console.log(email)
 
-    const userInfo = await User.find({ user_id })
+    // grab user object
+    const user = await User.find({ email }).sort({ createdAt: -1 }); // descending order
 
-    res.status(200).json(userInfo)
+    res.status(200).json(user);
 }
 
 
