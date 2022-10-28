@@ -1,5 +1,13 @@
 How to run the program
-1. make sure you have all the dependencies
+1. cd into Code/backend/ folder and run it by typing 'npm run dev' in the terminal
+--> upon successful launch, terminal should output 'Connected to MongoDB and Listening on port 3000'
+
+2. cd into Code/frontend/ folder and run it by typing 'npm start' in the terminal
+NOTE: if terminal read 'react-scripts is not recognised ...'
+- run the following in command in the terminal 'npm install' and rerun 'npm start'
+--> upon successful launch, a browser window should open up with localhost:3000
+
+NOTE: make sure you have all the dependencies, in case youre missing something, the terminal will prompt you and just install according to what is missing
 /* install the following dependencies in backend folder */
 // run the following commands in the terminal after you cd into backend folder
 
@@ -32,9 +40,3 @@ npm install react-router-dom
 
 // date-fns
 npm install date-fns
-
-2. cd into backend folder and run it by typing 'npm run dev' in the terminal
---> upon successful launch, terminal should output 'Connected to MongoDB and Listening on port 3000'
-
-3. cd into frontend folder and run it by typing 'npm start' in the terminal
---> upon successful launch, a browser window should open up with localhost:3000
