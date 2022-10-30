@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken')
 
 // to generate json web tokens
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.SECRET, { expiresIn: '1d'}) // token expires in 1 days
+    return jwt.sign({_id}, process.env.SECRET, { expiresIn: '1d'}) // token expires in 1 day
 }
 
 // login
@@ -26,7 +26,6 @@ const loginUser = async (req, res) => {
         res.status(400).json({error: error.message})
     }
 }
-
 
 // signup
 const signupUser = async (req, res) => {
@@ -55,10 +54,44 @@ const getUserInfo = async (req, res) => {
     res.status(200).json(user);
 }
 
+// Admin login
+const adminLogin = async (req, res) => {
+    const {adminEmail, adminPassword} = req.body
+
+    try {
+        const admin = await User.adminLogin(adminEmail, adminPassword)
+
+        // create a token
+        const token = createToken(admin._id)
+
+        res.status(200).json({adminEmail, token})
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+// Super Admin login
+const superAdminLogin = async (req, res) => {
+    const {superAdminEmail, superAdminPassword} = req.body
+
+    try {
+        const superAdmin = await User.superAdminLogin(superAdminEmail, superAdminPassword)
+
+        // create a token
+        const token = createToken(superAdmin._id)
+
+        res.status(200).json({superAdminEmail, token})
+    }
+    catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
 
 // exports
 module.exports = {
     loginUser,
     signupUser,
-    getUserInfo
+    getUserInfo,
+    adminLogin,
+    superAdminLogin
 }

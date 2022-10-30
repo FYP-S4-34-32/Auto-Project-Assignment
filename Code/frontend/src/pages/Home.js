@@ -1,5 +1,3 @@
-
-
 // imports
 import { useEffect } from "react"
 import { useAuthContext } from "../hooks/useAuthContext"
