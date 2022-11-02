@@ -1,5 +1,7 @@
 // import mongoose schema - to interact with User's collections
 const User = require('../models/userModel')
+const Admin = require('../models/adminModel')
+const SuperAdmin = require('../models/superAdminModel')
 
 const mongoose = require('mongoose')
 
@@ -55,11 +57,11 @@ const getUserInfo = async (req, res) => {
 }
 
 // Admin login
-const adminLogin = async (req, res) => {
+const adminLoginUser = async (req, res) => {
     const {adminEmail, adminPassword} = req.body
 
     try {
-        const admin = await User.adminLogin(adminEmail, adminPassword)
+        const admin = await Admin.adminLogin(adminEmail, adminPassword)
 
         // create a token
         const token = createToken(admin._id)
@@ -71,11 +73,11 @@ const adminLogin = async (req, res) => {
 }
 
 // Super Admin login
-const superAdminLogin = async (req, res) => {
+const superAdminLoginUser = async (req, res) => {
     const {superAdminEmail, superAdminPassword} = req.body
 
     try {
-        const superAdmin = await User.superAdminLogin(superAdminEmail, superAdminPassword)
+        const superAdmin = await SuperAdmin.superAdminLogin(superAdminEmail, superAdminPassword)
 
         // create a token
         const token = createToken(superAdmin._id)
@@ -92,6 +94,6 @@ module.exports = {
     loginUser,
     signupUser,
     getUserInfo,
-    adminLogin,
-    superAdminLogin
+    adminLoginUser,
+    superAdminLoginUser
 }

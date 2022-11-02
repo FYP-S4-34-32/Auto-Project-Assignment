@@ -86,81 +86,7 @@ userSchema.statics.login = async function(email, password) {
     return user
 }
 
-// ----------------------------------------------------------
-// Admin user schema
-// ----------------------------------------------------------
 
-const adminSchema = new Schema({
-    adminEmail: {
-        type: String,
-        required: true,
-        unique: true // unique username/email
-    },  
-    adminPassword: {
-        type: String,
-        required: true
-    }
-}, {timestamps: true});
-
-adminSchema.login = async function(adminEmail, adminPassword) {
-    // validation - email and/or password empty
-    if (!adminEmail || !adminPassword) {
-        throw Error('All fields must be filled')
-    }
-
-    const admin = await this.findOne({ adminEmail })
-
-    // if user not found
-    if (!admin) {
-        throw Error('Invalid login credentials')
-    }
- 
-    // for development only - change to hash above before deployment
-    if (adminPassword !== admin.adminPassword)
-    {
-        throw Error('Invalid login credentials')
-    }
-
-    return admin
-}
-
-// ----------------------------------------------------------
-// Super admin user schema
-// ----------------------------------------------------------
-
-const superAdminSchema = new Schema({
-    superAdminEmail: {
-        type: String,
-        required: true,
-        unique: true // unique username/email
-    },
-    superAdminPassword: {
-        type: String,
-        required: true
-    }
-}, {timestamps: true});
-
-superAdminSchema.login = async function(superAdminEmail, superAdminPassword) {
-    // validation - email and/or password empty
-    if (!superAdminEmail || !superAdminPassword) {
-        throw Error('All fields must be filled')
-    }
-
-    const superAdmin = await this.findOne({ superAdminEmail })
-    
-    // if super admin not found
-    if (!superAdmin) {
-        throw Error('Invalid login credentials')
-    }
-
-    
-    // for development only - change to hash above before deployment
-    if (superAdminPassword !== superAdmin.superAdminPassword) {
-        throw Error('Invalid login credentials')
-    }
-
-    return superAdmin
-}
 
 
 // ----------------------------------------------------------
@@ -169,5 +95,3 @@ superAdminSchema.login = async function(superAdminEmail, superAdminPassword) {
 
 // .model builds out a Collection
 module.exports = mongoose.model('User', userSchema)
-module.exports = mongoose.model('Admin', adminSchema)
-module.exports = mongoose.model('SuperAdmin', superAdminSchema)
