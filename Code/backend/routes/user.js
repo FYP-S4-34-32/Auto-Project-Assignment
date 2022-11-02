@@ -2,7 +2,7 @@
 const express = require('express')
 
 // import controller functions
-const { loginUser, signupUser, getUserInfo, AdminLogin, SuperAdminLogin } = require('../controllers/userController')
+const { loginUser, signupUser, getUserInfo, adminLogin, superAdminLogin } = require('../controllers/userController')
 
 // invoke express router
 const router = express.Router()
@@ -17,10 +17,10 @@ router.post('/signup', signupUser)
 router.get('/:email', getUserInfo)
 
 // Admin login route 
-router.post('/AdminLogin', AdminLogin)
+router.post('/AdminLogin', adminLogin)
 
 // Super Admin login route
-router.post('/SuperAdminLogin', SuperAdminLogin)
+router.post('/SuperAdminLogin', superAdminLogin)
 
 // export router
 module.exports = router
