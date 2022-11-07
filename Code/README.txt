@@ -1,12 +1,19 @@
-How to run the program
-1. cd into Code/backend/ folder and run it by typing 'npm run dev' in the terminal
+How to run the program (in VS Code)
+1. open up a terminal inside VS Code and cd into Code/backend/ folder
+--> run the following commands:
+npm install
+npm run dev
 --> upon successful launch, terminal should output 'Connected to MongoDB and Listening on port 3000'
 
-2. cd into Code/frontend/ folder and run it by typing 'npm start' in the terminal
-NOTE: if terminal read 'react-scripts is not recognised ...'
-- run the following in command in the terminal 'npm install' and rerun 'npm start'
+2. cd into Code/frontend/ folder
+--> run the following commands:
+npm install
+npm start
+NOTE: if terminal read 'react-scripts is not recognised ...', check that youre in the right folder and run npm install again before running npm start
 --> upon successful launch, a browser window should open up with localhost:3000
 
+
+/* lists of dependencies - should be installed via npm install above */
 NOTE: make sure you have all the dependencies, in case youre missing something, the terminal will prompt you and just install according to what is missing
 /* install the following dependencies in backend folder */
 // run the following commands in the terminal after you cd into backend folder
