@@ -1,9 +1,12 @@
+//===========//
+// Home page // --> To decide what to display upon logging in
+//===========//
+
 // imports
-import { useEffect } from "react"
-import { useAuthContext } from "../hooks/useAuthContext"
+import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
 
 const Home = () => {
-    const { user, dispatch } = useAuthContext()
+    const { user } = useAuthenticationContext()
 
     return (
         <div className="user-details">

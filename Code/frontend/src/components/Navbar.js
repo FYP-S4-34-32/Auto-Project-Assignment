@@ -1,11 +1,15 @@
+//=======================================//
+// Navigation Bar at the top of the page //
+//=======================================//
+
 // imports
 import { Link } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout'
-import { useAuthContext } from '../hooks/useAuthContext'
+import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 
 const Navbar = () => {
     const { logout } = useLogout()
-    const { user } = useAuthContext()
+    const { user } = useAuthenticationContext()
 
     const handleLogoutClick = () => {
         logout()
@@ -18,16 +22,17 @@ const Navbar = () => {
                     <h1>Automatic Project Assignment</h1>
                 </Link>
                 <nav>
-                    {user && (
-                        <div> {/* if there is a user logged in, then display */}
-                            <span>{ user.email }</span>
+                    {user && ( // return a template only when there is a user logged in
+                        <div>
+                            <Link to="/profile">Profile</Link>
                             <button onClick={handleLogoutClick}>Log out</button>
                         </div>
                     )}
-                    {!user && (
-                        <div> {/* if NO user logged in, do not display */}
+                    {!user && ( // return this template only when there is no user logged in
+                        <div>
                             <Link to="/login">Login</Link>
-                            <Link to="/signup">Signup</Link>
+                            {/* remove signup page */}
+                            {/* <Link to="/signup">Signup</Link> */}
                         </div>
                     )}
                 </nav>
@@ -36,4 +41,5 @@ const Navbar = () => {
     )
 }
 
+// EXPORT
 export default Navbar

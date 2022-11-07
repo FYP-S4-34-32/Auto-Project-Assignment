@@ -1,12 +1,19 @@
-// require express package to make an instance of the express router
+//========================================================//
+// File which handles all the request to /api/user routes //
+//========================================================//
+
+// imports
 const express = require('express')
 
-// import controller functions
-const { loginUser, signupUser, getUserInfo, adminLoginUser, superAdminLoginUser } = require('../controllers/userController')
-// const { superAdminLoginUser } = require('../controllers/userController')
-// const { adminLoginUser } = require('../controllers/userController')
+/* ============================================================================== *\
+|   import controller functions from userController.js in the controllers folder   |
+|   these functions will be invoked and handled in the controller file whenever    |
+|   the routes are requsted. e.g. /api/user/login will invoke the loginUser        |
+|   function in userController.js                                                  |
+\* ============================================================================== */
+const { loginUser, signupUser, getUserInfo } = require('../controllers/userController')
 
-// invoke express router
+// invoke express router object
 const router = express.Router()
 
 // login route - POST because we are sending data for each request
@@ -15,14 +22,8 @@ router.post('/login', loginUser)
 // signup route - POST because we are sending data for each request
 router.post('/signup', signupUser)
 
-// homepage route - GET because we are retrieving data *JUST FOR TESTING
-router.get('/:email', getUserInfo)
+// profile page route - GET because we are retrieving data
+router.get('/profile', getUserInfo)
 
-// Admin login route 
-router.post('/AdminLogin', adminLoginUser)
-
-// Super Admin login route
-router.post('/SuperAdminLogin', superAdminLoginUser)
-
-// export router
+// EXPORT router
 module.exports = router

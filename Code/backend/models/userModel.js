@@ -1,36 +1,59 @@
-// Enforcing schema for mongodb
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const validator = require('validator')
+//================//
+// MongoDB Schema //
+//================//
 
+// imports
+const mongoose = require('mongoose'); // enforcing schema for mongodb
+const bcrypt = require('bcrypt'); // hashing passwords
+const validator = require('validator') // validates email, password
+
+// create a new schema
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     email: {
         type: String,
-        required: true,
+        required: true, // compulsory property i.e. cannot be null
         unique: true // unique username/email
     },
     password: {
         type: String,
-        required: true
-    }
-}, {timestamps: true});
+        required: true // compulsory property i.e. cannot be null
+    },
+    role: {
+        type: String,
+        required: true,
+        default: "Employee" // default value for every user document created
+    },
+    skills: [{ // skills of user - set up to be an array of skills
+        type: String
+    }]
+    // MIGHT NEED TO INCLUDE A COUPLE MORE FIELDS TO TRACK PASSWORD CHANGE e.g. how many days till password has to be changed
+}, {timestamps: true}); // datetime created and updated
 
-// static signup method - has to be regular function instead of arrow function because of the usage of 'this' keyword
+//=================================================================================================================================//
+// SIGNUP USER: static signup method - has to be regular function instead of arrow function because of the usage of 'this' keyword
+// 1. VALIDATE whether email of password FIELD IS EMPTY
+// 2. VALIDATE the email
+// 3. VALIDATE the STRENGTH of the password
+// 4. CHECK whether email is UNIQUE
+// 5. GENERATE salt and HASH the password
+// 6. CREATE a new user document and store it to our database in the schema format specified above
+// 7. RETURNS the USER DOCUMENT in the format of the schema
+//=================================================================================================================================//
 userSchema.statics.signup = async function(email, password) {
     /* validation */
-    // email or password is empty
-    if (!email || !password) {
+    // EMAIL OR PASSWORD IS EMPTY
+    if (!email || !password) { 
         throw Error('All fields must be filled')
     }
 
-    // whether it is a valid email
+    // NOT A VALID EMAIL
     if (!validator.isEmail(email)) {
         throw Error('Email is not valid')
     }
 
-    // strength of password
+    // STRENGTH OF PASSWORD
     // if (!validator.isStrongPassword(password)) {
     //     throw Error('Password not strong enough')
     // }
@@ -38,24 +61,32 @@ userSchema.statics.signup = async function(email, password) {
     // check whether email exist in the database
     const exists = await this.findOne({ email })
 
-    if (exists) {
+    if (exists) { // DUPLICATE EMAIL - NOT ALLOWED
         throw Error('Email already in use')
     }
+    
+    const salt = await bcrypt.genSalt(10) // generate password salt - value determines strength --> default == 10
+    const hash = await bcrypt.hash(password, salt) // hash the password
 
-    /* save user to the database */
-    // generate password salt - value determines strength --> default == 10
-    const salt = await bcrypt.genSalt(10)
-
-    // hash the password
-    const hash = await bcrypt.hash(password, salt)
-
+    // save user to the database
     // const user = await this.create({ email, password: hash })
     const user = await this.create({ email, password })
 
+    // returns the user document we just created
     return user
 }
 
-// static login method
+
+//===============================================================================================================================//
+// LOGIN USER: static login method - has to be regular function instead of arrow function because of the usage of 'this' keyword
+// 1. VALIDATE whether email of password FIELD IS EMPTY
+// 2. FIND whether there is a MATCHING email in our database
+// 3. IF a user document is NOT found, means the email does not exist in our database
+// 4. IF a user is FOUND, COMPARE the hash of the PASSWORD we receive to the password in our database
+// 5. IF passwords hashes MATCH, login SUCCESSFUL
+// 6. RETURNS the USER DOCUMENT in the format of the schema
+//===============================================================================================================================//
+
 userSchema.statics.login = async function(email, password) {
     // validation - email and/or password empty
     if (!email || !password) {
@@ -83,15 +114,18 @@ userSchema.statics.login = async function(email, password) {
         throw Error('Invalid login credentials')
     }
 
+    // returns the user document we just created
     return user
+}
+
+// static method to retrieve user info - TESTING
+userSchema.statics.getInfo = async function(email) {
+    // returns the user document except the password field
+    return this.findOne({ email }).select('-password');
 }
 
 
 
 
-// ----------------------------------------------------------
-// Export the modules
-// ----------------------------------------------------------
-
-// .model builds out a Collection
-module.exports = mongoose.model('User', userSchema)
+// EXPORT
+module.exports = mongoose.model('User', userSchema) // .model builds out a Collection

@@ -1,99 +1,101 @@
-// import mongoose schema - to interact with User's collections
-const User = require('../models/userModel')
-const Admin = require('../models/adminModel')
-const SuperAdmin = require('../models/superAdminModel')
+//==============================================================//
+// File which does the heavylifting according to route requests //
+//==============================================================//
 
-const mongoose = require('mongoose')
+// imports
+const User = require('../models/userModel') // MongoDB model created in userModel.js in the models folder
+const mongoose = require('mongoose') // mongoose package for mongodb
+const jwt = require('jsonwebtoken') // jsonwebtoken package to help our backend and frontend to communicate with regards to authentication
 
-// json web token
-const jwt = require('jsonwebtoken')
-
-// to generate json web tokens
+// to generate json web tokens - takes in the _id property of the user
 const createToken = (_id) => {
+    // the sign function will take in a SECRET, which is a randomly generated password(by us)
+    // to sign the token
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '1d'}) // token expires in 1 day
 }
-
-// login
+    
+//================================================================================================================//
+// LOGIN USER:
+// 1. invoke the userSchema.statics.login function from userModel.js inside the models folder
+// 2. IF everything is ok(login successful), function will return the user object
+// 3. ELSE(login UNSUCCESSFUL) the function will return an error, which will be caught in the catch(error) block
+//    and return an error message written in the userSchema.statics.login function
+// 4. store the user object returned to us in the variable 'user'
+// 5. create a jsonwebtoken which takes in the _id property of the user
+// 6. returns the user's email and the token we just generated in json format
+//================================================================================================================//
 const loginUser = async (req, res) => {
+    // the body of the request in our login case will be in the following format:
+    // {
+    //      "email": "example@email.com",
+    // }    "password": "example password"
+    // -> so we can destructure the request body and obtain the email and password value
+
     const {email, password} = req.body
 
     try {
+        // invoke login function and store return value(user document)
         const user = await User.login(email, password)
 
-        // create a token
+        // create a jsonwebtoken
         const token = createToken(user._id)
 
+        // return the user's email and the token we just generated in json format
         res.status(200).json({email, token})
-    } catch (error) {
+    } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
+        // return the error message in json
         res.status(400).json({error: error.message})
     }
 }
 
-// signup
+//================================================================================================================//
+// SIGNUP USER:
+// 1. invoke the userSchema.statics.signup function from userModel.js inside the models folder
+// 2. IF everything is ok(signup successful), function will return the user object
+// 3. ELSE(signup UNSUCCESSFUL) the function will return an error, which will be caught in the catch(error) block
+//    and return an error message written in the userSchema.statics.signup function
+// 4. store the user object returned to us in the variable 'user'
+// 5. create a jsonwebtoken which takes in the _id property of the user
+// 6. returns the user's email and the token we just generated in json format
+//================================================================================================================//
 const signupUser = async (req, res) => {
+    // the body of the request in our login case will be in the following format:
+    // {
+    //      "email": "example@email.com",
+    // }    "password": "example password"
+    // -> so we can destructure the request body and obtain the email and password value
+
     const {email, password} = req.body
 
     try {
+        // invoke signup function and store return value(user document)
         const user = await User.signup(email, password)
 
-        // create a token
+        // create a jsonwebtoken
         const token = createToken(user._id)
 
+        // return the user's email and the token we just generated in json format
         res.status(200).json({email, token})
-    } catch (error) {
+    } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
+        // return the error message in json
         res.status(400).json({error: error.message})
     }
 }
 
 // getUserInfo - TESTING
 const getUserInfo = async (req, res) => {
-    const { email } = req.params
+    const { email } = req.body // grab id from the request object
     console.log(email)
 
-    // grab user object
-    const user = await User.find({ email }).sort({ createdAt: -1 }); // descending order
-
-    res.status(200).json(user);
+    // get the document
+    const userInfo = await User.getInfo(email)
+    
+    res.status(200).json(userInfo)
 }
 
-// Admin login
-const adminLoginUser = async (req, res) => {
-    const {adminEmail, adminPassword} = req.body
-
-    try {
-        const admin = await Admin.adminLogin(adminEmail, adminPassword)
-
-        // create a token
-        const token = createToken(admin._id)
-
-        res.status(200).json({adminEmail, token})
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
-// Super Admin login
-const superAdminLoginUser = async (req, res) => {
-    const {superAdminEmail, superAdminPassword} = req.body
-
-    try {
-        const superAdmin = await SuperAdmin.superAdminLogin(superAdminEmail, superAdminPassword)
-
-        // create a token
-        const token = createToken(superAdmin._id)
-
-        res.status(200).json({superAdminEmail, token})
-    }
-    catch (error) {
-        res.status(400).json({error: error.message})
-    }
-}
-
-// exports
+// EXPORT the functions
 module.exports = {
     loginUser,
     signupUser,
-    getUserInfo,
-    adminLoginUser,
-    superAdminLoginUser
+    getUserInfo
 }

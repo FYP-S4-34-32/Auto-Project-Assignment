@@ -1,3 +1,7 @@
+//====================================//
+// Main component for our Application //
+//====================================//
+
 // react-dom
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -6,14 +10,12 @@ import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import AdminLogin from './pages/AdminLogin';
-import SuperAdminLogin from './pages/SuperAdminLogin'; 
-import { useAuthContext } from './hooks/useAuthContext';
+import Profile from './pages/Profile'
+import PageNotFound from './pages/PageNotFound';
+import { useAuthenticationContext } from './hooks/useAuthenticationContext';
 
 function App() {
-  const { user } = useAuthContext()
-  const { admin } = useAuthContext()
-  const { superAdmin } = useAuthContext()
+  const { user } = useAuthenticationContext()
 
   return (
     <div className="App">
@@ -23,27 +25,23 @@ function App() {
           <Routes>
             <Route 
               path = "/" // home page
-              element = {user ? <Home /> : <Navigate to="/login" />} // render component if there is a user
+              element = { user ? <Home /> : <Navigate to="/login" /> } // Home page if there is a user, Login page if there is no user
             />  
             <Route 
               path = "/login" // login page
-              element = {!user ? <Login /> : <Navigate to="/" />} // render component if there is no user
+              element = { !user ? <Login /> : <Navigate to="/" /> } // Home page if there is a user, Login page if there is no user
             />
             <Route 
               path = "/signup" // signup page
-              element = {!user ? <Signup /> : <Navigate to="/" />} // render component if there is no user
+              element = { !user ? <Signup /> : <Navigate to="/" /> } // Home page if there is a user, Signup page if there is no user
             />
-            <Route
-              path = "/adminLogin" // admin login page
-              element = {!admin ? <AdminLogin /> : <Navigate to="/" />}  
-            />
-            <Route
-              path = "/superAdminLogin" // super admin login page
-              element = {!superAdmin ? <SuperAdminLogin /> : <Navigate to="/" />}  
+            <Route 
+              path = "/profile" // signup page
+              element = { user ? <Profile /> : <Navigate to="/login" /> } // Profile page if there is a user, Login page if there is no user
             />
             <Route
               path = "*" // 404 page
-              element = {<h1>404 - Not Found</h1>}
+              element = { <PageNotFound /> }
             /> 
           </Routes>
         </div>
