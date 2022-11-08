@@ -10,7 +10,8 @@ const Schema = mongoose.Schema;
 
 const projectSchema = new Schema({
     organisation_id: { // can be organisation name
-        type: Number // can be String/Number
+        type: Number, // can be String/Number
+        default: null
     },
     title: {
         type: String,
@@ -19,7 +20,7 @@ const projectSchema = new Schema({
     },
     description: {
         type: String,
-        required: true // compulsory property i.e. cannot be null
+        required: true
     },
     skills: [{ // skills required by the project - set up to be an array of skills
         type: String

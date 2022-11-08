@@ -18,8 +18,9 @@ const skillSchema = new Schema({
         type: String, // e.g. "Java", "C++", "NodeJS"
         required: true, // compulsory property i.e. cannot be null
     },
-    organisation_id: { // track who added the skills
-
+    organisation: { // track who added the skills
+        type: String,
+        default: ""
     }
 }, {timestamps: true}); // datetime created and updated
 

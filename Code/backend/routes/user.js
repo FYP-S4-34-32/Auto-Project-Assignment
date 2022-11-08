@@ -8,7 +8,7 @@ const express = require('express')
 /* ============================================================================== *\
 |   import controller functions from userController.js in the controllers folder   |
 |   these functions will be invoked and handled in the controller file whenever    |
-|   the routes are requsted. e.g. /api/user/login will invoke the loginUser        |
+|   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
 const { loginUser, signupUser, getUserInfo } = require('../controllers/userController')

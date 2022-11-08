@@ -16,15 +16,17 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     name: {
-        type: String
+        type: String,
+        default: ""
     },
     contact: {
-        type: Number
+        type: Number,
+        default: null
     },
     email: {
         type: String,
         required: true, // compulsory property i.e. cannot be null
-        unique: true // unique username/email
+        unique: true // unique email
     },
     password: {
         type: String,
@@ -36,13 +38,16 @@ const userSchema = new Schema({
         default: "Employee" // default value for every user document created
     },
     skills: [{ // skills of user - set up to be an array of skills
-        type: String
+        type: String,
+        default: ""
     }],
     organisation_id: { // can be organisation name
-        type: Number // can be String/Number
+        type: Number, // can be String/Number
+        default: null
     },
     project_id: [{ // the project assigned to the user
-        type: String
+        type: String,
+        default: ""
     }]
     // MIGHT NEED TO INCLUDE A COUPLE MORE FIELDS TO TRACK PASSWORD CHANGE e.g. how many days till password has to be changed
 }, {timestamps: true}); // datetime created and updated
