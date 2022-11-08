@@ -1,6 +1,10 @@
-//================//
-// MongoDB Schema //
-//================//
+//==========================//
+// MongoDB Schema for Users //
+//==========================//
+
+// Personal Details: Name, Contact, Email, (anything else?)
+// Login Details: Email, Password
+// Other Details: Organisation_ID, Skills, Role
 
 // imports
 const mongoose = require('mongoose'); // enforcing schema for mongodb
@@ -11,6 +15,12 @@ const validator = require('validator') // validates email, password
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    name: {
+        type: String
+    },
+    contact: {
+        type: Number
+    },
     email: {
         type: String,
         required: true, // compulsory property i.e. cannot be null
@@ -26,6 +36,12 @@ const userSchema = new Schema({
         default: "Employee" // default value for every user document created
     },
     skills: [{ // skills of user - set up to be an array of skills
+        type: String
+    }],
+    organisation_id: { // can be organisation name
+        type: Number // can be String/Number
+    },
+    project_id: [{ // the project assigned to the user
         type: String
     }]
     // MIGHT NEED TO INCLUDE A COUPLE MORE FIELDS TO TRACK PASSWORD CHANGE e.g. how many days till password has to be changed
@@ -69,8 +85,9 @@ userSchema.statics.signup = async function(email, password) {
     const hash = await bcrypt.hash(password, salt) // hash the password
 
     // save user to the database
-    // const user = await this.create({ email, password: hash })
-    const user = await this.create({ email, password })
+    const user = await this.create({ email, password: hash })
+
+    console.log(user)
 
     // returns the user document we just created
     return user
@@ -100,17 +117,11 @@ userSchema.statics.login = async function(email, password) {
         throw Error('Invalid login credentials')
     }
 
-    // // if user found - try to match password
-    // const match = await bcrypt.compare(password, user.password) // (password passed in, password in the db)
+    // if user found - try to match password
+    const match = await bcrypt.compare(password, user.password) // (password passed in, password in the db)
 
-    // // if no match
-    // if (!match) {
-    //     throw Error('Invalid login credentials')
-    // }
-
-    // for development only - change to hash above before deployment
-    if (password !== user.password)
-    {
+    // if no match
+    if (!match) {
         throw Error('Invalid login credentials')
     }
 
@@ -122,6 +133,11 @@ userSchema.statics.login = async function(email, password) {
 userSchema.statics.getInfo = async function(email) {
     // returns the user document except the password field
     return this.findOne({ email }).select('-password');
+}
+
+// delete user
+userSchema.statics.deleteUser = async function(email) {
+
 }
 
 
