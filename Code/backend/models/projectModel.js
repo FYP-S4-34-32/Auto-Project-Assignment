@@ -24,7 +24,11 @@ const projectSchema = new Schema({
     },
     skills: [{ // skills required by the project - set up to be an array of skills
         type: String
-    }]
+    }],
+    // threshold: { // number of people for this project
+    //     type: Number
+    //     required: true
+    // }
 }, {timestamps: true}); // datetime created and updated
 
 
