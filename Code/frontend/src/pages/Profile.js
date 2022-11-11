@@ -13,8 +13,9 @@ const Profile = () => {
 
     return (
         <div className="home">
-            <div className="">
-                { user && <p>{ user.email }</p>}
+            <div className="user-profile">
+                <h2> User Information </h2>
+                  { user && <p> Email: { user.email } </p>}  
             </div>
         </div>
     )
