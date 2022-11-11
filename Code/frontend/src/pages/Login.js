@@ -21,11 +21,10 @@ const Login = () => {
     }
 
     // show Password toggle 
-    const showPassword = () => {
-        // When the handler is invoked
-        // inverse the boolean state of passwordShown
+    const showPassword = () => { 
         setShowPassword(!passwordShown);
     };
+
     // return a template - login form
     return (
         <form className="login" onSubmit={handleSubmit}>
@@ -38,7 +37,7 @@ const Login = () => {
             />
             <label>Password:</label>
             <input
-                type="password" // hidden
+                type={passwordShown ? "text" : "password"}  // hidden
                 onChange={(e) => {setPassword(e.target.value)}} // set password to the value of the target input field
                 value={password} // reflect change in password state
             />
