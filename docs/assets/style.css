@@ -1,0 +1,289 @@
+html { 
+    overflow-y: scroll; 
+    text-align: center;
+} 
+ 
+p{
+    text-align: center;  
+    line-height: 1.35; 
+    font-size: 14px; 
+    font-weight: bold;
+}
+
+#spanFooter {
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+#downloads {
+    font-weight: 1;
+}
+
+header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+body {
+    background: rgb(17, 17, 17);   
+    color: rgb(255, 255, 255);
+    min-inline-size: 10%; 
+    box-sizing: border-box; 
+    place-content: center;  
+    font-family: "system-ui";
+    font-size: 15px; 
+}
+
+.divBody{ 
+    height: 1000px;
+    display: flex;   
+    flex-direction: column;
+    justify-content: center;
+    text-align: center; 
+    align-items: center; 
+    padding-top: 1%;
+    padding-bottom: 5%;
+}
+
+.divBody, .outer, .card, .info, .title{
+    background: radial-gradient(
+        hsl(100 100% 90%), 
+        hsl(200 100% 90%) 
+    ) fixed;
+    background: conic-gradient(
+        hsl(100 100% 90%), 
+        hsl(200 100% 90%), 
+        hsl(100 100% 90%) 
+    ) fixed; 
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+ 
+#div1{
+    height: 180px; 
+    background: rgba(23, 23, 23, 0.779);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#div2{ 
+    height: 70px; 
+    background: rgb(33, 33, 33); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center; 
+}
+
+#div3{
+    height: 800px;  
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+#divDownloads {
+    height: 700px;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    justify-items: center;
+    font-size: 14px;
+}
+
+#divFooter { 
+    height: 130px; 
+    background: rgba(23, 23, 23, 0.779);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+a:link, a:visited{
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+#menuTable{
+    background-color: transparent;
+    justify-content: left; 
+}
+
+#menuTable th{
+    width: 500px;
+    background-color: transparent;
+    text-align: centre;
+}
+
+#AboutUsTable{
+    height: 50%;
+    background-color: transparent;
+    justify-content: center;
+}
+
+#AboutUsTable td{
+    width: 333px; 
+    height: 35%;
+    background-color: transparent;  
+    text-align: center;  
+    justify-content: center;
+}
+
+#downloadsTable{  
+    width: 50%;
+    background-color: transparent;   
+    align-self: center;
+    justify-content: center;
+    margin-left: 0%;
+}
+
+#downloadsTable td{ 
+    width: 270px;
+    height: 50px;
+    background-color: transparent;  
+    text-align: center;
+    align-self: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* --------------------------------------- */
+/* --------------------------------------- */
+/* for timeline */
+:root{
+    --primary-color: #212121;  
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+/* Timeline Container */
+.timeline{ 
+    margin: 30px auto;
+    padding: 30px;
+    justify-content: center;
+}
+
+/* Card container */
+.card{
+    position: relative;
+    max-width: 700px;
+}
+
+/* setting padding based on even or odd */
+.card:nth-child(odd){
+    padding: 30px 0 30px 30px;
+}
+.card:nth-child(even){
+    padding: 30px 30px 30px 0;
+}
+/* Global ::before */
+.card::before{
+    content: "";
+    position: absolute;
+    width: 50%;
+    border: solid rgb(245, 255, 228);
+}
+
+/* Setting the border of top, bottom, left */
+.card:nth-child(odd)::before{
+    left: 0px;
+    top: -4.5px;
+    bottom: -4.5px;
+    border-width: 5px 0 5px 5px;
+    border-radius: 50px 0 0 50px;
+}
+
+/* Setting the border of top, bottom, right */
+.card:nth-child(even)::before{
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-width: 5px 5px 5px 0;
+    border-radius: 0 50px 50px 0;
+}
+
+/* Removing the border if it is the first card */
+.card:first-child::before{
+    border-top: 0;
+    border-top-left-radius: 0;
+}
+
+/* Removing the border if it is the last card  and it's odd */
+.card:last-child:nth-child(odd)::before{
+    border-bottom: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Removing the border if it is the last card  and it's even */
+.card:last-child:nth-child(even)::before{
+    border-bottom: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Information about the timeline */
+.info{
+    display: flex;
+    flex-direction: column;
+    background: transparent; 
+    border-radius: 10px;
+    padding: 10px;
+    padding-top: 10px;
+    font-size: 12px;
+}
+
+/* Title of the card */
+.title{ 
+    position: relative;  
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Timeline dot  */
+.title::before{
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px; 
+    border-radius: 999px;
+    border: 3px solid white;
+    background: rgba(17, 17, 17, 0.918);   
+    color: rgb(255, 255, 255); 
+    place-content: center;  
+}
+
+/* text right if the card is even  */
+.card:nth-child(even) > .info > .title{
+    text-align: right;
+}
+
+/* text right if the card is even  */
+.card:nth-child(odd) > .info > .title{
+    text-align: left;
+}
+
+/* setting dot to the left if the card is odd */
+.card:nth-child(odd) > .info > .title::before{
+    left: -45px;
+}
+ 
+/* setting dot to the right if the card is odd */
+.card:nth-child(even) > .info > .title::before{
+    right: -45px;
+}
+/* --------------------------------------- */
+/* --------------------------------------- */
