@@ -36,14 +36,14 @@ header a {
 .home {
   display: grid;
   grid-template-columns: 3fr 1fr;
-  gap: 100px;
+  gap: 100px; 
 }
 .user-details {
   background: #fff;
   border-radius: 4px;
   margin: 20px auto;
   padding: 20px;
-  position: relative;
+  position: center;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
 .user-details h4 {
@@ -65,6 +65,19 @@ header a {
   padding: 6px;
   border-radius: 50%;
   color: #333;
+}
+
+/* user profile page */
+.user-profile {
+  background: #fff;
+  border-radius: 4px; 
+  margin: auto; 
+  padding: 20px;
+  position: center;
+  align-self: center;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  height: 400px;
+  width: 900px; 
 }
 
 /* new project form */
