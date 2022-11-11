@@ -16,7 +16,7 @@ const Signup = () => {
         e.preventDefault()
 
         // invoke signup function from useSignup.js
-        await signup(email, password)
+        await signup(email, password) 
     }
 
     // return a template - signup form
