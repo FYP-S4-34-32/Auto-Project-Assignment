@@ -133,9 +133,10 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm {
 .showPwBtn {
   height: 36.8px; 
   position: absolute;
-  top: 46.7%;
-  right: 37.6%;  
+  top: 46.6%;
+  right: 36.1%;  
   color: rgb(37, 36, 36); 
   background-color: rgba(178, 175, 175, 0.517); 
   font-size: x-small;
+  border-color: transparent;
 }
