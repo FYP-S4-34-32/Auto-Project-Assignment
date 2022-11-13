@@ -38,12 +38,16 @@ const loginUser = async (req, res) => {
         const user = await User.login(email, password)
         
         const role = user.role // user's role
+        const name = user.name // user's name 
+        const contact = user.contact // user's contact number
+        const skills = user.skills // user's skills
+        const organisation_id = user.organisation_id // user's organisation id
 
         // create a jsonwebtoken
         const token = createToken(user._id)
 
         // return the user's email, role, and the token we just generated in json format
-        res.status(200).json({email, token, role})
+        res.status(200).json({email, token, role, name, contact, skills, organisation_id})
     } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -88,13 +92,26 @@ const signupUser = async (req, res) => {
 
 // getUserInfo - TESTING
 const getUserInfo = async (req, res) => {
-    const { email } = req.body // grab email from the request object
+    const { email } = (req.header) // grab email from the request object
     console.log(email)
 
     // get the document
     const userInfo = await User.getInfo(email)
     
     res.status(200).json(userInfo)
+}
+
+// Edit User Info
+const editUserInfo = async (req, res) => {
+    const { email, name, contact, skills } = req.body // grab email from the request object
+
+    try {
+        const user = await User.editInfo(email, name, contact, skills)
+
+        res.status(200).json({user}) 
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
 }
 
 // EXPORT the functions
