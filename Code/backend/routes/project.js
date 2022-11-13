@@ -22,7 +22,7 @@ router.get('/', getProjects);
 router.get('/:id', getSingleProject);
 
 // POST a new project @ /api/project/
-router.post('/', createProject);
+router.post('/', createProject); // ------------------------> Should require a change in url if we were to separate the project listings and project creation
 
 // DELETE a project @ /api/project/:id
 router.delete('/:id', deleteProject);
