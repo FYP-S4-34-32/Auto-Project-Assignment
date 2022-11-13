@@ -52,23 +52,19 @@ const Profile = () => {
             case 'showOrganisation':
                 return (
                     <div className="user-profile">
-                        <h2> Organisation Information </h2> 
+                        <h2> Organisation Information </h2>  
                         {/* to be added */}
                     </div>
                 )
                 
-            case 'showSkills': 
-                if (user.role === 'Admin' || user.role === 'SuperAdmin') {
-                }
-                else {
-                    return (
-                        <div className="user-profile">
-                            <h2> Skills </h2> 
-                            {/* to be added */}
-                        </div> 
-                    )   
-                }
-
+            case 'showSkills':   
+                return (
+                    <div className="user-profile">
+                        <h2> Skills </h2> 
+                        {/* to be added */}
+                    </div> 
+                )    
+            
             // cases for projects and settings to be added 
              
             // DEFAULT: DISPLAY USER INFORMATION
@@ -99,7 +95,7 @@ const Profile = () => {
                         <button className="updateDetailsBtn">Edit Profile</button>
                     </div>
                 )
-            }
+        }
     }
 
 
