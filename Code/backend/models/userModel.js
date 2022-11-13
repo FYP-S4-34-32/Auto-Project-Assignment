@@ -146,7 +146,5 @@ userSchema.statics.deleteUser = async function(email) {
 }
 
 
-
-
 // EXPORT
 module.exports = mongoose.model('User', userSchema) // .model builds out a Collection

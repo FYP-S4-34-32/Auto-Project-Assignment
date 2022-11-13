@@ -23,7 +23,7 @@ export const useLogin = () => {
             body: JSON.stringify({email, password}) // sends {email, password} as the request body
         })
 
-        const json = await response.json() // the return value we get back from the userController.js login function {email, token}
+        const json = await response.json() // the return value we get back from the userController.js login function {email, token, role}
 
         // if there is a problem
         if (!response.ok) {
@@ -34,7 +34,7 @@ export const useLogin = () => {
         // if response is ok
         if(response.ok) {
             // save the user(jsonwebtoken) to local storage
-            localStorage.setItem('user', JSON.stringify(json)) // {email, token}
+            localStorage.setItem('user', JSON.stringify(json)) // {email, token, role}
 
             // update authentication context
             dispatch({type: 'LOGIN', payload: json})

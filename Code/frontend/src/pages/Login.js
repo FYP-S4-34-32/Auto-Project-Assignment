@@ -41,7 +41,7 @@ const Login = () => {
                 onChange={(e) => {setPassword(e.target.value)}} // set password to the value of the target input field
                 value={password} // reflect change in password state
             />
-            <button className="showPwBtn" onClick={showPassword}>Show Password</button>
+            <button className="showPwBtn" type="button" onClick={showPassword}>Show Password</button>
 
             <button disabled={ isLoading }>Login</button> {/*prevent button from being clicked while page is loading*/}
             {error && <div className="error">{ error }</div>}
