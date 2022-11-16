@@ -22,7 +22,7 @@ const Profile = () => {
                     <button onClick={() => setSelectedInfo('showSkills')}> Skills </button> 
                     <br></br>
                     <button> Projects </button> 
-                    <button> Settings </button>
+                    <button> Change Password </button>
                 </div> 
             )
             case "Admin":
@@ -30,7 +30,7 @@ const Profile = () => {
                     <div className="profile-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                        <button> Settings </button>
+                        <button> Change Password  </button>
                     </div>
             )
             case "Super Admin":
@@ -38,7 +38,7 @@ const Profile = () => {
                     <div className="profile-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                        <button> Settings </button>
+                        <button> Change Password  </button>
                     </div>
             )
             default:
@@ -60,8 +60,10 @@ const Profile = () => {
             case 'showSkills':   
                 return (
                     <div className="user-profile">
-                        <h2> Skills </h2> 
-                        {/* to be added */}
+                        <h2> Skills </h2>  
+                        {/* to be added */} 
+                        
+                        <button className="editSkillsBtn">Edit Skills</button>
                     </div> 
                 )    
             
@@ -90,7 +92,8 @@ const Profile = () => {
                         <hr/>
             
                         <h4> Contact Info</h4>
-                        { user && <p> { user.contact } </p>} 
+                        { user && <p> { user.contact }</p>} 
+                        <button className="editContactBtn">Edit Contact Information</button>
                     </div>
                 )
         }

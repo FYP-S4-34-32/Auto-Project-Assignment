@@ -82,9 +82,16 @@ header a {
   width: 800px;  
 }
 
-.updateDetailsBtn {
-  float: right;
-  margin: 30px;
+.user-profile button {
+  /* background: var(--primary); */
+  background: rgba(128, 128, 128, 0.755);
+  border: 0;
+  color: #fff;
+  padding: 10px; 
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer; 
+  margin-left: 30px;
 }
 
 .user-profile h2, h4, p, hr{
@@ -100,11 +107,11 @@ hr {
   border-radius: 4px;  
   margin-top: 40px;
   margin-left: 120px;
-  padding: 25px;  
+  padding: 30px;  
   align-items: center;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
   height: 250px;
-  width: 170px;  
+  width: 200px;  
   grid-template-rows: auto;
 } 
 
