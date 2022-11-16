@@ -90,7 +90,14 @@ const signupUser = async (req, res) => {
     }
 }
 
-// getUserInfo - TESTING
+// GET all users info
+const getAllUserInfo = async (req, res) => {
+    const users = await User.find({}).sort({createdAt: 1}) // descending order
+
+    res.status(200).json(users)
+}
+
+// GET user info
 const getUserInfo = async (req, res) => {
     const { email } = (req.body) // grab email from the request object
     console.log(email)
@@ -101,7 +108,7 @@ const getUserInfo = async (req, res) => {
     res.status(200).json(userInfo)
 }
 
-// update user info
+// UPDATE user info
 const updateUserInfo = async (req, res) => {
     const { id } = req.params // grab id from the address bar or request
 
@@ -124,10 +131,32 @@ const updateUserInfo = async (req, res) => {
     res.status(200).json(user)
 }
 
+// DELETE a user
+const deleteUser = async (req, res) => {
+    const { id } = req.params
+
+    // id check
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({error: 'Invalid User ID'})
+    }
+  
+    const user = await User.findOneAndDelete({_id: id})
+  
+    // check to see whether a user is found
+    if (!user) {
+      return res.status(404).json({error: "No such user"});
+    } 
+  
+    // if user is found
+    res.status(200).json(user);
+}
+
 // EXPORT the functions
 module.exports = {
     loginUser,
     signupUser,
+    getAllUserInfo,
     getUserInfo,
-    updateUserInfo
+    updateUserInfo,
+    deleteUser
 }
