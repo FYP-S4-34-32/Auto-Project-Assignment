@@ -92,7 +92,7 @@ const signupUser = async (req, res) => {
 
 // getUserInfo - TESTING
 const getUserInfo = async (req, res) => {
-    const { email } = (req.header) // grab email from the request object
+    const { email } = (req.body) // grab email from the request object
     console.log(email)
 
     // get the document
@@ -101,22 +101,33 @@ const getUserInfo = async (req, res) => {
     res.status(200).json(userInfo)
 }
 
-// Edit User Info
-const editUserInfo = async (req, res) => {
-    const { email, name, contact, skills } = req.body // grab email from the request object
+// update user info
+const updateUserInfo = async (req, res) => {
+    const { id } = req.params // grab id from the address bar or request
 
-    try {
-        const user = await User.editInfo(email, name, contact, skills)
-
-        res.status(200).json({user}) 
-    } catch (error) {
-        res.status(400).json({error: error.message})
+    // check whether id is a valid mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ error: "Invalid User ID" }) 
     }
+
+    // get the document
+    const user = await User.findOneAndUpdate({ _id: id }, {
+        ...req.body // spread the req.body
+    }) // store the response of findOneAndUpdate() into user variable
+
+    // user DOES NOT exist
+    if (!user) {
+        return res.status(404).json({ error: "No such user" })
+    }
+
+    // user EXISTS
+    res.status(200).json(user)
 }
 
 // EXPORT the functions
 module.exports = {
     loginUser,
     signupUser,
-    getUserInfo
+    getUserInfo,
+    updateUserInfo
 }

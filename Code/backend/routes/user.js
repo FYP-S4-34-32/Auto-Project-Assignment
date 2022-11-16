@@ -11,7 +11,7 @@ const express = require('express')
 |   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
-const { loginUser, signupUser, getUserInfo } = require('../controllers/userController')
+const { loginUser, signupUser, getUserInfo, updateUserInfo } = require('../controllers/userController')
 
 // invoke express router object
 const router = express.Router()
@@ -24,6 +24,9 @@ router.post('/signup', signupUser)
 
 // profile page route - GET because we are retrieving data
 router.get('/profile', getUserInfo)
+
+// edit profile details
+router.post('/profile', updateUserInfo)
 
 // EXPORT router
 module.exports = router
