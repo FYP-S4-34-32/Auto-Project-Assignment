@@ -91,8 +91,6 @@ const Profile = () => {
             
                         <h4> Contact Info</h4>
                         { user && <p> { user.contact } </p>} 
-            
-                        <button className="updateDetailsBtn">Edit Profile</button>
                     </div>
                 )
         }
