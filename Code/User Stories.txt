@@ -3,7 +3,7 @@ List of our user stories
 ========================
 Document Control: Last updated @ 8/11/2022
 
-
+--------------
 Sprint 1 - 6 :
 --------------
 [x] 	As a Project Admin, I want to be able to login into the system
@@ -21,8 +21,9 @@ Sprint 1 - 6 :
 	I can protect the information and tasks handling that are only
 	authorised by me
 
+---------------
 Sprint 2 - 11 :
---------------
+---------------
 []	As an Employee, I want to be able to add my contact details so
 	that other personnels can contact me when necessary
 []	As an Employee, I want to be able to view my account information
@@ -50,3 +51,24 @@ Sprint 2 - 11 :
 	so that I can see the users in the organisation
 []	As a Super Admin, I want to delete user accounts for the
 	organisation so that I can remove invalid user
+
+--------------
+Sprint 3 - 7 :
+--------------
+[]	As a Project Admin, I want to be able to create new projects so that
+	employees will be able to see them
+[]	As a Project Admin, I want to be able to update project details so
+	that I can make necessary changes
+[]	As a Project Admin, I want to be able to set the number of employees
+	required for a specific project, so that I can limit the employees
+	enrolled into that project
+[]	As a Project Admin, I want to be able to remove projects, so that
+	unavailable projects can be deleted
+[]	As an Employee, I want to be able to view my skills and competency
+	details so that I can see my skills and competency details that
+	are reflected in the system
+[]	As an Employee, I want to be able to see a list of the available
+	projects so that I know what are the projects available for me
+	to choose
+[]	As an Employee, I want to view the projects' details so that I can
+	obtain more information for each project
