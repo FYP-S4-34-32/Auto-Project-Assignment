@@ -34,7 +34,7 @@ function App() {
             />
             <Route 
               path = "/signup" // signup page
-              element = { !user ? <Signup /> : <Navigate to="/" /> } // Home page if there is a user, Signup page if there is no user
+              element = { (user && user.role === "Admin" || user && user.role === "Super Admin") ? <Signup /> : <Navigate to="/signup" /> } // Home page if there is a user, Signup page if there is no user
             />
             <Route 
               path = "/profile" // signup page

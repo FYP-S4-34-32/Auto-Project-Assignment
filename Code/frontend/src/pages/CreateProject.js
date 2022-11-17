@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react"
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
 import ProjectForm from "../components/ProjectForm"
+import ProjectDetails from "../components/ProjectDetails"
 // import ProjectDetails from "../components/ProjectDetails"
 
 const CreateProject = () => {
@@ -14,7 +15,7 @@ const CreateProject = () => {
 
     useEffect(() => {
         const fetchProjects = async() => {
-            const response = await fetch('/api/project')
+            const response = await fetch('/api/projects')
             const json = await response.json()
 
             if (response.ok) {
@@ -24,22 +25,14 @@ const CreateProject = () => {
 
         fetchProjects()
     }, [])
-    
-    const { project } = useAuthenticationContext()
 
     return (
         <div className="home">
-            {/* <div className="workouts">
+            <div className="user-profile">
                 {projects && projects.map((project) => (
-                   <ProjectDetails key={Project._id} project={project}/>
+                    <ProjectDetails key={project._id} project={project} />
                 ))}
             </div>
-            <div className="user-details">
-            <h4>Project Listings - testing</h4>
-            <p><strong>Project Title: </strong>{project.title}</p>
-            <p><strong>Project Description: </strong>{project.description}</p>
-            <p><strong>Skills needed: </strong>{project.skills}</p>
-            </div> */}
             <ProjectForm/> 
         </div>
     )

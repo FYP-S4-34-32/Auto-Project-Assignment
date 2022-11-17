@@ -34,8 +34,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        required: true,
-        default: "Employee" // default value for every user document created
+        default: "Employee"
     },
     skills: [{ // skills of user - set up to be an array of skills
         skill: String,

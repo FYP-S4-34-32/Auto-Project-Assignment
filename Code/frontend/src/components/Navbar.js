@@ -25,6 +25,13 @@ const Navbar = () => {
                     {(user && user.role === "Admin") && ( // return this template only when the logged in user is a project admin
                         <div>
                             <Link to="/createproject">Create Project</Link>
+                            <Link to="/signup">Create Account</Link>
+                        </div>
+                    )}
+                    {(user && user.role === "Super Admin") && ( // return this template only when the logged in user is a project admin
+                        <div>
+                            <Link to="/createproject">Create Project</Link>
+                            <Link to="/signup">Create Account</Link>
                         </div>
                     )}
                     {user && ( // return a template only when there is a user logged in
