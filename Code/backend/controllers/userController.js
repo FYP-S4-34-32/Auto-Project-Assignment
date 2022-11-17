@@ -131,6 +131,45 @@ const updateUserInfo = async (req, res) => {
     res.status(200).json(user)
 }
 
+// POST a new skill
+const addUserSkill = async (req, res) => {
+    const { id } = req.params
+    const { name, competency } = req.body // req.body -> { "name": skillName, "competency": competencyLevel }
+    console.log(name, competency)
+
+    // id check
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({error: 'Invalid User ID'})
+    }
+
+    // search for user by id
+    const user = await User.findById(id)
+
+    // check to see whether a user is found
+    if (!user) {
+        return res.status(404).json({error: "No such user"});
+    } 
+
+    // search for user by id AND skill name in req.body
+    const skillExists = await User.find({ _id: id, 'skills.name': name}) // returns an array - have to check based on length whether it exists
+    
+    // check if skill has already been added
+    if (skillExists.length !== 0) {
+        return res.status(404).json({error: "Skill has already been added"})
+    }
+
+    // add new skill
+    user.skills = [...user.skills, { ...req.body }]
+    user.save()
+    
+    res.status(200).json(user);
+}
+
+// UPDATE skill competency
+const updateSkillCompetency = async (req, res) => {
+    
+}
+
 // DELETE a user
 const deleteUser = async (req, res) => {
     const { id } = req.params
@@ -158,5 +197,6 @@ module.exports = {
     getAllUserInfo,
     getUserInfo,
     updateUserInfo,
+    addUserSkill,
     deleteUser
 }

@@ -11,7 +11,7 @@ const express = require('express')
 |   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
-const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, deleteUser } = require('../controllers/userController')
+const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, deleteUser } = require('../controllers/userController')
 
 // invoke express router object
 const router = express.Router()
@@ -30,6 +30,9 @@ router.get('/profile', getUserInfo)
 
 // UPDATE user info @ /api/user/:id
 router.patch('/:id', updateUserInfo)
+
+// POST new user skill @ /api/user/:id
+router.post('/:id', addUserSkill)
 
 // DELETE a user @ /api/user/:id
 router.delete('/:id', deleteUser)

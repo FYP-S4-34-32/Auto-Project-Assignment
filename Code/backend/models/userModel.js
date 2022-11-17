@@ -38,8 +38,8 @@ const userSchema = new Schema({
         default: "Employee" // default value for every user document created
     },
     skills: [{ // skills of user - set up to be an array of skills
-        type: String,
-        default: ""
+        name: String,
+        competency: String
     }],
     organisation_id: { // can be organisation name
         type: Number, // can be String/Number
