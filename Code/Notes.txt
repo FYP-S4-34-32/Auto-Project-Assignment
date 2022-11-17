@@ -1,5 +1,2 @@
-[x] Remove Signup link - will still be kept in the backend server for us to use
-[x] Add role and skills property to user schema
-- role is set to 'Employee' by default
---> need to find a way to change the value to 'Manager' or 'Super Admin'
-- skills is set to an empty array
+[] signup feature only accessible by super admins and admins
+[] signup form to include {name, contact, role} field

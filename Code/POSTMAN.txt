@@ -1,0 +1,61 @@
+===========
+USER ROUTES
+===========
+localhost:4000/api/user/login - user login - POST
+
+{
+	"email": "user1@gmail.com",
+	"password": "user1"
+}
+
+localhost:4000/api/user/signup - user signup - POST
+
+{
+	"email": "user10@gmail.com",
+	"password": "user10"
+}
+
+localhost:4000/api/user/profile/ - single user profile - GET
+
+{
+	"email": "user2@gmail.com"
+}
+
+localhost:4000/api/user/allprofile - all user profile - GET
+
+localhost:4000/api/user/updateInfo - update user info - PATCH
+
+{
+	"email": "user2@gmail.com",
+	"name": "Sionggo",
+	"contact": 98766789
+}
+
+localhost:4000/api/user/addSkill - add skills - POST
+
+{
+	"email": "user2@gmail.com",
+	"skill": "C++",
+	"competency": "Beginner"
+}
+
+localhost:4000/api/user/updateSkill - update skill competency level - PATCH
+
+{
+	"email": "user2@gmail.com",
+	"skill": "C++",
+	"competency": Intermediate"
+}
+
+localhost:4000/api/user/deleteSkill - delete skill - DELETE
+
+{
+	"email": "user2@gmail.com",
+	"skill": "C++"
+}
+
+localhost:4000/api/user/deleteUser - delete user - DELETE
+
+{
+	"email": "user10@gmail.com"
+}
