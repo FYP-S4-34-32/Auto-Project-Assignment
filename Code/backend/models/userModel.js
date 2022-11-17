@@ -38,7 +38,7 @@ const userSchema = new Schema({
         default: "Employee" // default value for every user document created
     },
     skills: [{ // skills of user - set up to be an array of skills
-        name: String,
+        skill: String,
         competency: String
     }],
     organisation_id: { // can be organisation name
@@ -134,15 +134,113 @@ userSchema.statics.login = async function(email, password) {
     return user
 }
 
-// static method to retrieve user info - TESTING
-userSchema.statics.getInfo = async function(email) {
-    // returns the user document except the password field
-    return this.findOne({ email }).select('-password');
+// static method to retrieve ALL user info EXCEPT password
+userSchema.statics.getAllUsers = async function() {
+    return this.find({}).sort({createdAt: 1}).select('-password')
 }
 
-// delete user
-userSchema.statics.deleteUser = async function(email) {
+// static method to retrieve user info EXCEPT password
+userSchema.statics.getOneUser = async function(email) {
+    // returns the user document except the password field
+    return this.findOne({ email }).select('-password')
+}
 
+// static method to update user info
+userSchema.statics.updateInfo = async function(req) {
+    // get email - unique identifier
+    const { email } = req.body
+
+    // get the document
+    const user = await this.findOneAndUpdate({ email }, {
+        ...req.body // spread the req.body
+    }) // store the response of findOneAndUpdate() into user variable
+
+    // user DOES NOT exist
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    // user EXISTS
+    return user
+}
+
+// static method to add new skill
+userSchema.statics.addNewSkill = async function(email, skill, competency) {
+    // search for user by email
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    } 
+
+    // search for user by email AND skill name in req.body
+    const skillExists = await this.find({ email, 'skills.skill': skill}) // returns an array - have to check based on length whether it exists
+    
+    // check if skill has already been added
+    if (skillExists.length !== 0) {
+        throw Error("Skill has already been added")
+    }
+
+    // add new skill
+    user.skills = [...user.skills, { skill, competency }]
+    user.save()
+    
+    return user
+}
+
+// static method to update skill
+userSchema.statics.updateSkill = async function(req) {
+    const { email, skill, competency } = req.body
+
+    // search for user by email
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    } 
+
+    const updated = await this.findOneAndUpdate({ email, 'skills.skill': skill }, { $set: {
+        'skills.$.competency': competency
+    }})
+
+    return user
+}
+
+
+// static method to delete skill
+userSchema.statics.deleteSkill = async function(req) {
+    const { email, skill } = req.body
+
+    // search for user by email
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    } 
+
+    const deleteSkill = await this.updateOne({ email }, {
+        $pull: { skills: { skill }}
+    })
+
+    return user
+}
+
+// static method to delete user
+userSchema.statics.deleteUser = async function(email) {
+     // search for user by email
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    } 
+    
+    const deleteUser = await this.deleteOne(user)
+
+    return user
 }
 
 

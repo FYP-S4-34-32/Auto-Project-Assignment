@@ -92,7 +92,7 @@ const signupUser = async (req, res) => {
 
 // GET all users info
 const getAllUserInfo = async (req, res) => {
-    const users = await User.find({}).sort({createdAt: 1}) // descending order
+    const users = await User.getAllUsers()
 
     res.status(200).json(users)
 }
@@ -100,94 +100,98 @@ const getAllUserInfo = async (req, res) => {
 // GET user info
 const getUserInfo = async (req, res) => {
     const { email } = (req.body) // grab email from the request object
-    console.log(email)
 
     // get the document
-    const userInfo = await User.getInfo(email)
+    const userInfo = await User.getOneUser(email)
     
     res.status(200).json(userInfo)
 }
 
 // UPDATE user info
 const updateUserInfo = async (req, res) => {
-    const { id } = req.params // grab id from the address bar or request
+    
+    try {
+        // invoke updateInfo function in userModel.js
+        const user = await User.updateInfo(req)
 
-    // check whether id is a valid mongoose type object
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: "Invalid User ID" }) 
+        // return the request object
+        res.status(200).json({ user })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
     }
-
-    // get the document
-    const user = await User.findOneAndUpdate({ _id: id }, {
-        ...req.body // spread the req.body
-    }) // store the response of findOneAndUpdate() into user variable
-
-    // user DOES NOT exist
-    if (!user) {
-        return res.status(404).json({ error: "No such user" })
-    }
-
-    // user EXISTS
-    res.status(200).json(user)
 }
 
 // POST a new skill
 const addUserSkill = async (req, res) => {
-    const { id } = req.params
-    const { name, competency } = req.body // req.body -> { "name": skillName, "competency": competencyLevel }
-    console.log(name, competency)
+    const { email, skill, competency } = req.body // req.body -> { "email": email, "skill": skillName, "competency": competencyLevel }
+    
+    try {
+        // invoke addNewSkill function in userModel.js
+        const user = await User.addNewSkill(email, skill, competency)
 
-    // id check
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({error: 'Invalid User ID'})
+        const skills = user.skills
+
+        // return the email and skills
+        res.status(200).json({ email, skills })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
     }
 
-    // search for user by id
-    const user = await User.findById(id)
-
-    // check to see whether a user is found
-    if (!user) {
-        return res.status(404).json({error: "No such user"});
-    } 
-
-    // search for user by id AND skill name in req.body
-    const skillExists = await User.find({ _id: id, 'skills.name': name}) // returns an array - have to check based on length whether it exists
-    
-    // check if skill has already been added
-    if (skillExists.length !== 0) {
-        return res.status(404).json({error: "Skill has already been added"})
-    }
-
-    // add new skill
-    user.skills = [...user.skills, { ...req.body }]
-    user.save()
-    
-    res.status(200).json(user);
 }
 
 // UPDATE skill competency
-const updateSkillCompetency = async (req, res) => {
-    
+const updateUserSkill = async (req, res) => {
+
+    const { email, skill, competency } = req.body // req.body -> { "email": email, "skill": skillName, "competency": competencyLevel }
+
+    try {
+        // invoke updateSkill function in userModel.js
+        const user = await User.updateSkill(req)
+
+        const skills = user.skills
+
+        // return the email and skills
+        res.status(200).json({ email, skills })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
+// DELETE user skill
+const deleteUserSkill = async (req, res) => {
+    const { email } = req.body
+
+    try {
+        // invoke deleteSkill function in userModel.js
+        const user = await User.deleteSkill(req)
+
+        const skills = user.skills
+
+        // return the email and skills
+        res.status(200).json({ email, skills })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
 }
 
 // DELETE a user
 const deleteUser = async (req, res) => {
-    const { id } = req.params
+    const { email } = req.body
+  
+    try {
+        // invoke deleteUser function in userModel.js
+        const user = await User.deleteUser(email)
 
-    // id check
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({error: 'Invalid User ID'})
+        // return the email and skills
+        res.status(200).json({ email })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
     }
-  
-    const user = await User.findOneAndDelete({_id: id})
-  
-    // check to see whether a user is found
-    if (!user) {
-      return res.status(404).json({error: "No such user"});
-    } 
-  
-    // if user is found
-    res.status(200).json(user);
 }
 
 // EXPORT the functions
@@ -198,5 +202,7 @@ module.exports = {
     getUserInfo,
     updateUserInfo,
     addUserSkill,
+    updateUserSkill,
+    deleteUserSkill,
     deleteUser
 }

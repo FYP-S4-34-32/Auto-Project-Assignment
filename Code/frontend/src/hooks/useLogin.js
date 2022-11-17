@@ -23,7 +23,7 @@ export const useLogin = () => {
             body: JSON.stringify({email, password}) // sends {email, password} as the request body
         })
 
-        const json = await response.json() // the return value we get back from the userController.js login function {email, token, role}
+        const json = await response.json() // the return value we get back from the userController.js login function
 
         // if there is a problem
         if (!response.ok) {
