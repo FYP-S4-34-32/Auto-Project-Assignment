@@ -22,6 +22,7 @@ localhost:4000/api/user/profile/ - single user profile - GET
 }
 
 localhost:4000/api/user/allprofile - all user profile - GET
+- no body needed
 
 localhost:4000/api/user/updateInfo - update user info - PATCH
 
@@ -58,4 +59,50 @@ localhost:4000/api/user/deleteUser - delete user - DELETE
 
 {
 	"email": "user10@gmail.com"
+}
+
+==============
+PROJECT ROUTES
+==============
+localhost:4000/api/project/ - GET all projects
+- no body needed
+
+localhost:4000/api/project/637720a970f9b3a3e20ecaad - GET single project - can change _id params
+- no body needed
+
+localhost:4000/api/project/createproject - POST new project
+
+{
+	"title": "Project X",
+	"description": "X-men"
+}
+
+localhost:4000/api/project/636a7be00537f9af3434f88d - PATCH project details - can change _id params
+
+{
+	"title": "example title"
+	"description": "updated via Postman App"
+}
+
+localhost:4000/api/project/636a7be00537f9af3434f88d - DELETE a project - can change _id params
+- no body needed
+
+localhost:4000/api/project/skills/637720a970f9b3a3e20ecaad - POST new skill - can change _id params
+
+{
+	"skill": "Java",
+	"competency": "Intermediate"
+}
+
+localhost:4000/api/project/skills/637720a970f9b3a3e20ecaad - PATCH project skill - can change _id params
+
+{
+	"skill": "Java",
+	"competency": Beginner"
+}
+
+localhost:4000/api/project/skills/637720a970f9b3a3e20ecaad - DELETE project skill - can change _id params
+
+{
+	"skill": "Java"
 }
