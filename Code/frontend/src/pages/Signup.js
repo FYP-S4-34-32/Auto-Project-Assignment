@@ -5,8 +5,12 @@
 // imports
 import { useState } from 'react'
 import { useSignup } from '../hooks/useSignup'
+import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 
 const Signup = () => {
+    const { user } = useAuthenticationContext()
+    const currentUserRole = user.role
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [role, setRole] = useState('')
@@ -38,8 +42,10 @@ const Signup = () => {
             />
             <label>Role:</label>
             <select value={role} onChange={(e) => {setRole(e.target.value)}}>
+                <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
                 <option value="Employee">Employee</option>
                 <option value="Admin">Admin</option>
+                { (currentUserRole === "Super Admin") && <option value="Super Admin">Super Admin</option> } {/*only display the Super Admin option if the current user is one*/}
             </select>
             <br></br>
             <br></br>

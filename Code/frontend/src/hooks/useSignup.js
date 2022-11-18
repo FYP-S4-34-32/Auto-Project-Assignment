@@ -4,14 +4,14 @@
 
 // imports
 import { useState } from 'react'
-import { useAuthenticationContext} from './useAuthenticationContext'
 
 export const useSignup = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
-    const { dispatch } = useAuthenticationContext()
 
     const signup = async (email, password, role) => {
+        console.log(email, password, role)
+
         setIsLoading(true) // set loading state
         setError(null) // reset error to null in case there was one previously
 
@@ -32,11 +32,6 @@ export const useSignup = () => {
 
         // if response is ok
         if(response.ok) {
-            // save the user(jsonwebtoken) to local storage
-            localStorage.setItem('user', JSON.stringify(json)) // {email, token, role}
-
-            // update authentication context
-            dispatch({type: 'LOGIN', payload: json})
 
             // set loading state back to false
             setIsLoading(false)
