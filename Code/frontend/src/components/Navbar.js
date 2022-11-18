@@ -28,9 +28,8 @@ const Navbar = () => {
                             <Link to="/signup">Create Account</Link>
                         </div>
                     )}
-                    {(user && user.role === "Super Admin") && ( // return this template only when the logged in user is a project admin
+                    {(user && user.role === "Super Admin") && ( // return this template only when the logged in user is a super admin
                         <div>
-                            <Link to="/createproject">Create Project</Link>
                             <Link to="/signup">Create Account</Link>
                         </div>
                     )}

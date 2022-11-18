@@ -10,7 +10,7 @@ const express = require('express')
 |   folder these functions will be invoked and handled in the controller file      |
 |   whenever the routes are requested.                                             |
 \* ============================================================================== */
-const { createProject, getProjects, getSingleProject, deleteProject, updateProject } = require('../controllers/projectController')
+const { createProject, getProjects, getSingleProject, deleteProject, updateProject, addProjectSkills, updateProjectSkills, deleteProjectSkills } = require('../controllers/projectController')
 
 // invoke express router object
 const router = express.Router()
@@ -21,14 +21,23 @@ router.get('/', getProjects);
 // GET a single project @ /api/project/:id
 router.get('/:id', getSingleProject);
 
-// POST a new project @ /api/project/
-router.post('/', createProject); // ------------------------> Should require a change in url if we were to separate the project listings and project creation
+// POST a new project @ /api/project/createproject
+router.post('/createproject', createProject); // ------------------------> Should require a change in url if we were to separate the project listings and project creation
 
 // DELETE a project @ /api/project/:id
 router.delete('/:id', deleteProject);
 
 // UPDATE a new project @ /api/project/:id
 router.patch('/:id', updateProject);
+
+// POST project skills @ /api/project/skills/:id
+router.post('/skills/:id', addProjectSkills);
+
+// PATCH project skills @ /api/project/skills/:id
+router.patch('/skills/:id', updateProjectSkills)
+
+// DELETE project skills @ /api/project/skills/:id
+router.delete('/skills/:id', deleteProjectSkills)
 
 // EXPORT router
 module.exports = router

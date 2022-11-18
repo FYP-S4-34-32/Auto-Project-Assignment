@@ -107,6 +107,60 @@ const updateProject = async (req, res) => {
     res.status(200).json(project)
 }
 
+// POST project skills
+const addProjectSkills = async (req, res) => {
+    
+    try {
+        // invoke addNewSkill function in projectModel.js
+        const project = await Project.addNewSkill(req)
+
+        const title = project.title
+        const skills = project.skills
+
+        // return the email and skills
+        res.status(200).json({ title, skill })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+
+}
+
+
+// UPDATE project skills
+const updateProjectSkills = async (req, res) => {
+
+    try {
+        // invoke updateSkill function in projectModel.js
+        const project = await Project.updateSkill(req)
+
+        const title = project.title
+        const skills = project.skills
+
+        // return the email and skills
+        res.status(200).json({ title, skill })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+
+}
+
+// DELETE project skills
+const deleteProjectSkills = async (req, res) => {
+    
+    try {
+        // invoke deleteSkill function in projectModel.js
+        const project = await Project.deleteSkill(req)
+
+        // return the email and skills
+        res.status(200).json({ project })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
 
 
 // export functions
@@ -115,5 +169,8 @@ module.exports = {
     getSingleProject,
     createProject,
     deleteProject,
-    updateProject
+    updateProject,
+    addProjectSkills,
+    updateProjectSkills,
+    deleteProjectSkills
 }
