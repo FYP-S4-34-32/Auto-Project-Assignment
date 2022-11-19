@@ -61,10 +61,10 @@ const userSchema = new Schema({
 // 6. CREATE a new user document and store it to our database in the schema format specified above
 // 7. RETURNS the USER DOCUMENT in the format of the schema
 //=================================================================================================================================//
-userSchema.statics.signup = async function(email, password, role) {
+userSchema.statics.signup = async function(name, email, password, role) {
     /* validation */
-    // EMAIL OR PASSWORD IS EMPTY
-    if (!email || !password) { 
+    // NAME OR EMAIL OR PASSWORD IS EMPTY
+    if (!email || !password || !name) { 
         throw Error('All fields must be filled')
     }
 
@@ -94,7 +94,7 @@ userSchema.statics.signup = async function(email, password, role) {
     const hash = await bcrypt.hash(password, salt) // hash the password
 
     // save user to the database
-    const user = await this.create({ email, password: hash, role })
+    const user = await this.create({ name, email, password: hash, role })
 
     console.log(user)
 

@@ -9,8 +9,8 @@ export const useSignup = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
 
-    const signup = async (email, password, role) => {
-        console.log(email, password, role)
+    const signup = async (name, email, password, role) => {
+        console.log(name, email, password, role)
 
         setIsLoading(true) // set loading state
         setError(null) // reset error to null in case there was one previously
@@ -19,7 +19,7 @@ export const useSignup = () => {
         const response = await fetch('/api/user/signup', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'}, // type of the data
-            body: JSON.stringify({email, password, role}) // sends {email, password, role} as the request body
+            body: JSON.stringify({name, email, password, role}) // sends {name,email, password, role} as the request body
         })
 
         const json = await response.json() // the return value we get back from the userController.js signup function {email, token, role}

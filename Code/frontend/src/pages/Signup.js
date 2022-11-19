@@ -11,6 +11,7 @@ const Signup = () => {
     const { user } = useAuthenticationContext()
     const currentUserRole = user.role
 
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [role, setRole] = useState('')
@@ -21,13 +22,19 @@ const Signup = () => {
         e.preventDefault()
 
         // invoke signup function from useSignup.js
-        await signup(email, password, role) 
+        await signup(name, email, password, role) 
     }
 
     // return a template - signup form
     return (
         <form className="signup" onSubmit={handleSubmit}>
             <h3>Account Creation</h3>
+            <label>Name:</label>
+            <input
+                type="text"
+                onChange={(e) => {setName(e.target.value)}} // set name to the value of the target input field
+                value={name} // reflect change in name state
+            />
             <label>Email:</label>
             <input
                 type="email"

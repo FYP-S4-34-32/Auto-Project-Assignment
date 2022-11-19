@@ -67,21 +67,22 @@ const loginUser = async (req, res) => {
 const signupUser = async (req, res) => {
     // the body of the request in our login case will be in the following format:
     // {
+    //      "name": "example choo"
     //      "email": "example@email.com",
     // }    "password": "example password"
-    // -> so we can destructure the request body and obtain the email and password value
+    // -> so we can destructure the request body and obtain the name, email and password value
 
-    const {email, password, role} = req.body
+    const {name, email, password, role} = req.body
 
     try {
         // invoke signup function and store return value(user document)
-        const user = await User.signup(email, password, role)
+        const user = await User.signup(name, email, password, role)
         
         // create a jsonwebtoken
         const token = createToken(user._id)
 
-        // return the user's email, role and the token we just generated in json format
-        res.status(200).json({email, token, role})
+        // return the user's name, email, role and the token we just generated in json format
+        res.status(200).json({name, email, token, role})
     } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
         // return the error message in json
         res.status(400).json({error: error.message})
