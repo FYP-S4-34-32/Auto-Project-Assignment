@@ -8,7 +8,7 @@ import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 
 const Profile = () => { 
     const { user } = useAuthenticationContext()    
-    const [selectedInfo, setSelectedInfo] = useState(''); 
+    const [selectedInfo, setSelectedInfo] = useState('');
 
     // LEFT DIVIDER: INFO PANEL
     // where user can select what info to view
@@ -58,10 +58,18 @@ const Profile = () => {
                 )
                 
             case 'showSkills':   
+                const skillRows = user.skills.map((s) => {
+                    return (
+                        <p key={ s.skill }>{ s.skill }: { s.competency }</p>
+                    )
+                })
+
                 return (
                     <div className="user-profile">
                         <h2> Skills </h2>  
-                        {/* to be added */} 
+                        <div>
+                            { skillRows }
+                        </div>
                         
                         <button className="editSkillsBtn">Edit Skills</button>
                     </div> 
