@@ -44,7 +44,11 @@ const userSchema = new Schema({
         type: Number, // can be String/Number
         default: null
     },
-    project_id: [{ // the project assigned to the user
+    project_preference: [{ // user's project preference
+        type: String,
+        default: ""
+    }],
+    project_assigned: [{ // the project assigned to the user
         type: String,
         default: ""
     }]

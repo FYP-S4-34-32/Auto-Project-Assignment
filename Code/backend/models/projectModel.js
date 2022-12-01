@@ -26,10 +26,11 @@ const projectSchema = new Schema({
         skill: String,
         competency: String
     }],
-    // threshold: { // number of people for this project
-    //     type: Number
-    //     required: true
-    // }
+    threshold: { // number of people for this project
+        type: Number,
+        required: true,
+        default: 0
+    }
 }, {timestamps: true}); // datetime created and updated
 
 //==============================================================================================//
