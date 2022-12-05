@@ -82,7 +82,7 @@ header a {
   width: 800px;  
 }
 
-.cancelContactBtn, .editContactBtn, .editSkillsBtn {
+.cancelBtn, .editContactBtn, .editSkillsBtn {
   /* background: var(--primary); */
   background: rgba(128, 128, 128, 0.268);
   border: 0;
@@ -91,7 +91,7 @@ header a {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer; 
-  margin-left: 30px;
+  
 }
 
 .user-profile h2, h4, p, hr{
@@ -131,6 +131,18 @@ hr {
   width: 740px;  
 }
 
+.editSkillsForm {
+  margin-top: 30px;
+  margin-left: 30px;
+  margin-right: 30px;  
+}
+
+.changePwdForm { 
+  margin-left: 30px;
+  margin-right: 30px; 
+  width: 740px;  
+}
+
 .newContactForm input {
   height: 50px;
 }
@@ -145,16 +157,21 @@ input::placeholder {
   margin-right: 30px;
 }
 
-.submitContactBtn {
+.submitBtn {
   background: var(--primary); 
   float: right;
   margin-left: 10px;
 }
 
-.cancelContactBtn { 
+.cancelBtn { 
   float: right; 
 }
  
+.editSkillsBtn {
+  float: right;
+  margin-right: 30px;
+  margin-top: 20px;
+}
 
 /* new project form */
 label, input {

@@ -212,13 +212,12 @@ userSchema.statics.updateSkill = async function(req) {
         throw Error("No such user")
     } 
 
-    const updated = await this.findOneAndUpdate({ email, 'skills.skill': skill }, { $set: {
-        'skills.$.competency': competency
-    }})
-
-    return user
+    const updated = await this.findOneAndUpdate({ email, 'skills.skill': skill }, 
+    { $set: { 'skills.$.competency': competency}}
+    )
+     
+    return this.findOne({ email })
 }
-
 
 // static method to delete skill
 userSchema.statics.deleteSkill = async function(req) {
@@ -237,6 +236,33 @@ userSchema.statics.deleteSkill = async function(req) {
     })
 
     return user
+}
+
+// static method to change password
+userSchema.statics.changePassword = async function(email, currentPassword, newPassword) {
+    // search for user by email
+    const user = await this.findOne({email}) 
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    } 
+
+    // check if current password matches
+    const match = await bcrypt.compare(currentPassword, user.password)
+
+    if (!match) {
+        throw Error("Invalid current password")
+    }
+
+    // if current password matches, change password
+    const salt = await bcrypt.genSalt(10) // generate password salt - value determines strength --> default == 10
+    const hash = await bcrypt.hash(newPassword, salt) // hash the password
+
+    // update password
+    const update = await this.findOneAndUpdate({ email }, { password: hash })
+
+    return this.findOne({ email })
 }
 
 // static method to delete user

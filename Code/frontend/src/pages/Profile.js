@@ -6,23 +6,80 @@
 import { useState} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useUpdateInfo } from '../hooks/useUpdateInfo'
+import { useUpdateSkills } from '../hooks/useUpdateSkills'
+import { useChangePassword } from '../hooks/useChangePassword'
 
 const Profile = () => { 
-    const { user } = useAuthenticationContext()    
-    const [selectedInfo, setSelectedInfo] = useState(''); 
-    const [contactForm, setShowContactForm] = useState(false);
+    // hooks
+    var { user } = useAuthenticationContext()  
+    const {updateInfo, isLoading, error} = useUpdateInfo()  
+    const {changePassword} = useChangePassword()
 
-    const [contact, setContact] = useState('');
-    const {updateInfo, isLoading, error} = useUpdateInfo()
+    const [selectedInfo, setSelectedInfo] = useState(''); 
+    const [contactForm, setShowContactForm] = useState(false);  
+    const [contact, setContact] = useState(''); 
+
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+ 
+ 
+    const handelSubmitContactInfo = async(e) => {
+        e.preventDefault();
+
+        await updateInfo(user.email, contact);
+    }
+ 
+
+    const handleSubmitPassword = async(e) => {
+        e.preventDefault();
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            alert('Please fill out all fields')
+        }
+        else if (newPassword !== confirmPassword) {
+            alert('Passwords do not match')
+        }
+        else {
+            await changePassword(user.email, currentPassword, newPassword);
+        }
+    }
 
     const showContactForm = () => {
         setShowContactForm(!contactForm)
     };
 
-    const handelSubmitContactInfo = async(e) => {
-        e.preventDefault();
+    const showSkills = () => {
+        const showSkillRows = user.skills.map((s) => {
+            return (
+                <p key={ s.skill }>{ s.skill }: { s.competency }</p>
+            )
+        })
 
-        await updateInfo(user.email, contact);
+        var editingSkills = user.skills.map((s) => {
+            return (
+                <p key={ s.skill }> {s.skill} : <input type="text" defaultValue={ s.competency } /> </p>
+            )
+        })
+
+        switch (skillsForm) {
+            case 'editSkills':
+                return (
+                    <div>
+                        <form className='editSkillsForm'>
+                        {editingSkills}
+                        <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
+                        <button className="submitBtn" disabled={ isLoading }>Submit</button>
+                        </form>
+                    </div>
+                )
+            default:
+                return (
+                    <div>
+                        { showSkillRows }
+                    </div>
+                )
+        }
     }
 
     // LEFT DIVIDER: INFO PANEL
@@ -32,28 +89,28 @@ const Profile = () => {
             case "Employee":
                 return (
                     <div className="profile-panel"> 
-                    <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
-                    <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                    <button onClick={() => setSelectedInfo('showSkills')}> Skills </button> 
-                    <br></br>
-                    <button> Projects </button> 
-                    <button> Change Password </button>
-                </div> 
+                        <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
+                        <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
+                        <button onClick={() => setSelectedInfo('showSkills')}> Skills </button> 
+                        <br></br>
+                        <button> Projects </button> 
+                        <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
+                    </div> 
             )
             case "Admin":
                 return (
                     <div className="profile-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                        <button> Change Password  </button>
+                        <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
                     </div>
             )
             case "Super Admin":
                 return (
                     <div className="profile-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showUser')} > User Information </button>
-                        <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                        <button> Change Password  </button>
+                        <button onClick={() => setSelectedInfo('showOrganisation')} > Organisation </button>
+                        <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
                     </div>
             )
             default:
@@ -72,25 +129,36 @@ const Profile = () => {
                     </div>
                 )
                 
-            case 'showSkills':   
-                const skillRows = user.skills.map((s) => {
-                    return (
-                        <p key={ s.skill }>{ s.skill }: { s.competency }</p>
-                    )
-                })
-
+            case 'showSkills':    
                 return (
                     <div className="user-profile">
+                        <button className="editSkillsBtn" onClick={() => setShowSkillsForm('editSkills')}>Edit Skills</button>
                         <h2> Skills </h2>  
-                        <div>
-                            { skillRows }
-                        </div>
-                        
-                        <button className="editSkillsBtn">Edit Skills</button>
+                        {showSkills()}
                     </div> 
                 )    
             
-            // cases for projects and settings to be added 
+            // case for projects to be added 
+
+            case 'changePassword':
+                return (
+                    <div className="user-profile" style={{height:"450px"}}>
+                        <h2> Change Password </h2>
+                        <form className="changePwdForm" onSubmit={handleSubmitPassword}>
+
+                            <label> Current Password </label>
+                            <input type="currentPassword" onChange={(e) => {setCurrentPassword(e.target.value)}}/>
+                            <label> New Password </label>
+                            <input type="newPassword" onChange={(e) => {setNewPassword(e.target.value)}}/>
+                            <label> Confirm New Password </label>
+                            <input type="confirmPassword" onChange={(e) => {setConfirmPassword(e.target.value)}}/>
+                            
+                            <button className="cancelBtn" style={{float:"left"}}>Cancel</button>
+                            <button className="submitBtn"> Submit </button> 
+                            {error && <div className="error"> {error} </div>}
+                        </form>
+                    </div>
+                )
              
             // DEFAULT: DISPLAY USER INFORMATION
             case 'showUser':
@@ -117,20 +185,20 @@ const Profile = () => {
                         <h4> Contact Info</h4>
                         { user && <p style={{display:'inline'}}> { user.contact }</p>} 
                         <button className="editContactBtn" onClick={showContactForm}>Edit</button>
+
                         { contactForm && (
                             <form className='newContactForm' onSubmit={handelSubmitContactInfo}> 
                                 <input type="Number" className="newContact" placeholder={"New contact information"} onChange={(e) => {setContact(e.target.value)}}/>
-                                <button className="submitContactBtn" disabled={ isLoading }>Submit</button>
-                                <button className="cancelContactBtn" onClick={showContactForm}>Cancel</button>
+                                <button className="submitBtn" disabled={ isLoading }>Submit</button>
+                                <button className="cancelBtn" onClick={showContactForm}>Cancel</button>
                             </form>
                         )}
+
                         {error && <div className="error"> {error} </div>}
-                    
                     </div>
                 )
         }
     }
-
 
     return (
         <div className="home">  

@@ -148,7 +148,7 @@ const updateUserSkill = async (req, res) => {
 
     try {
         // invoke updateSkill function in userModel.js
-        const user = await User.updateSkill(req)
+        const user = await User.updateSkill(email, skill, competency)
 
         const skills = user.skills
 
@@ -172,6 +172,21 @@ const deleteUserSkill = async (req, res) => {
 
         // return the email and skills
         res.status(200).json({ email, skills })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
+const changeUserPassword = async (req, res) => {
+    const { email, currentPassword, newPassword} = req.body
+
+    try {
+        // invoke changePassword function in userModel.js
+        const user = await User.changePassword(email, currentPassword, newPassword)
+
+        // return the email and skills
+        res.status(200).json({ user })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -204,5 +219,6 @@ module.exports = {
     addUserSkill,
     updateUserSkill,
     deleteUserSkill,
+    changeUserPassword,
     deleteUser
 }
