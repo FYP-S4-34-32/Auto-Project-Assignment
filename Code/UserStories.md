@@ -33,12 +33,12 @@ Document Control: **Last updated @ 5/12/2022**
 - []	As an Employee, I want to be able to update my skills and
 	competency details so that I can keep my skills and competency
 	details updated in the system
-- []	As a Project Admin, I want to be able to add my contact details
+- [x]	As a Project Admin, I want to be able to add my contact details
 	so that other personnels can contact me when necessary
-- []	As a Project Admin, I want to be able to view my account
+- [x]	As a Project Admin, I want to be able to view my account
 	information so that I can see the personal details that are
 	reflected in the system
-- []	As a Project Admin, I want to be able to update my contact details
+- [x]	As a Project Admin, I want to be able to update my contact details
 	so that I can keep my contact details updated in the system
 - []	As a Super Admin, I want to create Project Admin accounts for the
 	organisation that the Project Admin can manage the project

@@ -5,40 +5,37 @@
 // imports 
 import { useState} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
-import { useUpdateInfo } from '../hooks/useUpdateInfo'
-import { useUpdateSkills } from '../hooks/useUpdateSkills'
+import { useUpdateInfo } from '../hooks/useUpdateInfo' 
 import { useChangePassword } from '../hooks/useChangePassword'
 
 const Profile = () => { 
     // hooks
     var { user } = useAuthenticationContext()  
     const {updateInfo, isLoading, error} = useUpdateInfo()  
-    const {changePassword} = useChangePassword()
+    const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
     const [contact, setContact] = useState(''); 
-
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
- 
- 
+    const [confirmPassword, setConfirmPassword] = useState(''); 
+    const [skillsForm, setShowSkillsForm] = useState(false);
+     
     const handelSubmitContactInfo = async(e) => {
         e.preventDefault();
 
         await updateInfo(user.email, contact);
     }
- 
 
     const handleSubmitPassword = async(e) => {
         e.preventDefault();
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            alert('Please fill out all fields')
+            throw Error('Please fill out all fields')
         }
         else if (newPassword !== confirmPassword) {
-            alert('Passwords do not match')
+            throw Error('Passwords do not match')
         }
         else {
             await changePassword(user.email, currentPassword, newPassword);
@@ -153,10 +150,13 @@ const Profile = () => {
                             <label> Confirm New Password </label>
                             <input type="confirmPassword" onChange={(e) => {setConfirmPassword(e.target.value)}}/>
                             
-                            <button className="cancelBtn" style={{float:"left"}}>Cancel</button>
-                            <button className="submitBtn"> Submit </button> 
-                            {error && <div className="error"> {error} </div>}
+                            <button className="cancelBtn" style={{float:"left"}}>Cancel</button> 
+
+                            <button className="submitBtn" disabled={ changePwIsLoading }> Submit </button> 
+
+                            {changePwError && <div className="error"> {changePwError} </div>}
                         </form>
+                        
                     </div>
                 )
              

@@ -6,8 +6,8 @@
 import { useState } from 'react'
 
 export const useChangePassword = () => {
-    const [error, setError] = useState(null)
-    const [isLoading, setIsLoading] = useState(null)
+    const [changePwError, setError] = useState(null)
+    const [changePwIsLoading, setIsLoading] = useState(null)
 
     const changePassword = async (email, currentPassword, newPassword) => {
         // console.log(email, currentPassword, newPassword) 
@@ -33,5 +33,5 @@ export const useChangePassword = () => {
         } 
     }
 
-    return { changePassword, isLoading, error }
+    return { changePassword, changePwIsLoading, changePwError}
 }
