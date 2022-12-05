@@ -26,10 +26,10 @@ Sprint 2 - 11 :
 ---------------
 []	As an Employee, I want to be able to add my contact details so
 	that other personnels can contact me when necessary
-[]	As an Employee, I want to be able to view my account information
+[x]	As an Employee, I want to be able to view my account information
 	so that I can see the personal details that are reflected in
 	the system
-[]	As an Employee, I want to be able to update my contact details so
+[x]	As an Employee, I want to be able to update my contact details so
 	that I can keep my contact details updated in the system
 []	As an Employee, I want to be able to add my skills and competency
 	details so that I can provide information of my skills and

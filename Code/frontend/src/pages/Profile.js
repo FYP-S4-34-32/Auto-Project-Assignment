@@ -5,10 +5,25 @@
 // imports 
 import { useState} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
+import { useUpdateInfo } from '../hooks/useUpdateInfo'
 
 const Profile = () => { 
     const { user } = useAuthenticationContext()    
-    const [selectedInfo, setSelectedInfo] = useState('');
+    const [selectedInfo, setSelectedInfo] = useState(''); 
+    const [contactForm, setShowContactForm] = useState(false);
+
+    const [contact, setContact] = useState('');
+    const {updateInfo, isLoading, error} = useUpdateInfo()
+
+    const showContactForm = () => {
+        setShowContactForm(!contactForm)
+    };
+
+    const handelSubmitContactInfo = async(e) => {
+        e.preventDefault();
+
+        await updateInfo(user.email, contact);
+    }
 
     // LEFT DIVIDER: INFO PANEL
     // where user can select what info to view
@@ -36,7 +51,7 @@ const Profile = () => {
             case "Super Admin":
                 return (
                     <div className="profile-panel" style={{height:'150px'}}>
-                        <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
+                        <button onClick={() => setSelectedInfo('showUser')} > User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
                         <button> Change Password  </button>
                     </div>
@@ -84,29 +99,37 @@ const Profile = () => {
                     <div className="user-profile"> 
                         <h2> User Information </h2>
             
-                        <h4 > Full Name: </h4>
+                        <h4 > Full Name </h4>
                         { user && <p> { user.name } </p>}  
             
                         <hr/>
             
-                        <h4 > Email: </h4>
+                        <h4 > Email </h4>
                         { user && <p> { user.email } </p>}  
             
                         <hr/>
             
-                        <h4> Role: </h4>
+                        <h4> Role </h4>
                         { user && <p> { user.role } </p>}  
             
                         <hr/>
             
                         <h4> Contact Info</h4>
-                        { user && <p> { user.contact }</p>} 
-                        <button className="editContactBtn">Edit Contact Information</button>
+                        { user && <p style={{display:'inline'}}> { user.contact }</p>} 
+                        <button className="editContactBtn" onClick={showContactForm}>Edit</button>
+                        { contactForm && (
+                            <form className='newContactForm' onSubmit={handelSubmitContactInfo}> 
+                                <input type="Number" className="newContact" placeholder={"New contact information"} onChange={(e) => {setContact(e.target.value)}}/>
+                                <button className="submitContactBtn" disabled={ isLoading }>Submit</button>
+                                <button className="cancelContactBtn" onClick={showContactForm}>Cancel</button>
+                            </form>
+                        )}
+                        {error && <div className="error"> {error} </div>}
+                    
                     </div>
                 )
         }
     }
-
 
 
     return (

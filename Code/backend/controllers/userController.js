@@ -108,10 +108,11 @@ const getUserInfo = async (req, res) => {
 
 // UPDATE user info
 const updateUserInfo = async (req, res) => {
-    
+    const {email, contact} = req.body
+
     try {
         // invoke updateInfo function in userModel.js
-        const user = await User.updateInfo(req)
+        const user = await User.updateInfo(email, contact)
 
         // return the request object
         res.status(200).json({ user })

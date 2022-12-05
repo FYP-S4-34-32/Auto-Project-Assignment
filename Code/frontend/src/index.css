@@ -78,15 +78,15 @@ header a {
   align-self: left;
   text-align: auto;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-  height: 700px;
+  height: 800px;
   width: 800px;  
 }
 
-.user-profile button {
+.cancelContactBtn, .editContactBtn, .editSkillsBtn {
   /* background: var(--primary); */
-  background: rgba(128, 128, 128, 0.755);
+  background: rgba(128, 128, 128, 0.268);
   border: 0;
-  color: #fff;
+  color: rgb(86, 86, 86);
   padding: 10px; 
   font-family: "Poppins";
   border-radius: 4px;
@@ -123,6 +123,38 @@ hr {
   background: none;
   font: inherit;
 }
+
+.newContactForm {
+  margin-top: 30px;
+  margin-left: 30px;
+  margin-right: 30px; 
+  width: 740px;  
+}
+
+.newContactForm input {
+  height: 50px;
+}
+
+input::placeholder {
+  font-family: "Poppins";
+}
+
+.editContactBtn {
+  display: inline; 
+  vertical-align: middle;  
+  margin-right: 30px;
+}
+
+.submitContactBtn {
+  background: var(--primary); 
+  float: right;
+  margin-left: 10px;
+}
+
+.cancelContactBtn { 
+  float: right; 
+}
+ 
 
 /* new project form */
 label, input {

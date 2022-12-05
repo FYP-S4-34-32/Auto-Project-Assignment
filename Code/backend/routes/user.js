@@ -29,7 +29,7 @@ router.get('/allprofile', getAllUserInfo)
 router.get('/profile', getUserInfo)
 
 // UPDATE user info @ /api/user/
-router.patch('/updateInfo', updateUserInfo)
+router.post('/updateInfo', updateUserInfo)
 
 // POST new user skill @ /api/user/
 router.post('/addSkill', addUserSkill)
