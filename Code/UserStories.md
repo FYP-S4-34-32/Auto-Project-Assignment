@@ -1,6 +1,6 @@
 # List of our user stories
 
-Document Control: **Last updated @ 8/11/2022**
+Document Control: **Last updated @ 5/12/2022**
  
 ## Sprint 1 - 6 : 
 - [x] As a Project Admin, I want to be able to login into the system
