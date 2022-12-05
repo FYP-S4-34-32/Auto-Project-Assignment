@@ -50,7 +50,7 @@ Document Control: **Last updated @ 5/12/2022**
 
 
 ## Sprint 3 - 7 :
-- []	As a Project Admin, I want to be able to create new projects so that
+- [x]	As a Project Admin, I want to be able to create new projects so that
 	employees will be able to see them
 - []	As a Project Admin, I want to be able to update project details so
 	that I can make necessary changes
@@ -59,7 +59,7 @@ Document Control: **Last updated @ 5/12/2022**
 	enrolled into that project
 - []	As a Project Admin, I want to be able to remove projects, so that
 	unavailable projects can be deleted
-- []	As an Employee, I want to be able to view my skills and competency
+- [x]	As an Employee, I want to be able to view my skills and competency
 	details so that I can see my skills and competency details that
 	are reflected in the system
 - []	As an Employee, I want to be able to see a list of the available
