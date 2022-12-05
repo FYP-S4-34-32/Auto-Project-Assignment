@@ -239,7 +239,7 @@ userSchema.statics.deleteSkill = async function(req) {
 }
 
 // static method to change password
-userSchema.statics.changePassword = async function(email, currentPassword, newPassword) {
+userSchema.statics.changePassword = async function(email, currentPassword, newPassword, confirmPassword) {
     // search for user by email
     const user = await this.findOne({email}) 
 
@@ -248,13 +248,22 @@ userSchema.statics.changePassword = async function(email, currentPassword, newPa
         throw Error("No such user")
     } 
 
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        throw Error("All fields must be filled")
+    }
+
     // check if current password matches
     const match = await bcrypt.compare(currentPassword, user.password)
+    console.log(match)
 
     if (!match) {
         throw Error("Invalid current password")
     }
-
+    
+    if (newPassword !== confirmPassword) {
+        throw Error("Passwords do not match")
+    }
+    
     // if current password matches, change password
     const salt = await bcrypt.genSalt(10) // generate password salt - value determines strength --> default == 10
     const hash = await bcrypt.hash(newPassword, salt) // hash the password

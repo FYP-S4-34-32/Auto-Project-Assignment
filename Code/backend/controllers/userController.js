@@ -179,11 +179,11 @@ const deleteUserSkill = async (req, res) => {
 }
 
 const changeUserPassword = async (req, res) => {
-    const { email, currentPassword, newPassword} = req.body
+    const { email, currentPassword, newPassword, confirmPassword} = req.body
 
     try {
         // invoke changePassword function in userModel.js
-        const user = await User.changePassword(email, currentPassword, newPassword)
+        const user = await User.changePassword(email, currentPassword, newPassword, confirmPassword)
 
         // return the email and skills
         res.status(200).json({ user })

@@ -43,7 +43,7 @@ const Login = () => {
             />
             <button className="showPwBtn" type="button" onClick={showPassword}>Show Password</button>
 
-            <button disabled={ isLoading }>Login</button> {/*prevent button from being clicked while page is loading*/}
+            <button disabled={ isLoading } style={{float:"right"}}>Login</button> {/*prevent button from being clicked while page is loading*/}
             {error && <div className="error">{ error }</div>}
         </form>
     )

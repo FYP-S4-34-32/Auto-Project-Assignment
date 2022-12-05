@@ -29,17 +29,9 @@ const Profile = () => {
     }
 
     const handleSubmitPassword = async(e) => {
-        e.preventDefault();
+        e.preventDefault(); 
 
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            throw Error('Please fill out all fields')
-        }
-        else if (newPassword !== confirmPassword) {
-            throw Error('Passwords do not match')
-        }
-        else {
-            await changePassword(user.email, currentPassword, newPassword);
-        }
+        await changePassword(user.email, currentPassword, newPassword, confirmPassword);
     }
 
     const showContactForm = () => {
@@ -156,6 +148,7 @@ const Profile = () => {
 
                             {changePwError && <div className="error"> {changePwError} </div>}
                         </form>
+                        
                         
                     </div>
                 )

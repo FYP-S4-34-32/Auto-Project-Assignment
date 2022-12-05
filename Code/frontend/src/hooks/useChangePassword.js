@@ -9,7 +9,7 @@ export const useChangePassword = () => {
     const [changePwError, setError] = useState(null)
     const [changePwIsLoading, setIsLoading] = useState(null)
 
-    const changePassword = async (email, currentPassword, newPassword) => {
+    const changePassword = async (email, currentPassword, newPassword, confirmPassword) => {
         // console.log(email, currentPassword, newPassword) 
 
         setIsLoading(true)  
@@ -18,7 +18,7 @@ export const useChangePassword = () => {
         const response = await fetch('/api/user/changePassword', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, currentPassword, newPassword})
+            body: JSON.stringify({email, currentPassword, newPassword, confirmPassword})
         })
 
         const json = await response.json()
