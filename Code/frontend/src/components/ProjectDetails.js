@@ -1,12 +1,9 @@
 
 
-
-
 // imports
 import { useProjectsContext } from "../hooks/useProjectsContext"
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
-
 
 
 const ProjectDetails = ({ project }) => {
@@ -42,6 +39,21 @@ const ProjectDetails = ({ project }) => {
         }
     }
 
+    // show delete button only if user is a Super Admin/admin
+    const renderDeleteButton = (user) => {
+        console.log(user)
+        switch (user.role) {
+            case 'Admin':
+                return (
+                    <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
+                ) 
+            case 'Superadmin':
+                return (
+                    <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
+                ) 
+        }
+    }
+
     return (
         <div className="project-details">
         <h4>{ project.title }</h4>
@@ -49,7 +61,7 @@ const ProjectDetails = ({ project }) => {
         <p><strong>Project Description: </strong>{project.description}</p>
         {/* <p><strong>Skills needed: </strong>{project.skills}</p> */}
         <p>{ formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) }</p>
-        <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
+        { renderDeleteButton(user) }
         </div>
     )
 }

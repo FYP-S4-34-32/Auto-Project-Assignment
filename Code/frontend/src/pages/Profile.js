@@ -2,6 +2,8 @@
 // Profile page // --> Just a template for now - a lot of changes to be made
 //==============//
 
+// TO BE DONE: update/add skill info
+
 // imports 
 import { useState} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
@@ -142,14 +144,12 @@ const Profile = () => {
                             <label> Confirm New Password </label>
                             <input type="confirmPassword" onChange={(e) => {setConfirmPassword(e.target.value)}}/>
                             
-                            <button className="cancelBtn" style={{float:"left"}}>Cancel</button> 
+                            <button className="cancelBtn" style={{float:"left"}} onClick={() => setSelectedInfo('showUser')}>Cancel</button> 
 
                             <button className="submitBtn" disabled={ changePwIsLoading }> Submit </button> 
 
                             {changePwError && <div className="error"> {changePwError} </div>}
                         </form>
-                        
-                        
                     </div>
                 )
              
@@ -198,7 +198,6 @@ const Profile = () => {
             {infoPanel()}
 
             { showSelectedInfo()}  
-
         </div>
     )
 }

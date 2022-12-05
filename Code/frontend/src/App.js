@@ -12,6 +12,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import CreateProject from './pages/CreateProject';
+import Projects from './pages/Projects';
 import PageNotFound from './pages/PageNotFound';
 import { useAuthenticationContext } from './hooks/useAuthenticationContext';
 
@@ -43,6 +44,10 @@ function App() {
             <Route 
               path = "/createproject" // create project page
               element = { (user && user.role === "Admin") ? <CreateProject /> : <Navigate to="/login" /> } // Profile page if there is a user and is of role Admin, Login page if there is no user
+            />
+            <Route
+              path = "/projects" // projects page
+              element = { user ? <Projects /> : <Navigate to="/login" /> } // Home page if there is a user, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

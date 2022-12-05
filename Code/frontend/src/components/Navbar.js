@@ -33,6 +33,11 @@ const Navbar = () => {
                             <Link to="/signup">Create Account</Link>
                         </div>
                     )}
+                    {user && user.role === "Employee" && (
+                        <div>
+                            <Link to="/projects">Projects</Link>
+                        </div>
+                    )}
                     {user && ( // return a template only when there is a user logged in
                         <div>
                             <Link to="/profile">Profile</Link>
