@@ -15,6 +15,7 @@ import CreateProject from './pages/CreateProject';
 import Projects from './pages/Projects';
 import PageNotFound from './pages/PageNotFound';
 import { useAuthenticationContext } from './hooks/useAuthenticationContext';
+import SingleProjectDetails from './components/SingleProjectDetails';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -48,6 +49,10 @@ function App() {
             <Route
               path = "/projects" // projects page
               element = { user ? <Projects /> : <Navigate to="/login" /> } // Home page if there is a user, Login page if there is no user
+            />
+            <Route 
+                path = "/projects/:id" // single project page
+                element = { <SingleProjectDetails /> }
             />
             <Route
               path = "*" // 404 page

@@ -4,6 +4,7 @@
 import { useProjectsContext } from "../hooks/useProjectsContext"
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
+import { Link } from "react-router-dom"
 
 
 const ProjectDetails = ({ project }) => {
@@ -47,21 +48,26 @@ const ProjectDetails = ({ project }) => {
                 return (
                     <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
                 ) 
-            case 'Superadmin':
+            case 'Super Admin':
                 return (
                     <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
-                ) 
+                )
+            default:
+                return
         }
     }
 
     return (
-        <div className="project-details">
-        <h4>{ project.title }</h4>
-        <p><strong>Project Title: </strong>{project.title}</p>
-        <p><strong>Project Description: </strong>{project.description}</p>
-        {/* <p><strong>Skills needed: </strong>{project.skills}</p> */}
-        <p>{ formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) }</p>
-        { renderDeleteButton(user) }
+        <div className="project-details" key={ project._id }>
+            <Link to={ `/projects/${ project._id }` }>
+                <h4>{ project.title }</h4>
+                <p><strong>Project Title: </strong>{ project.title }</p>
+                <p><strong>Project Description: </strong>{ project.description }</p>
+                <p><strong>Skills needed: </strong>{user.skills.map(s => s.skill).join(', ')}</p>
+                <p><strong>Threshold: </strong>{ project.threshold }</p>
+                <p>{ formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) }</p>
+                { renderDeleteButton(user) }
+            </Link>
         </div>
     )
 }

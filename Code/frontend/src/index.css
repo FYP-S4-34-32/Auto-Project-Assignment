@@ -262,6 +262,7 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm {
   margin: 0 0 10px 0;
   font-size: 1.2em;
   color: var(--primary);
+
 }
 .project-details p {
   margin: 0;
@@ -278,3 +279,9 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm {
   border-radius: 50%;
   color: #333;
 }
+.project-details:hover {
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.1);
+}
+.project-details a{
+    text-decoration: none;
+  }
