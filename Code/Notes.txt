@@ -1,2 +1,8 @@
 [] signup feature only accessible by super admins and admins
 [] signup form to include {name, contact, role} field
+
+-priority fixes-
+[] change employee edit skills competency to disallow manual inputs
+[] figure out database skills array inconsistent data match
+[] auto refresh page to display new contact information changes when edit profile for contact
+[] 
