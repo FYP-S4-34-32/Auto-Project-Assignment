@@ -63,8 +63,8 @@ const ProjectDetails = ({ project }) => {
                 <h4>{ project.title }</h4>
                 <p><strong>Project Title: </strong>{ project.title }</p>
                 <p><strong>Project Description: </strong>{ project.description }</p>
-                <p><strong>Skills needed: </strong>{user.skills.map(s => s.skill).join(', ')}</p>
-                <p><strong>Threshold: </strong>{ project.threshold }</p>
+                <p><strong>Skills needed: </strong>{project.skills.map(s => s.skill).join(', ')}</p>
+                { user.role === 'Admin' && <p><strong>Threshold: </strong>{ project.threshold }</p> }
                 <p>{ formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) }</p>
                 { renderDeleteButton(user) }
             </Link>
