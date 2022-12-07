@@ -38,7 +38,8 @@ const getSingleProject = async (req, res) => {
 
 // CREATE new project
 const createProject = async (req, res) => {
-    const { title, description } = req.body
+    const { title, description, threshold } = req.body
+    // const { title, description, skills, threshold } = req.body
 
     let emptyFields = []
   
@@ -48,16 +49,30 @@ const createProject = async (req, res) => {
     if (!description) {
       emptyFields.push('description')
     }
+    // if (!skills) {
+    //     emptyFields.push('skills')
+    // }    
+    if (!threshold || threshold === 0) {
+        emptyFields.push('threshold')
+    }
     if (emptyFields.length > 0) {
       return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
     }
   
     // add to the database
     try {
-      const project = await Project.create({ title, description })
+
+        const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
+
+      const project = await Project.create({ title, description, threshold, created_by })
+    //   const project = await Project.create({ title, description, skills, threshold, created_by })
+
       res.status(200).json(project)
+
     } catch (error) {
+
       res.status(400).json({ error: error.message })
+
     }
 }
 
@@ -118,7 +133,7 @@ const addProjectSkills = async (req, res) => {
         const skills = project.skills
 
         // return the email and skills
-        res.status(200).json({ title, skill })
+        res.status(200).json({ title, skills })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})

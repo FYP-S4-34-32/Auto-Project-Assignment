@@ -8,15 +8,13 @@ import { useProjectsContext } from "../hooks/useProjectsContext"
 const Projects = () => {
     // hooks
     const { user } = useAuthenticationContext()   
-    const { projects, dispatch } = useProjectsContext()
-
- 
+    const { projects, dispatch } = useProjectsContext() 
 
     // fires when component is rendered
     useEffect(() => {
         const fetchProjects = async () => {
             const response = await fetch('/api/project', {
-                header: {
+                headers: {
                     'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
                 }
             }) // using fetch() api to fetch data ad store in the variable

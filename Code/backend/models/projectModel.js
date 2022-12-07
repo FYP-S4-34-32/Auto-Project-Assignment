@@ -30,6 +30,10 @@ const projectSchema = new Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    created_by: { // who created the project listing
+        type: String,
+        required: true
     }
 }, {timestamps: true}); // datetime created and updated
 
@@ -37,6 +41,8 @@ const projectSchema = new Schema({
 
 // static method to add new skill
 projectSchema.statics.addNewSkill = async function(req) {
+
+    console.log(req.body)
     const { id } = req.params // grab id from the address bar or request
     const { skill, competency } = req.body
 

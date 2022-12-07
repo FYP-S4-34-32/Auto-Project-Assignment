@@ -33,7 +33,7 @@ const requireAuthentication = async (req, res, next) => { // request, response, 
         
 
         // use id to find the user and attach it to the next middleware
-        req.user = await User.findOne({ _id }).select('_id') // grabs the _id property from the user to be used in the next middleware
+        req.user = await User.findOne({ _id }) // grabs the user object to be used in the next middleware
         
         next() // fires the next handler function
 

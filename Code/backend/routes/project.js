@@ -11,9 +11,13 @@ const express = require('express')
 |   whenever the routes are requested.                                             |
 \* ============================================================================== */
 const { createProject, getProjects, getSingleProject, deleteProject, updateProject, addProjectSkills, updateProjectSkills, deleteProjectSkills } = require('../controllers/projectController')
+const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
 const router = express.Router()
+
+// fire authentication check before moving on to the remaining routes
+router.use(requireAuthentication)
 
 // GET all projects @ /api/project/
 router.get('/', getProjects);

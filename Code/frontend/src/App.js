@@ -28,15 +28,15 @@ function App() {
           <Routes>
             <Route 
               path = "/" // home page
-              element = { user ? <Home /> : <Navigate to="/login" /> } // Home page if there is a user, Login page if there is no user
+              element = { user ? <Navigate to="/projects" /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
             />  
             <Route 
               path = "/login" // login page
-              element = { !user ? <Login /> : <Navigate to="/" /> } // Home page if there is a user, Login page if there is no user
+              element = { !user ? <Login /> : <Navigate to="/projects" /> } // Projects page if there is a user, Login page if there is no user
             />
             <Route 
               path = "/signup" // signup page
-              element = { (user && user.role === "Admin") || (user && user.role === "Super Admin") ? <Signup /> : <Navigate to="/" /> } // Sign up page if user is an Admin or Super Admin else Home page
+              element = { (user && user.role === "Admin") || (user && user.role === "Super Admin") ? <Signup /> : <Navigate to="/projects" /> } // Sign up page if user is an Admin or Super Admin else Projects page
             />
             <Route 
               path = "/profile" // signup page
@@ -48,11 +48,11 @@ function App() {
             />
             <Route
               path = "/projects" // projects page
-              element = { user ? <Projects /> : <Navigate to="/login" /> } // Home page if there is a user, Login page if there is no user
+              element = { user ? <Projects /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
             />
             <Route 
                 path = "/projects/:id" // single project page
-                element = { <SingleProjectDetails /> }
+                element = { user ? <SingleProjectDetails /> : <Navigate to="/login" /> } // SingleProjectDetails page if there is a user, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

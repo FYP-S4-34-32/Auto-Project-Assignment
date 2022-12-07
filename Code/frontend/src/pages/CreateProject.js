@@ -1,52 +1,114 @@
-//=====================//
-// Create Project page // --> Just a template for now - a lot of changes to be made - HAVE NOT SET UP BACKEND
-//=====================//
 
-// components
-import { useEffect } from "react"
-import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
-import ProjectForm from "../components/ProjectForm"
-import ProjectDetails from "../components/ProjectDetails"
+
+// imports
 import { useProjectsContext } from "../hooks/useProjectsContext"
+import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
+
+// import TextareaAutoSize from 'react-textarea-autosize'
+
+const { useState } = require("react")
 
 const CreateProject = () => {
-
-    const { projects, dispatch } = useProjectsContext()
-
-    // check for authenticated user object
+    const { dispatch } = useProjectsContext()
     const { user } = useAuthenticationContext()
 
-    // fires when component is rendered
-    useEffect(() => {
-        const fetchProjects = async () => {
-            const response = await fetch('/api/project', {
-                header: {
-                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
-                }
-            }) // using fetch() api to fetch data ad store in the variable
-            const json = await response.json() // response object into json object, in this case an array of project objects
+    const [title, setTitle] = useState('') // default value = empty
+    const [description, setDescription] = useState('') // default value = empty
+    const [threshold, setThreshold] = useState('') // default value = empty
+    const [error, setError] = useState(null) // default value = no error
 
-            // response OK
-            if (response.ok) {
-                dispatch({ type: 'SET_PROJECTS', payload: json})
+    // state for empty fields validation
+    const [emptyFields, setEmptyFields] = useState([]) // empty array by default
+
+
+    const handleSubmit = async (e) => { // will be reaching out to the api
+        e.preventDefault() // prevent the page from refreshing upon submit
+
+        // if there is no user object <- not logged in
+        if (!user) {
+            setError('You must be logged in')
+            return
+        }
+
+        const project = {title, description, threshold}
+
+        // fetch request to post new data
+        const response = await fetch('/api/project/createproject', {
+            method: 'POST',
+            body: JSON.stringify(project),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${ user.token }`
             }
+        }) // this is where we send the POST request
+        const json = await response.json() // response will be retrieved from projectController.createProject
+
+        // response NOT ok
+        if (!response.ok) {
+            setError(json.error) // the error property from projectController.createProject
+
+            setEmptyFields(json.emptyFields)
         }
 
-        // if there is an authenticated user
-        if (user) {
-            fetchProjects()
-        }
-    }, [dispatch, user])
+        // response OK
+        if (response.ok) {
+            setError(null) // in case there was an error previously
+            
+            // reset the form
+            setTitle('') 
+            setDescription('')
+            // setSkills(null)
+            setThreshold(null)
 
-    // return a template
-    return (
-        <div className="createproject">
-            <div className="projects">
-                { projects && projects.map((project) => ( // will only run when there is a project object
-                    <ProjectDetails key={ project._id } project={ project } /> // key must be unique
-                ))}
-            </div>
-            <ProjectForm />
+            setEmptyFields([]) // reset the emptyfields array
+            
+            console.log('New Project Added')
+
+            dispatch({ type: 'CREATE_PROJECT', payload: json})
+        }
+    }
+
+    return(
+        <div className="create">
+            <h2>Add a new Project Lising</h2>
+
+            <form onSubmit={ handleSubmit }>
+            <label>New Project Title:</label>
+            <input 
+                type="text"
+                onChange={ (e) => setTitle(e.target.value) } // value of the target(input field) of the event e
+                value={ title } // reflect changes made outside the form e.g. resetting the form into empty string
+                className={ emptyFields.includes('title') ? 'error': '' } // if empty, give it a className
+            />
+
+            <label>Project Description:</label>
+            {/* {<TextareaAutoSize
+                type="text"
+                onChange={(e) => setDescription(e.target.value)} 
+                value={description}
+                className={ emptyFields.includes('description') ? 'error': ''}
+            />} */}
+            <textarea 
+                type="text"
+                onChange={(e) => setDescription(e.target.value)} 
+                value={description}
+                className={ emptyFields.includes('description') ? 'error': ''}
+            />
+
+            <label>Skills Required:</label>
+
+
+            <label>Threshold:</label>
+            <input 
+                type="number"
+                onChange={ (e) => setThreshold(e.target.value) }
+                value={ threshold }
+                className={ emptyFields.includes('threshold') ? 'error' : '' }
+            />
+
+            <button>Add New Project Listing</button>
+            { error && <div className="error">{ error }</div> }
+            </form>
         </div>
     )
 }

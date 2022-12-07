@@ -8,7 +8,7 @@ import { Link } from "react-router-dom"
 
 
 const ProjectDetails = ({ project }) => {
-    const { projects, dispatch } = useProjectsContext()
+    const { dispatch } = useProjectsContext()
     const { user } = useAuthenticationContext()
 
     // CODE for extracting skill info and displaying them in the project details
@@ -42,7 +42,6 @@ const ProjectDetails = ({ project }) => {
 
     // show delete button only if user is a Super Admin/admin
     const renderDeleteButton = (user) => {
-        console.log(user)
         switch (user.role) {
             case 'Admin':
                 return (
@@ -61,11 +60,11 @@ const ProjectDetails = ({ project }) => {
         <div className="project-details" key={ project._id }>
             <Link to={ `/projects/${ project._id }` }>
                 <h4>{ project.title }</h4>
-                <p><strong>Project Title: </strong>{ project.title }</p>
-                <p><strong>Project Description: </strong>{ project.description }</p>
+                {/* <p><strong>Project Title: </strong>{ project.title }</p>
+                <p><strong>Project Description: </strong>{ project.description }</p> */}
                 <p><strong>Skills needed: </strong>{project.skills.map(s => s.skill).join(', ')}</p>
                 { user.role === 'Admin' && <p><strong>Threshold: </strong>{ project.threshold }</p> }
-                <p>{ formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) }</p>
+                <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
                 { renderDeleteButton(user) }
             </Link>
         </div>
