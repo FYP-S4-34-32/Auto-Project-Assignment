@@ -16,6 +16,7 @@ import Projects from './pages/Projects';
 import PageNotFound from './pages/PageNotFound';
 import { useAuthenticationContext } from './hooks/useAuthenticationContext';
 import SingleProjectDetails from './components/SingleProjectDetails';
+import AllUsers from './pages/AllUsers';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -53,6 +54,10 @@ function App() {
             <Route 
                 path = "/projects/:id" // single project page
                 element = { user ? <SingleProjectDetails /> : <Navigate to="/login" /> } // SingleProjectDetails page if there is a user, Login page if there is no user
+            />
+            <Route
+              path = "/allusers" // all users page
+              element = { (user && user.role === "Super Admin") ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

@@ -31,6 +31,7 @@ const Navbar = () => {
                     {(user && user.role === "Super Admin") && ( // return this template only when the logged in user is a super admin
                         <div>
                             <Link to="/signup">Create Account</Link>
+                            <Link to="/allusers">All Users</Link>
                         </div>
                     )}
                     {user && user.role === "Employee" && (

@@ -1,6 +1,6 @@
 # List of our user stories
 
-Document Control: **Last updated @ 5/12/2022**
+Document Control: **Last updated @ 9/12/2022**
 
 **Note**: After updating contact info, have to logout and login again to see the updated contact info.
  
@@ -45,7 +45,7 @@ Document Control: **Last updated @ 5/12/2022**
 - [x]	As a Super Admin, I want to create Project Admin accounts for the
 	organisation that the Project Admin can manage the project
 	activities
-- []	As a Super Admin, I want to view user accounts for the organisation
+- [x]	As a Super Admin, I want to view user accounts for the organisation
 	so that I can see the users in the organisation
 - []	As a Super Admin, I want to delete user accounts for the
 	organisation so that I can remove invalid user
