@@ -154,22 +154,17 @@ userSchema.statics.getOneUser = async function(email) {
 }
 
 // static method to update user info
-userSchema.statics.updateInfo = async function(email, contact) {
-    // get email - unique identifier
-    // const { email } = req.body
+userSchema.statics.updateInfo = async function(email, contact) { 
 
-    // get the document
-    // const user = await this.findOneAndUpdate({ email }, {
-    //     ...req.body // spread the req.body
-    // }) // store the response of findOneAndUpdate() into user variable
-
-    // get the user and update contact info
-    const user = await this.findOneAndUpdate({email}, {contact})  
+    const user = await this.findOne({ email })
 
     // user DOES NOT exist
     if (!user) {
         throw Error("No such user")
     }
+
+    // get the user and update contact info
+    const updated = await this.findOneAndUpdate({email}, {contact})  
 
     // return updated user 
     return this.findOne({ email })
@@ -199,10 +194,9 @@ userSchema.statics.addNewSkill = async function(email, skill, competency) {
     
     return user
 }
-
+ 
 // static method to update skill
-userSchema.statics.updateSkill = async function(req) {
-    const { email, skill, competency } = req.body
+userSchema.statics.updateSkill = async function(email, skills) { 
 
     // search for user by email
     const user = await this.findOne({ email })
@@ -211,10 +205,8 @@ userSchema.statics.updateSkill = async function(req) {
     if (!user) {
         throw Error("No such user")
     } 
-
-    const updated = await this.findOneAndUpdate({ email, 'skills.skill': skill }, 
-    { $set: { 'skills.$.competency': competency}}
-    )
+ 
+    const updated = await this.findOneAndUpdate({ email }, {skills})
      
     return this.findOne({ email })
 }

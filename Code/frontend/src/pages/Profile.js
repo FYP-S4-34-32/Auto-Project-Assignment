@@ -5,16 +5,21 @@
 // TO BE DONE: update/add skill info
 
 // imports 
-import { useState} from 'react'
+import { useState} from 'react'  
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useUpdateInfo } from '../hooks/useUpdateInfo' 
 import { useChangePassword } from '../hooks/useChangePassword'
+import { useUpdateSkills } from '../hooks/useUpdateSkills'
 
 const Profile = () => { 
     // hooks
     var { user } = useAuthenticationContext()  
     const {updateInfo, isLoading, error} = useUpdateInfo()  
     const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
+    const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()
+
+    // user's array of skills
+    var skillsArr = user.skills
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
@@ -23,16 +28,53 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
+    const [newArr, setCompetency] = useState(skillsArr);
+
+    const competencyLevels = [
+        {value : "Beginner", label : "Beginner"}, 
+        {value : "Intermediate", label : "Intermediate"},
+        {value : "Advanced", label : "Advanced"}]
+
+    const skillsArray = [ // user's array of skills
+        {skill: "Java", label: "Java"},
+        {skill: "MongoDB", label: "MongoDB"},
+        {skill: "React", label: "React"},
+        {skill: "Node.js", label: "Node.js"},
+        {skill: "Python", label: "Python"},
+        {skill: "C++", label: "C++"},
+        {skill: "C#", label: "C#"},
+        {skill: "C", label: "C"},
+        {skill: "PHP", label: "PHP"},
+        {skill: "Ruby", label: "Ruby"},
+        {skill: "Swift", label: "Swift"}
+    ]
+
+    // update skill competency -> 
+    const changeCompetency = index => (e) => { 
+        let newArr = [...skillsArr]; // copying the old datas array
+        newArr[index].competency = e.target.value; // replace e.target.value with whatever you want to change it to
+
+        console.log(newArr);
+        setCompetency(newArr);
+    }
      
-    const handelSubmitContactInfo = async(e) => {
+    const handleSubmitContactInfo = async(e) => {
         e.preventDefault();
 
+        setSelectedInfo('showUser')
         await updateInfo(user.email, contact);
+    }
+
+    const handleSubmitSkills = async(e) => {
+        e.preventDefault(); 
+
+        setShowSkillsForm('showSkills');
+        await updateSkills(user.email, newArr);
     }
 
     const handleSubmitPassword = async(e) => {
         e.preventDefault(); 
-
+ 
         await changePassword(user.email, currentPassword, newPassword, confirmPassword);
     }
 
@@ -40,31 +82,59 @@ const Profile = () => {
         setShowContactForm(!contactForm)
     };
 
-    const showSkills = () => {
+
+    const showSkills = () => { 
+
         const showSkillRows = user.skills.map((s) => {
             return (
                 <p key={ s.skill }>{ s.skill }: { s.competency }</p>
             )
         })
 
-        var editingSkills = user.skills.map((s) => {
+        // select competency levels for current skills
+        var editingSkills = user.skills.map((datum, index) => {
+            var skill = datum.skill
+            var competency = datum.competency
+
+            if (competency === "Beginner") {
+                competency = competencyLevels[0].value
+            }
+            else if (competency === "Intermediate") {
+                competency = competencyLevels[1].value
+            }
+            else if (competency === "Advanced") {
+                competency = competencyLevels[2].value
+            }
+            else {
+                competency = competencyLevels[0].value
+            }
+
             return (
-                <p key={ s.skill }> {s.skill} : <input type="text" defaultValue={ s.competency } /> </p>
+                <p key={ skill }>{ skill }  
+                    <select className="skillSelection" defaultValue={competency} onChange={changeCompetency(index)}>
+                        <option value={competencyLevels[0].value}>{competencyLevels[0].label}</option>
+                        <option value={competencyLevels[1].value}>{competencyLevels[1].label}</option>
+                        <option value={competencyLevels[2].value}>{competencyLevels[2].label}</option>
+                    </select>
+                 </p>
             )
         })
 
         switch (skillsForm) {
-            case 'editSkills':
+            case 'editSkills': // editing skill competency
                 return (
-                    <div>
+                    <div> 
                         <form className='editSkillsForm'>
+
                         {editingSkills}
+
                         <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
-                        <button className="submitBtn" disabled={ isLoading }>Submit</button>
+                        <button className="submitBtn" disabled={ updateSkillsIsLoading } onClick={handleSubmitSkills}>Submit</button>
+                        {updateSkillsError && <p>{updateSkillsError}</p>}
                         </form>
                     </div>
                 )
-            default:
+            default: // display user skills
                 return (
                     <div>
                         { showSkillRows }
@@ -180,7 +250,7 @@ const Profile = () => {
                         <button className="editContactBtn" onClick={showContactForm}>Edit</button>
 
                         { contactForm && (
-                            <form className='newContactForm' onSubmit={handelSubmitContactInfo}> 
+                            <form className='newContactForm' onSubmit={handleSubmitContactInfo}> 
                                 <input type="Number" className="newContact" placeholder={"New contact information"} onChange={(e) => {setContact(e.target.value)}}/>
                                 <button className="submitBtn" disabled={ isLoading }>Submit</button>
                                 <button className="cancelBtn" onClick={showContactForm}>Cancel</button>

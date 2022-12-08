@@ -140,20 +140,17 @@ const addUserSkill = async (req, res) => {
     }
 
 }
-
+ 
 // UPDATE skill competency
-const updateUserSkill = async (req, res) => {
-
-    const { email, skill, competency } = req.body // req.body -> { "email": email, "skill": skillName, "competency": competencyLevel }
+const updateUserSkill = async (req, res) => { 
+    const { email, skillsArr } = req.body // req.body -> { "email": email, "skills": skillArr}
 
     try {
         // invoke updateSkill function in userModel.js
-        const user = await User.updateSkill(email, skill, competency)
-
-        const skills = user.skills
+        const user = await User.updateSkill(email, skillsArr) 
 
         // return the email and skills
-        res.status(200).json({ email, skills })
+        res.status(200).json({ user })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})

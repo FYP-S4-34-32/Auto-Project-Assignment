@@ -6,12 +6,11 @@
 import { useState } from 'react'
 
 export const useUpdateSkills = () => {
-    const [error, setError] = useState(null)
-    const [isLoading, setIsLoading] = useState(null)
+    const [updateSkillsError, setError] = useState(null)
+    const [updateSkillsIsLoading, setIsLoading] = useState(null) 
 
-    const updateSkills = async (email, skills) => { 
-
-        console.log(email, skills)
+    const updateSkills = async (email, skillsArr) => { 
+        console.log(JSON.stringify({email, skillsArr}))
 
         setIsLoading(true)  
         setError(null) 
@@ -19,7 +18,7 @@ export const useUpdateSkills = () => {
         const response = await fetch('/api/user/updateSkill', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, skills})
+            body: JSON.stringify({email, skillsArr})
         })
 
         const json = await response.json()
@@ -29,10 +28,10 @@ export const useUpdateSkills = () => {
             setError(json.error)
         }
 
-        if(response.ok) {
+        if(response.ok) { 
             setIsLoading(false)
         }
     }
 
-    return { updateSkills, isLoading, error }
+    return { updateSkills, updateSkillsIsLoading, updateSkillsError}
 }
