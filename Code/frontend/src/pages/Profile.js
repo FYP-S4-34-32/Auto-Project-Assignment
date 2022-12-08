@@ -2,8 +2,6 @@
 // Profile page // --> Just a template for now - a lot of changes to be made
 //==============//
 
-// TO BE DONE: update/add skill info
-
 // imports 
 import { useState} from 'react'  
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
@@ -40,6 +38,7 @@ const Profile = () => {
 
     // default available skills, will change based on user's current skills (check validateSkillsArray function)
     var availSkillsArray = [ 
+        {skill: "0", label: "Select a skill"},
         {skill: "Java", label: "Java"},
         {skill: "MongoDB", label: "MongoDB"},
         {skill: "React", label: "React"},
@@ -82,14 +81,18 @@ const Profile = () => {
     const addSkill = (e) => {
         tempUserSkillsArr.push({skill: e.target.value, competency: "Beginner"});
         setCompetency(tempUserSkillsArr);
-        setShowSkillsForm('editSkills');
+        
+        console.log("after adding skill: ", userSkillsArr);
+        updateSkills(user.email, tempUserSkillsArr);
     }
 
     // delete skill
     const deleteSkill = (index) => {
         tempUserSkillsArr.splice(index, 1);
-        setCompetency(tempUserSkillsArr);
-        setShowSkillsForm('editSkills');
+        setCompetency(tempUserSkillsArr); 
+
+        console.log("after deleting skill: ", userSkillsArr); 
+        updateSkills(user.email, tempUserSkillsArr);
     }
      
     // Submit edited contact info
@@ -122,13 +125,13 @@ const Profile = () => {
     const showSkills = () => {  
         validateSkillsArray();
 
-        const showAvailSkills = availSkillsArray.map((s) => {
+        const showAvailSkills = availSkillsArray.map((availSkill) => {
             return (
-                <option key={ s.skill } value={ s.skill }>{ s.skill }</option>
+                <option key={ availSkill.skill } value={ availSkill.skill }>{ availSkill.label }</option>
             )
         })
 
-        const showSkillRows = userSkillsArr.map((s) => {
+        const showSkillRows = user.skills.map((s) => {
             return (
                 <p key={ s.skill }>{ s.skill }: { s.competency }</p>
             )
@@ -168,29 +171,25 @@ const Profile = () => {
         switch (skillsForm) {
             case 'editSkills': // editing skill competency
                 return (
-                    <div> 
+                    <div>  
                         <form className='editSkillsForm'>
-
                             <h3>Add New Skills</h3>
                             <div> 
-                            <select className="skillSelection" onChange={addSkill}>
-                                {showAvailSkills}
-                            </select>
-
+                                <select className="skillSelection" onChange={addSkill}>
+                                    {showAvailSkills}
+                                </select>
+                            </div>
                             <hr></hr>
-                            
                             <h3>Edit Skill Competency</h3>
 
-                            </div>
                             {editingSkills}
 
                             <br></br>
                             <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
                             <button className="submitBtn" disabled={ updateSkillsIsLoading } onClick={handleSubmitSkills}>Submit</button>
                             {updateSkillsError && <p>{updateSkillsError}</p>}
-                            
                         </form>
-                    </div>
+                    </div> 
                 )
             default: // display user skills
                 return (
