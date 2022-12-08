@@ -18,8 +18,9 @@ const Profile = () => {
     const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
     const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()
 
-    // user's array of skills
-    var skillsArr = user.skills
+    // user's array of skills and competency levels (from database)
+    var userSkillsArr = user.skills
+    var tempUserSkillsArr = userSkillsArr // temporary since userSkillsArr will be modified
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
@@ -28,14 +29,17 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
-    const [newArr, setCompetency] = useState(skillsArr);
+    const [newArr, setCompetency] = useState(userSkillsArr);
 
+    // default competency levels for all skills
     const competencyLevels = [
         {value : "Beginner", label : "Beginner"}, 
         {value : "Intermediate", label : "Intermediate"},
-        {value : "Advanced", label : "Advanced"}]
+        {value : "Advanced", label : "Advanced"}
+    ]
 
-    const skillsArray = [ // user's array of skills
+    // default available skills, will change based on user's current skills (check validateSkillsArray function)
+    var availSkillsArray = [ 
         {skill: "Java", label: "Java"},
         {skill: "MongoDB", label: "MongoDB"},
         {skill: "React", label: "React"},
@@ -49,15 +53,46 @@ const Profile = () => {
         {skill: "Swift", label: "Swift"}
     ]
 
-    // update skill competency -> 
+    // validate availSkillsArray: should only have skills that are not already in userSkillsArr
+    const validateSkillsArray = () => {
+        var tempAvailSkillsArray = availSkillsArray
+        var tempUserSkillsArr = userSkillsArr
+
+        for (var i = 0; i < tempUserSkillsArr.length; i++) {
+            for (var j = 0; j < tempAvailSkillsArray.length; j++) {
+                if (tempUserSkillsArr[i].skill === tempAvailSkillsArray[j].skill) {
+                    tempAvailSkillsArray.splice(j, 1)
+                }
+            }
+        }
+
+        availSkillsArray = tempAvailSkillsArray 
+    }
+
+    // update skill competency 
     const changeCompetency = index => (e) => { 
-        let newArr = [...skillsArr]; // copying the old datas array
-        newArr[index].competency = e.target.value; // replace e.target.value with whatever you want to change it to
+        let newArr = [...userSkillsArr]; // copying userSkillsArr 
+        newArr[index].competency = e.target.value; // replace e.target.value with competency level selected
 
         console.log(newArr);
         setCompetency(newArr);
     }
+
+    // adding new skill
+    const addSkill = (e) => {
+        tempUserSkillsArr.push({skill: e.target.value, competency: "Beginner"});
+        setCompetency(tempUserSkillsArr);
+        setShowSkillsForm('editSkills');
+    }
+
+    // delete skill
+    const deleteSkill = (index) => {
+        tempUserSkillsArr.splice(index, 1);
+        setCompetency(tempUserSkillsArr);
+        setShowSkillsForm('editSkills');
+    }
      
+    // Submit edited contact info
     const handleSubmitContactInfo = async(e) => {
         e.preventDefault();
 
@@ -65,6 +100,7 @@ const Profile = () => {
         await updateInfo(user.email, contact);
     }
 
+    // Submit edit skills info
     const handleSubmitSkills = async(e) => {
         e.preventDefault(); 
 
@@ -72,6 +108,7 @@ const Profile = () => {
         await updateSkills(user.email, newArr);
     }
 
+    // Submit new password
     const handleSubmitPassword = async(e) => {
         e.preventDefault(); 
  
@@ -82,17 +119,23 @@ const Profile = () => {
         setShowContactForm(!contactForm)
     };
 
+    const showSkills = () => {  
+        validateSkillsArray();
 
-    const showSkills = () => { 
+        const showAvailSkills = availSkillsArray.map((s) => {
+            return (
+                <option key={ s.skill } value={ s.skill }>{ s.skill }</option>
+            )
+        })
 
-        const showSkillRows = user.skills.map((s) => {
+        const showSkillRows = userSkillsArr.map((s) => {
             return (
                 <p key={ s.skill }>{ s.skill }: { s.competency }</p>
             )
         })
 
         // select competency levels for current skills
-        var editingSkills = user.skills.map((datum, index) => {
+        var editingSkills = userSkillsArr.map((datum, index) => {
             var skill = datum.skill
             var competency = datum.competency
 
@@ -116,6 +159,8 @@ const Profile = () => {
                         <option value={competencyLevels[1].value}>{competencyLevels[1].label}</option>
                         <option value={competencyLevels[2].value}>{competencyLevels[2].label}</option>
                     </select>
+
+                    <span className="material-symbols-outlined" onClick={() => deleteSkill(index)} style={{marginLeft:"20px", marginTop:"20px"}}>delete</span> 
                  </p>
             )
         })
@@ -126,11 +171,24 @@ const Profile = () => {
                     <div> 
                         <form className='editSkillsForm'>
 
-                        {editingSkills}
+                            <h3>Add New Skills</h3>
+                            <div> 
+                            <select className="skillSelection" onChange={addSkill}>
+                                {showAvailSkills}
+                            </select>
 
-                        <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
-                        <button className="submitBtn" disabled={ updateSkillsIsLoading } onClick={handleSubmitSkills}>Submit</button>
-                        {updateSkillsError && <p>{updateSkillsError}</p>}
+                            <hr></hr>
+                            
+                            <h3>Edit Skill Competency</h3>
+
+                            </div>
+                            {editingSkills}
+
+                            <br></br>
+                            <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
+                            <button className="submitBtn" disabled={ updateSkillsIsLoading } onClick={handleSubmitSkills}>Submit</button>
+                            {updateSkillsError && <p>{updateSkillsError}</p>}
+                            
                         </form>
                     </div>
                 )
