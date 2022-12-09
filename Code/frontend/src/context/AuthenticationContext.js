@@ -31,21 +31,24 @@ export const AuthenticationContextProvider = ({ children }) => {
     // check local storage for any logged in user once component renders
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user')) // localStorage is in JSON string, to be converted to be used as a JS object
-        const token = user.token
+        
+        if (user) {
+            const token = user.token
 
-        // check if token has expired
-        const isTokenExpired = (token) => {
-            // decode the token to get its payload
-            const payload = jwtDecode(token)
+            // check if token has expired
+            const isTokenExpired = (token) => {
+                // decode the token to get its payload
+                const payload = jwtDecode(token)
 
-            // check if the token has expired by comparing the current time to the token's expiry time
-            const now = Date.now() / 1000
-            return now > payload.exp
-        }
-
-        // if user is logged in, and token has not expired
-        if (user && !isTokenExpired(token)) {
-            dispatch({ type: 'LOGIN', payload: user }) // set user object to the logged in user
+                // check if the token has expired by comparing the current time to the token's expiry time
+                const now = Date.now() / 1000
+                return now > payload.exp
+            }
+            
+            // if user is logged in, and token has not expired
+            if (!isTokenExpired(token)) {
+                dispatch({ type: 'LOGIN', payload: user })
+            }
         }
     }, []) // runs once
 
