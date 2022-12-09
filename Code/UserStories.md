@@ -47,7 +47,7 @@ Document Control: **Last updated @ 9/12/2022**
 	activities
 - [x]	As a Super Admin, I want to view user accounts for the organisation
 	so that I can see the users in the organisation
-- []	As a Super Admin, I want to delete user accounts for the
+- [x]	As a Super Admin, I want to delete user accounts for the
 	organisation so that I can remove invalid user
 
 
