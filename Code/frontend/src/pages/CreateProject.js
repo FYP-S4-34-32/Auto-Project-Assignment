@@ -1,25 +1,28 @@
-
+//=====================//
+// Create Project Page //
+//=====================//
 
 // imports
-import { useProjectsContext } from "../hooks/useProjectsContext"
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
+import { useNavigate } from "react-router-dom"
 
 // import TextareaAutoSize from 'react-textarea-autosize'
 
 const { useState } = require("react")
 
 const CreateProject = () => {
-    const { dispatch } = useProjectsContext()
     const { user } = useAuthenticationContext()
 
     const [title, setTitle] = useState('') // default value = empty
     const [description, setDescription] = useState('') // default value = empty
+    // const [skills, setSkills] = useState('') // default value = empty
     const [threshold, setThreshold] = useState('') // default value = empty
     const [error, setError] = useState(null) // default value = no error
 
+    const navigate = useNavigate()
+
     // state for empty fields validation
     const [emptyFields, setEmptyFields] = useState([]) // empty array by default
-
 
     const handleSubmit = async (e) => { // will be reaching out to the api
         e.preventDefault() // prevent the page from refreshing upon submit
@@ -30,7 +33,8 @@ const CreateProject = () => {
             return
         }
 
-        const project = {title, description, threshold}
+        // const project = { title, description, skills, threshold }
+        const project = { title, description, threshold }
 
         // fetch request to post new data
         const response = await fetch('/api/project/createproject', {
@@ -55,16 +59,16 @@ const CreateProject = () => {
             setError(null) // in case there was an error previously
             
             // reset the form
-            setTitle('') 
-            setDescription('')
-            // setSkills(null)
-            setThreshold(null)
+            setTitle('') // reset title
+            setDescription('') // reset description
+            // setSkills(null) // reset skills
+            setThreshold(null) // reset threshold
 
             setEmptyFields([]) // reset the emptyfields array
             
             console.log('New Project Added')
 
-            dispatch({ type: 'CREATE_PROJECT', payload: json})
+            navigate('/') // navigate back to home page aka project listing page
         }
     }
 
@@ -88,7 +92,7 @@ const CreateProject = () => {
                 value={description}
                 className={ emptyFields.includes('description') ? 'error': ''}
             />} */}
-            <textarea 
+            <textarea
                 type="text"
                 onChange={(e) => setDescription(e.target.value)} 
                 value={description}

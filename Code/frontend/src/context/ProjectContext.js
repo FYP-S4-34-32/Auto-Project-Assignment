@@ -1,6 +1,6 @@
-
-
-
+//================================//
+// Context Provider to set states //
+//================================//
 
 // imports
 import { createContext, useReducer } from "react";
@@ -15,6 +15,10 @@ export const projectsReducer = (state, action) => {
         case 'SET_PROJECTS': // set all project
             return {
                 projects: action.payload // payload in this case is an array of project objects
+            }
+        case 'SET_ONE_PROJECT': // set one project
+            return {
+                project: action.payload // payload in this is a project object
             }
         case 'CREATE_PROJECT': 
             return {

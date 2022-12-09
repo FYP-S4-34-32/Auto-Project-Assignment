@@ -6,7 +6,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // pages and components
-import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -15,8 +14,8 @@ import CreateProject from './pages/CreateProject';
 import Projects from './pages/Projects';
 import PageNotFound from './pages/PageNotFound';
 import { useAuthenticationContext } from './hooks/useAuthenticationContext';
-import SingleProjectDetails from './components/SingleProjectDetails';
 import AllUsers from './pages/AllUsers';
+import ProjectDetails from './components/ProjectDetails';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -53,7 +52,7 @@ function App() {
             />
             <Route 
                 path = "/projects/:id" // single project page
-                element = { user ? <SingleProjectDetails /> : <Navigate to="/login" /> } // SingleProjectDetails page if there is a user, Login page if there is no user
+                element = { user ? <ProjectDetails /> : <Navigate to="/login" /> } // ProjectDetails page if there is a user, Login page if there is no user
             />
             <Route
               path = "/allusers" // all users page

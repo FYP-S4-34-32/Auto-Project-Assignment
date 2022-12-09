@@ -1,14 +1,17 @@
+//======================//
+// Project Listing Page //
+//======================//
+
 // imports 
-import { useState} from 'react'
 import { useEffect } from "react"
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext' 
-import ProjectDetails from "../components/ProjectDetails"
+import ProjectList from "../components/ProjectList"
 import { useProjectsContext } from "../hooks/useProjectsContext"
 
 const Projects = () => {
     // hooks
-    const { user } = useAuthenticationContext()   
-    const { projects, dispatch } = useProjectsContext() 
+    const { user } = useAuthenticationContext()
+    const { projects, dispatch } = useProjectsContext()
 
     // fires when component is rendered
     useEffect(() => {
@@ -36,7 +39,7 @@ const Projects = () => {
     return ( 
         <div className="projects">
             { projects && projects.map((project) => ( // will only run when there is a project object
-                <ProjectDetails key={ project._id } project={ project } /> // key must be unique
+                <ProjectList key={ project._id } project={ project } /> // key must be unique
             ))}
         </div>  
     )

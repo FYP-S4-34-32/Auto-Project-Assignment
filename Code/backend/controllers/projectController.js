@@ -32,7 +32,7 @@ const getSingleProject = async (req, res) => {
     }
 
     // document found
-    res.status(200).json([project])
+    res.status(200).json(project)
 }
 
 

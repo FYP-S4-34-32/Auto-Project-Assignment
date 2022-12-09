@@ -1,26 +1,47 @@
+//================================================//
+// Project Details page for an individual project //
+//================================================//
 
-
-// imports
-import { useProjectsContext } from "../hooks/useProjectsContext"
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthenticationContext } from "../hooks/useAuthenticationContext";
+import { useProjectsContext } from "../hooks/useProjectsContext";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
-import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
-import { Link } from "react-router-dom"
 
-
-const ProjectDetails = ({ project }) => {
-    const { dispatch } = useProjectsContext()
+const ProjectDetails = () => {
     const { user } = useAuthenticationContext()
+    const { project, dispatch } = useProjectsContext() // note project instead of projects -> because we are setting the state of ONE project using SET_ONE_PROJECT
 
-    // CODE for extracting skill info and displaying them in the project details
+    const { id } = useParams()
 
-    // if there is no user object - not logged in
-    if (!user) {
-        return
-    }
+    const navigate = useNavigate()
+    
+    // fires when the component is rendered
+    useEffect(() => {
+        const fetchProject = async () => {
+            const response = await fetch('/api/project/' + id, { // fetch the project based on the project's id
+                headers: {
+                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the user's token -> backend will validate token -> if valid, grant access to API
+                }
+            }) // using fetch() api to fetch data and store in the variable
 
-    // delete projects
+            const json = await response.json() // response object into json object
+
+            // response OK
+            if (response.ok) {
+                dispatch({ type: 'SET_ONE_PROJECT', payload: json})
+            }
+        }
+
+        // if there is an authenticated user
+        if (user) {
+            fetchProject()
+        }
+    }, [dispatch, user, id])
+
+    // delete project
     const handleClick = async () => {
-        const response = await fetch('/api/projects/' + project._id, {
+        const response = await fetch('/api/project/' + id, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${ user.token }`
@@ -31,7 +52,7 @@ const ProjectDetails = ({ project }) => {
 
         // response OK
         if (response.ok) {
-            dispatch({ type: 'DELETE_PROJECT', payload: json})
+            navigate('/') // navigate back to home page aka project listing page
         }
 
         // reponse NOT ok
@@ -40,35 +61,28 @@ const ProjectDetails = ({ project }) => {
         }
     }
 
-    // show delete button only if user is a Super Admin/admin
-    const renderDeleteButton = (user) => {
-        switch (user.role) {
-            case 'Admin':
-                return (
-                    <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
-                ) 
-            case 'Super Admin':
-                return (
-                    <span className="material-symbols-outlined" onClick = { handleClick }>delete</span>
-                )
-            default:
-                return
-        }
-    }
-
     return (
-        <div className="project-details" key={ project._id }>
-            <Link to={ `/projects/${ project._id }` }>
-                <h4>{ project.title }</h4>
-                {/* <p><strong>Project Title: </strong>{ project.title }</p>
-                <p><strong>Project Description: </strong>{ project.description }</p> */}
-                <p><strong>Skills needed: </strong>{project.skills.map(s => s.skill).join(', ')}</p>
-                { user.role === 'Admin' && <p><strong>Threshold: </strong>{ project.threshold }</p> }
-                <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
-                { renderDeleteButton(user) }
-            </Link>
+        <div className="project-details">
+            { project && (
+                <article>
+                    <h2>{ project.title }</h2>
+                    <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
+                    <div>
+                        <p><strong>Project Description: </strong></p>
+                        <p>{ project.description }</p>
+                    </div>
+                    <div>
+                        <p><strong>Skills needed: </strong></p>
+                        { project.skills.map(s => (
+                            <p key={ s.skill }>{ s.skill } - { s.competency }</p>
+                        )) }
+                    </div>
+                    { user.role === 'Admin' && <div><p><strong>Threshold: </strong>{ project.threshold }</p></div> }
+                    { user.role === 'Admin' && <button onClick={ handleClick }>Delete</button> }
+                </article>
+            )}
         </div>
-    )
+    );
 }
-
-export default ProjectDetails
+ 
+export default ProjectDetails;
