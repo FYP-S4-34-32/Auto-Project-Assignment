@@ -44,7 +44,7 @@ router.delete('/deleteSkill', deleteUserSkill)
 router.post('/changePassword', changeUserPassword)
 
 // DELETE a user @ /api/user/:id
-router.delete('/deleteUser', deleteUser)
+router.post('/deleteUser', deleteUser)
 
 
 

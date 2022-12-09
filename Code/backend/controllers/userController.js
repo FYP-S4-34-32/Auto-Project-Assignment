@@ -192,14 +192,17 @@ const changeUserPassword = async (req, res) => {
 
 // DELETE a user
 const deleteUser = async (req, res) => {
-    const { email } = req.body
+    const { email } = req.body 
   
     try {
         // invoke deleteUser function in userModel.js
-        const user = await User.deleteUser(email)
+        const deletedUser = await User.deleteUser(email) 
+        console.log("(userController) deletedUser: ", deletedUser)
+
+        const users = await User.getAllUsers()
 
         // return the email and skills
-        res.status(200).json({ email })
+        res.status(200).json({ users })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})

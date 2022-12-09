@@ -270,15 +270,16 @@ userSchema.statics.changePassword = async function(email, currentPassword, newPa
 userSchema.statics.deleteUser = async function(email) {
      // search for user by email
     const user = await this.findOne({ email })
-
+    
     // check to see whether a user is found
-    if (!user) {
-        throw Error("No such user")
+    if (!user) { 
+        throw Error("No such user!")
     } 
     
-    const deleteUser = await this.deleteOne(user)
+    const deleteUser = await this.deleteOne({ email }) 
+    console.log("(userModel) deleted user: ", deleteUser)
 
-    return user
+    return deleteUser
 }
 
 
