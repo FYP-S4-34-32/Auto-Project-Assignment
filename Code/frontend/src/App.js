@@ -56,7 +56,7 @@ function App() {
             />
             <Route
               path = "/allusers" // all users page
-              element = { (user && user.role === "Super Admin") ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
+              element = { (user && user.role === "Super Admin" || (user && user.role === "Admin")) ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

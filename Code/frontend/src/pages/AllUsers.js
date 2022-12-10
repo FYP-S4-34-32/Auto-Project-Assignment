@@ -13,10 +13,9 @@ const AllUsers = () => {
     var superAdminsArray = []
     var employeesArray = []
     
-
     const { user } = useAuthenticationContext() // get the user object from the context 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
-    const { updateUsers, deleteUserIsLoading, deleteUserError} = useDeleteUser() // get the deleteUser function from the context
+    const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
     const [selectedUsers, setSelectedUsers] = useState('')
     
     const handleGetAllUsers = async () => {
@@ -122,6 +121,21 @@ const AllUsers = () => {
         )
     })
 
+    const manageEmployees = allUsersArray.map((datum, index) => {
+        if (datum.role === "Employee") {
+            var employee = datum
+
+            return (
+                <div className="user-div" key={employee._id} style={{height:"200px"}}>
+                    <h3>{employee.name}</h3>
+                    <p>Email: {employee.email}</p>
+                    <p>Role: {employee.role}</p>
+                    <p>Contact Info: {employee.contact}</p>
+                    <span className="material-symbols-outlined" onClick={() => deleteUser(index)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                </div>
+            )
+        }
+    })
 
     const showSelectedUsers = () => {
         switch (selectedUsers) {
@@ -135,19 +149,38 @@ const AllUsers = () => {
                 return showEmployees
             case "manageUsers":
                 return manageUsers
+            case "manageEmployees":
+                return manageEmployees
             default:
                 return showAllUsers
     }}
 
+    const showUsersPanel = (user) => {
+        switch (user.role) {
+            case "Super Admin":
+                return (
+                    <div className="selection-panel">
+                        <button onClick={handleGetAllUsers}>All Users</button>
+                        <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
+                        <button onClick={() =>setSelectedUsers("superAdmins")}>Super Admins</button>
+                        <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
+                        <button onClick={() =>setSelectedUsers("manageUsers")}>Manage Users</button>
+                    </div>
+                )
+            case "Admin":
+                return (
+                    <div className="selection-panel" style={{height:"100px"}}> 
+                        <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
+                        <button onClick={() =>setSelectedUsers("manageEmployees")}>Manage Employees</button>
+                    </div>
+                )
+        }
+    }
+
+
     return (
         <div>
-            <div className="selection-panel">
-                <button onClick={handleGetAllUsers}>All Users</button>
-                <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
-                <button onClick={() =>setSelectedUsers("superAdmins")}>Super Admins</button>
-                <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
-                <button onClick={() =>setSelectedUsers("manageUsers")}>Manage Users</button>
-            </div>
+            {showUsersPanel(user)}
             <div className="allUsers-div">
                 {showSelectedUsers()}
                 {deleteUserError && <p>Error: {deleteUserError}</p>}
