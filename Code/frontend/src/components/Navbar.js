@@ -37,7 +37,8 @@ const Navbar = () => {
                     )}
                     {user && user.role === "Employee" && (
                         <div>
-                            <Link to="/projects">Projects</Link>
+                            <Link to="/projects">Project Listings</Link>
+                            <Link to="/assignedprojects">Assigned Projects</Link>
                         </div>
                     )}
                     {user && ( // return a template only when there is a user logged in

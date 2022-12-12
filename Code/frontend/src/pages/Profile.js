@@ -209,9 +209,7 @@ const Profile = () => {
                     <div className="profile-panel"> 
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
-                        <button onClick={() => setSelectedInfo('showSkills')}> Skills </button> 
-                        <br></br>
-                        <button> Projects </button> 
+                        <button onClick={() => setSelectedInfo('showSkills')}> Skills </button>  
                         <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
                     </div> 
             )

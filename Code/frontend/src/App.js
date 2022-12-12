@@ -16,6 +16,7 @@ import PageNotFound from './pages/PageNotFound';
 import { useAuthenticationContext } from './hooks/useAuthenticationContext';
 import AllUsers from './pages/AllUsers';
 import ProjectDetails from './components/ProjectDetails';
+import AssignedProjects from './pages/AssignedProjects';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -56,7 +57,11 @@ function App() {
             />
             <Route
               path = "/allusers" // all users page
-              element = { (user && user.role === "Super Admin" || (user && user.role === "Admin")) ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
+              element = { ((user && user.role === "Super Admin") || (user && user.role === "Admin")) ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
+            />
+            <Route
+              path = "/assignedprojects" // assigned projects page
+              element = { (user && user.role === "Employee") ? <AssignedProjects /> : <Navigate to="/login" /> } // Projects page if there is a user and is of role Employee, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

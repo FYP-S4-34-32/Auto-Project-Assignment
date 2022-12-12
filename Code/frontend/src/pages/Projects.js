@@ -37,11 +37,14 @@ const Projects = () => {
 
     // return a template
     return ( 
-        <div className="projects">
-            { projects && projects.map((project) => ( // will only run when there is a project object
-                <ProjectList key={ project._id } project={ project } /> // key must be unique
-            ))}
-        </div>  
+        <div> 
+            <div className="projects">
+                <h2>Project Listings</h2>
+                { projects && projects.map((project) => ( // will only run when there is a project object
+                    <ProjectList key={ project._id } project={ project } /> // key must be unique
+                ))}
+            </div>  
+        </div>
     )
 }
 
