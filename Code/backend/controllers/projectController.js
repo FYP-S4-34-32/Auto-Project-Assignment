@@ -1,5 +1,5 @@
 //==============================================================//
-// File which does the heavylifting according to route requests // --> TEMPLATE ONLY, A LOT OF CHANGES TO BE MADE
+// File which does the heavylifting according to route requests //
 //==============================================================//
 
 // imports

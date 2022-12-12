@@ -14,15 +14,15 @@ const mongoose = require('mongoose'); // enforcing schema for mongodb
 const Schema = mongoose.Schema;
 
 const skillSchema = new Schema({
-    title: {
+    skillName: {
         type: String, // e.g. "Java", "C++", "NodeJS"
         required: true, // compulsory property i.e. cannot be null
+        unique: true
     },
     organisation: { // track who added the skills
-        type: String,
-        default: ""
+        type: String
     }
-}, {timestamps: true}); // datetime created and updated
+});
 
 
 // EXPORT

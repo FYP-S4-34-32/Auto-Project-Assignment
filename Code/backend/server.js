@@ -9,6 +9,7 @@ require('dotenv').config() // fetch env variables
 
 const userRoutes = require('./routes/user') // user routes
 const projectRoutes = require('./routes/project') // project routes
+const skillRoutes = require('./routes/skill') // skill routes
 
 // start up express app
 const app = express()
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 // register route handler - reacts to requests sent in
 app.use('/api/user', userRoutes); // any request to /api/user will be handled in userRoute.js in the routes folder
 app.use('/api/project', projectRoutes); // any request to /api/project will be handled in projectRoute.js in the routes folder
+app.use('/api/skill', skillRoutes); // any request to /api/skill will be handled in skillRoute.js in the routes folder
 
 // connect to MongoDB and listen for requests
 mongoose.connect(process.env.MONGO_URI)
