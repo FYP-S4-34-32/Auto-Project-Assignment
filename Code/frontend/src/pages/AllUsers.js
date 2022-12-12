@@ -18,9 +18,10 @@ const AllUsers = () => {
     const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
     const [selectedUsers, setSelectedUsers] = useState('')
     
-    const handleGetAllUsers = async () => {
-        await getAllUsers()
-    }
+    // const handleGetAllUsers = async () => {
+        
+    //     await getAllUsers()
+    // }
 
     const filterUsers = () => {
         allUsersArray = allUsers
@@ -44,7 +45,7 @@ const AllUsers = () => {
     useEffect(() => {
         getAllUsers();
     }, [])
-
+    
 
     const deleteUser = (index) => { 
         console.log("deleteUser: ", allUsersArray[index].email)
@@ -160,7 +161,7 @@ const AllUsers = () => {
             case "Super Admin":
                 return (
                     <div className="selection-panel">
-                        <button onClick={handleGetAllUsers}>All Users</button>
+                        <button onClick={() => setSelectedUsers("allUsers")}>All Users</button>
                         <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
                         <button onClick={() =>setSelectedUsers("superAdmins")}>Super Admins</button>
                         <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
