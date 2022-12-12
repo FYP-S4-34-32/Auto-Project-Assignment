@@ -12,12 +12,16 @@ const express = require('express')
 |   function in userController.js                                                  |
 \* ============================================================================== */
 const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword } = require('../controllers/userController')
+const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
 const router = express.Router()
 
 // POST a new user @ /api/user/login
 router.post('/login', loginUser)
+
+// fire authentication check before moving on to the remaining routes
+// router.use(requireAuthentication)
 
 // POST a new user @ /api/user/signup
 router.post('/signup', signupUser)

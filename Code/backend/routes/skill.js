@@ -5,16 +5,19 @@
 // imports
 const express = require('express')
 
-/* ============================================================================== *\
-|   import controller functions from userController.js in the controllers folder   |
-|   these functions will be invoked and handled in the controller file whenever    |
-|   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
-|   function in userController.js                                                  |
-\* ============================================================================== */
+/* =============================================================================== *\
+|   import controller functions from skillController.js in the controllers folder   |
+|   these functions will be invoked and handled in the controller file whenever     |
+|   the routes are requested.                                                       |
+\* =============================================================================== */
 const { getSkills, addSkill, deleteSkill } = require('../controllers/skillController')
+const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
 const router = express.Router()
+
+// fire authentication check before moving on to the remaining routes
+// router.use(requireAuthentication)
 
 // GET all skills @ /api/skill/
 router.get('/', getSkills)
