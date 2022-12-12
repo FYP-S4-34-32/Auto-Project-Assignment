@@ -43,7 +43,7 @@ const AllUsers = () => {
 
     useEffect(() => {
         getAllUsers();
-    })
+    }, [])
 
 
     const deleteUser = (index) => { 
