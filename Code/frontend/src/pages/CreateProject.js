@@ -77,7 +77,7 @@ const CreateProject = () => {
             <h2>Add a new Project Lising</h2>
 
             <form onSubmit={ handleSubmit }>
-            <label>New Project Title:</label>
+            <label>Project Title:</label>
             <input 
                 type="text"
                 onChange={ (e) => setTitle(e.target.value) } // value of the target(input field) of the event e
@@ -102,7 +102,7 @@ const CreateProject = () => {
             <label>Skills Required:</label>
 
 
-            <label>Threshold:</label>
+            <label>Number of People Needed:</label>
             <input 
                 type="number"
                 onChange={ (e) => setThreshold(e.target.value) }

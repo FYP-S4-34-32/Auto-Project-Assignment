@@ -42,30 +42,41 @@ Document Control: **Last updated @ 9/12/2022**
 	reflected in the system
 - [x]	As a Project Admin, I want to be able to update my contact details
 	so that I can keep my contact details updated in the system
-- [x]	As a Super Admin, I want to create Project Admin accounts for the
-	organisation that the Project Admin can manage the project
-	activities
+- [x]	As a Super Admin, I want to create user accounts for the
+	organisation so that the user from the organisation can use the system
 - [x]	As a Super Admin, I want to view user accounts for the organisation
 	so that I can see the users in the organisation
 - [x]	As a Super Admin, I want to delete user accounts for the
 	organisation so that I can remove invalid user
 
 
-## Sprint 3 - 7 :
+## Sprint 3 - 5 :
 - []	As a Project Admin, I want to be able to create new projects so that
 	employees will be able to see them
 - []	As a Project Admin, I want to be able to update project details so
 	that I can make necessary changes
+- [x]	As a Project Admin, I want to be able to remove projects, so that
+	unavailable projects can be deleted
 - [x]	As a Project Admin, I want to be able to set the number of employees
 	required for a specific project, so that I can limit the employees
 	enrolled into that project
-- [x]	As a Project Admin, I want to be able to remove projects, so that
-	unavailable projects can be deleted
 - [x]	As an Employee, I want to be able to view my skills and competency
 	details so that I can see my skills and competency details that
 	are reflected in the system
+
+## Sprint 4
 - [x]	As an Employee, I want to be able to see a list of the available
 	projects so that I know what are the projects available for me
 	to choose
 - [x]	As an Employee, I want to view the projects' details so that I can
 	obtain more information for each project
+- [x]	As a Project Admin, I want to be able to create Employee account so
+	that there isn't any unauthorised account created in the system
+- [x]	As an Project Admin, I want to be able to delete Employee account
+	so that unused account can be removed
+- []	As an Project Admin, I want to edit Employee contact
+	info so that I can ensure their contact infos are up to date
+- []	As an Super Admin, I want to edit user roles so that I can update
+	user privileges as needed
+- []	As an Super Admin, I want to edit user account contact info so that
+	I can ensure their contact infos are up to date

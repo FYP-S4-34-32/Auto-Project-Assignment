@@ -77,7 +77,7 @@ const ProjectDetails = () => {
                             <p key={ s.skill }>{ s.skill } - { s.competency }</p>
                         )) }
                     </div>
-                    { user.role === 'Admin' && <div><p><strong>Threshold: </strong>{ project.threshold }</p></div> }
+                    { user.role === 'Admin' && <div><p><strong>Number of People Needed: </strong>{ project.threshold }</p></div> }
                     { user.role === 'Admin' && <button onClick={ handleClick }>Delete</button> }
                 </article>
             )}
