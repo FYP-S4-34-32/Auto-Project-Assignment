@@ -17,6 +17,7 @@ import { useAuthenticationContext } from './hooks/useAuthenticationContext';
 import AllUsers from './pages/AllUsers';
 import ProjectDetails from './components/ProjectDetails';
 import AssignedProjects from './pages/AssignedProjects';
+import SelectPreference from './pages/SelectPreference';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -62,6 +63,10 @@ function App() {
             <Route
               path = "/assignedprojects" // assigned projects page
               element = { (user && user.role === "Employee") ? <AssignedProjects /> : <Navigate to="/login" /> } // Projects page if there is a user and is of role Employee, Login page if there is no user
+            />
+            <Route 
+              path = "/selectpreference" // preference selection page
+              element = { (user && user.role === "Employee") ? <SelectPreference/> : <Navigate to="/login" /> }
             />
             <Route
               path = "*" // 404 page

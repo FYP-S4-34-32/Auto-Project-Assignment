@@ -44,10 +44,22 @@ const userSchema = new Schema({
         type: Number, // can be String/Number
         default: null
     },
-    project_preference: [{ // user's project preference
+    // project_preference: [{ // user's project preference
+    //     type: String,
+    //     default: ""
+    // }],
+    firstChoice: {
         type: String,
         default: ""
-    }],
+    },
+    secondChoice: {
+        type: String,
+        default: ""
+    },
+    thirdChoice: {
+        type: String,
+        default: ""
+    },
     project_assigned: [{ // the project assigned to the user
         type: String,
         default: ""
@@ -65,7 +77,7 @@ const userSchema = new Schema({
 // 6. CREATE a new user document and store it to our database in the schema format specified above
 // 7. RETURNS the USER DOCUMENT in the format of the schema
 //=================================================================================================================================//
-userSchema.statics.signup = async function(name, email, password, role) {
+userSchema.statics.signup = async function(name, email, password, confirmPassword, role) {
     /* validation */
     // NAME OR EMAIL OR PASSWORD IS EMPTY
     if (!email || !password || !name) { 
@@ -80,6 +92,12 @@ userSchema.statics.signup = async function(name, email, password, role) {
     // NOT A VALID EMAIL
     if (!validator.isEmail(email)) {
         throw Error('Email is not valid')
+    }
+
+    // Passwords do not match
+
+    if (password !== confirmPassword) {
+        throw Error('Passwords do not match')
     }
 
     // STRENGTH OF PASSWORD
@@ -274,12 +292,39 @@ userSchema.statics.deleteUser = async function(email) {
     // check to see whether a user is found
     if (!user) { 
         throw Error("No such user!")
-    } 
+    }
     
     const deleteUser = await this.deleteOne({ email }) 
     console.log("(userModel) deleted user: ", deleteUser)
 
     return deleteUser
+}
+
+// static method to update project preference
+userSchema.statics.selectPreference = async function(email, firstChoice, secondChoice, thirdChoice) {
+    // search for user by eamil
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) { 
+        throw Error("No such user!")
+    }
+
+    if (!firstChoice) {
+        throw Error('Please select your First Choice')
+    }
+
+    if (!secondChoice) {
+        throw Error('Please select your Second Choice')
+    }
+
+    if (!thirdChoice) {
+        throw Error('Please select your Third Choice')
+    }
+
+    console.log(firstChoice, secondChoice, thirdChoice)
+
+    return user
 }
 
 

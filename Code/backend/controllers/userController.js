@@ -72,11 +72,11 @@ const signupUser = async (req, res) => {
     // }    "password": "example password"
     // -> so we can destructure the request body and obtain the name, email and password value
 
-    const {name, email, password, role} = req.body
+    const {name, email, password, confirmPassword, role} = req.body
 
     try {
         // invoke signup function and store return value(user document)
-        const user = await User.signup(name, email, password, role)
+        const user = await User.signup(name, email, password, confirmPassword, role)
         
         // create a jsonwebtoken
         const token = createToken(user._id)
@@ -209,6 +209,22 @@ const deleteUser = async (req, res) => {
     }
 }
 
+// UPDATE user project preference
+const selectPreference = async (req, res) => {
+    const { email, projectPreference } = req.body
+
+    try {
+        // invoke selectPreference function in userModel.js
+        const user = await User.selectPreference(email, projectPreference)
+
+        // return the email and skills
+        res.status(200).json({ user })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
 // EXPORT the functions
 module.exports = {
     loginUser,
@@ -220,5 +236,6 @@ module.exports = {
     updateUserSkill,
     deleteUserSkill,
     changeUserPassword,
-    deleteUser
+    deleteUser,
+    selectPreference
 }

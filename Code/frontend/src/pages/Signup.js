@@ -11,9 +11,15 @@ const Signup = () => {
     const { user } = useAuthenticationContext()
     const currentUserRole = user.role
 
+    // another layer of  check
+    if (currentUserRole !== 'Admin' && currentUserRole !== 'Super Admin') {
+        throw Error('You are not authorised to view this page')
+    }
+
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [role, setRole] = useState('')
     const { signup, isLoading, error } = useSignup() // from useSignup.js in the hooks folder
 
@@ -22,13 +28,19 @@ const Signup = () => {
         e.preventDefault()
 
         // invoke signup function from useSignup.js
-        await signup(name, email, password, role) 
+        await signup(name, email, password, confirmPassword, role) 
     }
 
     // return a template - signup form
     return (
         <form className="signup" onSubmit={handleSubmit}>
             <h3>Account Creation</h3>
+            { (currentUserRole === 'Super Admin') && (
+                <div>
+                    <label>Organisation: </label>
+                    <br></br>
+                </div>
+            )}
             <label>Name:</label>
             <input
                 type="text"
@@ -46,6 +58,12 @@ const Signup = () => {
                 type="password" // hidden
                 onChange={(e) => {setPassword(e.target.value)}} // set password to the value of the target input field
                 value={password} // reflect change in password state
+            />
+            <label>Confirm Password:</label>
+            <input
+                type="password" // hidden
+                onChange={(e) => {setConfirmPassword(e.target.value)}} // set password to the value of the target input field
+                value={confirmPassword} // reflect change in password state
             />
             <label>Role:</label>
             <select value={role} onChange={(e) => {setRole(e.target.value)}}>

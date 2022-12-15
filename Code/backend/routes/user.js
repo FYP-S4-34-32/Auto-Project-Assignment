@@ -11,7 +11,7 @@ const express = require('express')
 |   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
-const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword } = require('../controllers/userController')
+const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword, selectPreference } = require('../controllers/userController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -49,6 +49,9 @@ router.post('/changePassword', changeUserPassword)
 
 // DELETE a user @ /api/user/:id
 router.post('/deleteUser', deleteUser)
+
+// UPDATE user's project preference @ /api/user/selectpreference
+router.patch('/selectpreference', selectPreference)
 
 
 

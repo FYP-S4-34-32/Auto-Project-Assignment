@@ -9,8 +9,7 @@ export const useSignup = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
 
-    const signup = async (name, email, password, role) => {
-        console.log(name, email, password, role)
+    const signup = async (name, email, password, confirmPassword, role) => {
 
         setIsLoading(true) // set loading state
         setError(null) // reset error to null in case there was one previously

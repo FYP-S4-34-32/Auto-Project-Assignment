@@ -74,7 +74,7 @@ const CreateProject = () => {
 
     return(
         <div className="create">
-            <h2>Add a new Project Lising</h2>
+            <h2>Add a new Project Listing</h2>
 
             <form onSubmit={ handleSubmit }>
             <label>Project Title:</label>
