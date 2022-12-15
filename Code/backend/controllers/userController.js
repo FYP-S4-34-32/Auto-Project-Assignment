@@ -211,11 +211,51 @@ const deleteUser = async (req, res) => {
 
 // UPDATE user project preference
 const selectPreference = async (req, res) => {
-    const { email, projectPreference } = req.body
+    const { email, firstChoice, secondChoice, thirdChoice } = req.body
+
+    // track empty fields
+    let errorFields = []
+
+    if (!firstChoice) {
+        errorFields.push('firstChoice')
+    }
+
+    if (!secondChoice) {
+        errorFields.push('secondChoice')
+    }
+
+    if (!thirdChoice) {
+        errorFields.push('thirdChoice')
+    }
+
+    if (firstChoice === secondChoice) {
+        errorFields.push('firstChoice')
+        errorFields.push('secondChoice')
+    }
+
+    if (firstChoice === thirdChoice) {
+        errorFields.push('firstChoice')
+        errorFields.push('thirdChoice')
+    }
+
+    if (secondChoice === thirdChoice) {
+        errorFields.push('secondChoice')
+        errorFields.push('thirdChoice')
+    }
+
+    if (firstChoice === secondChoice && secondChoice === thirdChoice) {
+        errorFields.push('firstChoice')
+        errorFields.push('secondChoice')
+        errorFields.push('thirdChoice')
+    }
+    
+    if (errorFields.length > 0) {
+        return res.status(400).json({ error: 'Please make sure all fields are selected and that no projects are duplicated', errorFields: errorFields })
+    }
 
     try {
         // invoke selectPreference function in userModel.js
-        const user = await User.selectPreference(email, projectPreference)
+        const user = await User.selectPreference(email, firstChoice, secondChoice, thirdChoice)
 
         // return the email and skills
         res.status(200).json({ user })

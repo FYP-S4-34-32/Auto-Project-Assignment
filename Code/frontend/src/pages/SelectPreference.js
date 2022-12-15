@@ -19,17 +19,24 @@ const SelectPreference = () => {
 
     const navigate = useNavigate()
 
-
-    // authorisation check
-    if (!user && user.role !== 'Employee') {
-        throw Error("You are not authorised to view this resource")
-    }
+    // state for empty fields validation
+    const [errorFields, setErrorFields] = useState([]) // empty array by default
 
     // get the list of available project
     const { projects } = useProjectsContext()
 
-    const handleSubmit = async () => {
-        const projectPreference = [firstChoice, secondChoice, thirdChoice]
+
+    // authorisation check
+    if (!user && user.role !== 'Employee') {
+        setError("You are not authorised to view this resource")
+        return
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const email = user.email
+        const projectPreference = { email, firstChoice, secondChoice, thirdChoice }
 
         // fetch request to post new data
         const response = await fetch('/api/user/selectpreference', {
@@ -45,7 +52,9 @@ const SelectPreference = () => {
 
         // response NOT ok
         if (!response.ok) {
-            setError(json.error) // the error property from projectController.createProject
+            setError(json.error) // the error property
+
+            setErrorFields(json.errorFields)
         }
 
         // response OK
@@ -57,18 +66,20 @@ const SelectPreference = () => {
             setSecondChoice('') // reset second choice
             setThirdChoice('') // reset third choice
 
-            navigate('/projects') // navigate back to home page aka project listing page
+            setErrorFields([]) // reset the emptyfields array
+
+            navigate('/projects') // navigate back to project listing page
         }
     }
     
 
     // return a template
     return ( 
-        <div> 
-            <h2>Input Project Preference</h2>
+        <div className="create"> 
+            <h2>Input/Update Project Preference</h2>
             <form onSubmit={ handleSubmit }>
                 <label>First Choice:</label>
-                <select value={ firstChoice } onChange={(e) => { setFirstChoice(e.target.value) }}>
+                <select value={ firstChoice } onChange={(e) => { setFirstChoice(e.target.value) }} className={ errorFields.includes('firstChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { projects.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>
@@ -78,7 +89,7 @@ const SelectPreference = () => {
                 <br></br><br></br><br></br>
                 
                 <label>Second Choice:</label>
-                <select value={ secondChoice } onChange={(e) => { setSecondChoice(e.target.value) }}>
+                <select value={ secondChoice } onChange={(e) => { setSecondChoice(e.target.value) }} className={ errorFields.includes('secondChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { projects.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>
@@ -88,7 +99,7 @@ const SelectPreference = () => {
                 <br></br><br></br><br></br>
                 
                 <label>Third Choice:</label>
-                <select value={ thirdChoice } onChange={(e) => { setThirdChoice(e.target.value) }}>
+                <select value={ thirdChoice } onChange={(e) => { setThirdChoice(e.target.value) }} className={ errorFields.includes('thirdChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { projects.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>

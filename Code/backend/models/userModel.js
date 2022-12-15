@@ -302,27 +302,13 @@ userSchema.statics.deleteUser = async function(email) {
 
 // static method to update project preference
 userSchema.statics.selectPreference = async function(email, firstChoice, secondChoice, thirdChoice) {
-    // search for user by eamil
-    const user = await this.findOne({ email })
+    // search for user by email and update the user's project preference
+    const user = await this.findOneAndUpdate({ email }, { firstChoice, secondChoice, thirdChoice })
 
     // check to see whether a user is found
     if (!user) { 
         throw Error("No such user!")
     }
-
-    if (!firstChoice) {
-        throw Error('Please select your First Choice')
-    }
-
-    if (!secondChoice) {
-        throw Error('Please select your Second Choice')
-    }
-
-    if (!thirdChoice) {
-        throw Error('Please select your Third Choice')
-    }
-
-    console.log(firstChoice, secondChoice, thirdChoice)
 
     return user
 }

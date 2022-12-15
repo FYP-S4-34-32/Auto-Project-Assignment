@@ -258,7 +258,7 @@ input::placeholder {
 .create label {
     display: block;
 }
-.create input, .create textarea {
+.create input, .create textarea, .create select {
     padding: 10px;
     margin-top: 10px;
     margin-bottom: 20px;
@@ -409,4 +409,9 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm {
     padding: 8px;
     border-radius: 8px;
     cursor: pointer;
+}
+
+/* SelectPreference page */
+select.error {
+    border: 1px solid var(--error);
 }
