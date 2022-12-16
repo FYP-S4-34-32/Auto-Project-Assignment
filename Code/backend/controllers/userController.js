@@ -143,11 +143,11 @@ const addUserSkill = async (req, res) => {
  
 // UPDATE skill competency
 const updateUserSkill = async (req, res) => { 
-    const { email, skillsArr } = req.body // req.body -> { "email": email, "skills": skillArr}
+    const { email, skills } = req.body // req.body -> { "email": email, "skills": skillArr}
 
     try {
         // invoke updateSkill function in userModel.js
-        const user = await User.updateSkill(email, skillsArr) 
+        const user = await User.updateSkill(email, skills) 
 
         // return the email and skills
         res.status(200).json({ user })
@@ -208,6 +208,7 @@ const deleteUser = async (req, res) => {
         res.status(400).json({error: error.message})
     }
 }
+ 
 
 // UPDATE user project preference
 const selectPreference = async (req, res) => {

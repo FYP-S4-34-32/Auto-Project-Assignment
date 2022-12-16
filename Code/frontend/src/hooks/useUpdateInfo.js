@@ -21,7 +21,7 @@ export const useUpdateInfo = () => {
             body: JSON.stringify({email, contact})
         })
 
-        const json = await response.json()
+        const json = await response.json() 
 
         if (!response.ok) {
             setIsLoading(false)
@@ -31,6 +31,8 @@ export const useUpdateInfo = () => {
         if(response.ok) {
             setIsLoading(false)
         }
+
+        return json.user.contact
     }
 
     return { updateInfo, isLoading, error }

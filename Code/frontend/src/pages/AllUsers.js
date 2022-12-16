@@ -1,6 +1,9 @@
 // ========================================================
 // This page is used to display all users in the database
 // ========================================================
+// superadmin: can edit USER ROLES, can delete user accounts
+// both superadmin and project admin: can edit USER CONTACT INFO, can delete EMPLOYEE accounts
+// ========================================================
 
 import { useState, useEffect} from 'react'  
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
@@ -57,6 +60,7 @@ const AllUsers = () => {
         return (
             <div className="user-div" key={user._id}> 
                 <h3>{user.name}</h3>
+                <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
                 <p>Role: {user.role}</p>
                 <p>Contact Info: {user.contact}</p> 
@@ -68,6 +72,7 @@ const AllUsers = () => {
         return (
             <div className="user-div" key={user._id}>
                 <h3>{user.name}</h3>
+                <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
                 <p>Role: {user.role}</p>
                 <p>Contact Info: {user.contact}</p>
@@ -79,6 +84,7 @@ const AllUsers = () => {
         return (
             <div className="user-div" key={user._id}>
                 <h3>{user.name}</h3>
+                <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
                 <p>Role: {user.role}</p>
                 <p>Contact Info: {user.contact}</p>
@@ -100,6 +106,7 @@ const AllUsers = () => {
         return (
             <div className="user-div" key={user._id}>
                 <h3>{user.name}</h3>
+                <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
                 <p>Role: {user.role}</p>
                 <p>Contact Info: {user.contact}</p> 
@@ -113,6 +120,7 @@ const AllUsers = () => {
         return (
             <div className="user-div" key={user._id} style={{height:"200px"}}>
                 <h3>{user.name}</h3>
+                <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
                 <p>Role: {user.role}</p>
                 <p>Contact Info: {user.contact}</p>

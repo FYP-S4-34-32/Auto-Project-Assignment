@@ -7,10 +7,10 @@ import { useState } from 'react'
 
 export const useUpdateSkills = () => {
     const [updateSkillsError, setError] = useState(null)
-    const [updateSkillsIsLoading, setIsLoading] = useState(null) 
+    const [updateSkillsIsLoading, setIsLoading] = useState(null)  
 
-    const updateSkills = async (email, skillsArr) => { 
-        console.log(JSON.stringify({email, skillsArr}))
+    const updateSkills = async (email, skills) => { 
+        console.log(JSON.stringify({email, skills}))
 
         setIsLoading(true)  
         setError(null) 
@@ -18,10 +18,11 @@ export const useUpdateSkills = () => {
         const response = await fetch('/api/user/updateSkill', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, skillsArr})
+            body: JSON.stringify({email, skills})
         })
 
-        const json = await response.json()
+        const json = await response.json() 
+        console.log("json.user.skills : ", json.user.skills)
 
         if (!response.ok) {
             setIsLoading(false)
@@ -30,7 +31,11 @@ export const useUpdateSkills = () => {
 
         if(response.ok) { 
             setIsLoading(false)
+            // setUserSkills(json.user.skills) 
+            // console.log("updated user skills arr: ", userSkills)
         }
+        
+        return json.user
     }
 
     return { updateSkills, updateSkillsIsLoading, updateSkillsError}

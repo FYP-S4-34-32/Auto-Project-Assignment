@@ -168,7 +168,16 @@ userSchema.statics.getAllUsers = async function() {
 // static method to retrieve user info EXCEPT password
 userSchema.statics.getOneUser = async function(email) {
     // returns the user document except the password field
-    return this.findOne({ email }).select('-password')
+    const user = await this.findOne({ email }).select('-password')
+
+    console.log(user)
+
+    // user DOES NOT exist
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    return user
 }
 
 // static method to update user info
@@ -221,10 +230,10 @@ userSchema.statics.updateSkill = async function(email, skills) {
 
     // check to see whether a user is found
     if (!user) {
-        throw Error("No such user")
+        throw Error("No such user: ", email)
     } 
  
-    const updated = await this.findOneAndUpdate({ email }, {skills})
+    const updated = await this.findOneAndUpdate({ email }, {skills})  
      
     return this.findOne({ email })
 }
@@ -312,6 +321,7 @@ userSchema.statics.selectPreference = async function(email, firstChoice, secondC
 
     return user
 }
+
 
 
 // EXPORT

@@ -3,31 +3,32 @@
 //==============//
 
 // imports 
-import { useState} from 'react'  
-import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
+import { useState, useEffect} from 'react'  
+import { useAuthenticationContext } from '../hooks/useAuthenticationContext' 
 import { useUpdateInfo } from '../hooks/useUpdateInfo' 
 import { useChangePassword } from '../hooks/useChangePassword'
-import { useUpdateSkills } from '../hooks/useUpdateSkills'
+import { useUpdateSkills } from '../hooks/useUpdateSkills' 
 
 const Profile = () => { 
     // hooks
-    var { user } = useAuthenticationContext()  
+    var { user } = useAuthenticationContext()   
     const {updateInfo, isLoading, error} = useUpdateInfo()  
     const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
-    const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()
+    const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()  
 
-    // user's array of skills and competency levels (from database)
-    var userSkillsArr = user.skills
-    var tempUserSkillsArr = userSkillsArr // temporary since userSkillsArr will be modified
+    // user's array of skills
+    const [userObject, setUserObject] = useState(user)   
+    var userSkillsArr = user.skills;
+    const [tempUserSkillsArr, setTempUserSkills] = useState([]);
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
-    const [contact, setContact] = useState(''); 
+    const [contact, setContact] = useState(user.contact); 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
-    const [newArr, setCompetency] = useState(userSkillsArr);
+    const [finalSkillsArr, setCompetency] = useState([]);
 
     // default competency levels for all skills
     const competencyLevels = [
@@ -52,63 +53,83 @@ const Profile = () => {
         {skill: "Swift", label: "Swift"}
     ]
 
+    // toggle contact form
+    const showContactForm = () => {
+        setShowContactForm(!contactForm)
+    };
+
     // validate availSkillsArray: should only have skills that are not already in userSkillsArr
     const validateSkillsArray = () => {
-        var tempAvailSkillsArray = availSkillsArray
-        var tempUserSkillsArr = userSkillsArr
+        var tempAvailSkillsArray = availSkillsArray;
 
         for (var i = 0; i < tempUserSkillsArr.length; i++) {
             for (var j = 0; j < tempAvailSkillsArray.length; j++) {
                 if (tempUserSkillsArr[i].skill === tempAvailSkillsArray[j].skill) {
-                    tempAvailSkillsArray.splice(j, 1)
+                    tempAvailSkillsArray.splice(j, 1);
                 }
             }
         }
 
-        availSkillsArray = tempAvailSkillsArray 
+        availSkillsArray = JSON.parse(JSON.stringify(tempAvailSkillsArray));
+    }
+ 
+    // update skill competency 
+    const changeCompetency = index => (e) => {  
+        // let finalSkillsArr = [...tempUserSkillsArr]; // deep copy of finalSkillsArr
+        finalSkillsArr[index].competency = e.target.value; // replace e.target.value with competency level selected 
+
+        setCompetency(finalSkillsArr);
     }
 
-    // update skill competency 
-    const changeCompetency = index => (e) => { 
-        let newArr = [...userSkillsArr]; // copying userSkillsArr 
-        newArr[index].competency = e.target.value; // replace e.target.value with competency level selected
-
-        console.log(newArr);
-        setCompetency(newArr);
+    const cancelEditSkills = () => {
+        setCompetency(userSkillsArr);
+        setTempUserSkills(userSkillsArr); 
+        
+        setShowSkillsForm('showSkills');
     }
 
     // adding new skill
-    const addSkill = (e) => {
-        tempUserSkillsArr.push({skill: e.target.value, competency: "Beginner"});
-        setCompetency(tempUserSkillsArr);
-        
-        console.log("after adding skill: ", userSkillsArr);
-        updateSkills(user.email, tempUserSkillsArr);
+    const addSkill = (e) => { 
+        let temp = [...tempUserSkillsArr]; 
+        temp.push({skill: e.target.value, competency: "Beginner"}); 
+
+        setTempUserSkills(temp);
+        setCompetency(temp);  
     }
 
     // delete skill
-    const deleteSkill = (index) => {
-        tempUserSkillsArr.splice(index, 1);
-        setCompetency(tempUserSkillsArr); 
-
-        console.log("after deleting skill: ", userSkillsArr); 
-        updateSkills(user.email, tempUserSkillsArr);
+    const deleteSkill = (index) => { 
+        let temp = [...tempUserSkillsArr]; 
+        temp.splice(index, 1);  
+ 
+        setTempUserSkills([...temp]);
+        setCompetency(tempUserSkillsArr);   
+        
+        // console.log("deleteSkill - temp: ", temp);
+        // console.log("deleteSkill - tempUserSkillsArr: ", tempUserSkillsArr);
+        // console.log("deleteSkill - finalSkillsArr: ", finalSkillsArr); 
     }
      
     // Submit edited contact info
     const handleSubmitContactInfo = async(e) => {
         e.preventDefault();
 
-        setSelectedInfo('showUser')
-        await updateInfo(user.email, contact);
+        setSelectedInfo('showUser');
+        setContact(await updateInfo(user.email, contact));
     }
 
-    // Submit edit skills info
+    // Submit edited skills info
     const handleSubmitSkills = async(e) => {
-        e.preventDefault(); 
+        e.preventDefault();   
+        let userObj = await updateSkills(user.email, finalSkillsArr);  
+        
+        setUserObject(userObj); 
 
+        setTempUserSkills([...userObj.skills]); 
+
+        // console.log("handleSubmitSkills - userObj.skills: ", userObj.skills);
+        // console.log("handleSubmitSkills - tempUserSkillsArr: ", tempUserSkillsArr);
         setShowSkillsForm('showSkills');
-        await updateSkills(user.email, newArr);
     }
 
     // Submit new password
@@ -116,29 +137,32 @@ const Profile = () => {
         e.preventDefault(); 
  
         await changePassword(user.email, currentPassword, newPassword, confirmPassword);
-    }
+    } 
+ 
+    // skills section 
+    const showSkills = () => {     
+        userSkillsArr = userObject.skills; 
+        validateSkillsArray(); 
 
-    const showContactForm = () => {
-        setShowContactForm(!contactForm)
-    };
+        console.log("glob - tempUserSkillsArr: ", tempUserSkillsArr);
+        console.log("glob - finalSkillsArr: ", finalSkillsArr);
 
-    const showSkills = () => {  
-        validateSkillsArray();
-
-        const showAvailSkills = availSkillsArray.map((availSkill) => {
+        // select skills
+        var showAvailSkills = availSkillsArray.map((availSkill) => {
             return (
                 <option key={ availSkill.skill } value={ availSkill.skill }>{ availSkill.label }</option>
             )
         })
 
-        const showSkillRows = user.skills.map((s) => {
+        // show skills
+        var showSkillRows = userSkillsArr.map((s) => {
             return (
                 <p key={ s.skill }>{ s.skill }: { s.competency }</p>
             )
-        })
+        }) 
 
         // select competency levels for current skills
-        var editingSkills = userSkillsArr.map((datum, index) => {
+        var editingSkillsCompetency = finalSkillsArr.map((datum, index) => {
             var skill = datum.skill
             var competency = datum.competency
 
@@ -162,13 +186,19 @@ const Profile = () => {
                         <option value={competencyLevels[1].value}>{competencyLevels[1].label}</option>
                         <option value={competencyLevels[2].value}>{competencyLevels[2].label}</option>
                     </select>
-
-                    <span className="material-symbols-outlined" onClick={() => deleteSkill(index)} style={{marginLeft:"20px", marginTop:"20px"}}>delete</span> 
+                    <span className="material-symbols-outlined" onClick={() => deleteSkill(index)} style={{marginLeft:"20px"}}>delete</span> 
                  </p>
             )
         })
 
         switch (skillsForm) {
+            case 'showSkills': // show skills
+                return (
+                    <div>
+                        { showSkillRows }
+                    </div>
+                ) 
+
             case 'editSkills': // editing skill competency
                 return (
                     <div>  
@@ -180,12 +210,12 @@ const Profile = () => {
                                 </select>
                             </div>
                             <hr></hr>
-                            <h3>Edit Skill Competency</h3>
+                            <h3>Edit Skills Competency</h3>
 
-                            {editingSkills}
+                            {editingSkillsCompetency}
 
                             <br></br>
-                            <button className="cancelBtn" onClick={() => setShowSkillsForm('showSkills')} style={{float:"left"}}>Cancel</button>
+                            <button className="cancelBtn" style={{float:"left"}} onClick={() => cancelEditSkills()}>Cancel</button>
                             <button className="submitBtn" disabled={ updateSkillsIsLoading } onClick={handleSubmitSkills}>Submit</button>
                             {updateSkillsError && <p>{updateSkillsError}</p>}
                         </form>
@@ -280,7 +310,7 @@ const Profile = () => {
              
             // DEFAULT: DISPLAY USER INFORMATION
             case 'showUser':
-            default:
+            default: 
                 return (
                     <div className="user-profile"> 
                         <h2> User Information </h2>
@@ -300,8 +330,7 @@ const Profile = () => {
             
                         <hr/>
             
-                        <h4> Contact Info</h4>
-                        { user && <p style={{display:'inline'}}> { user.contact }</p>} 
+                        <h4> Contact Info</h4>  <p style={{display:'inline'}}> { contact }</p>
                         <button className="editContactBtn" onClick={showContactForm}>Edit</button>
 
                         { contactForm && (
@@ -322,9 +351,9 @@ const Profile = () => {
         <div className="home">  
             {infoPanel()}
 
-            { showSelectedInfo()}  
+            {showSelectedInfo()}  
         </div>
     )
 }
 
-export default Profile
+export default Profile 
