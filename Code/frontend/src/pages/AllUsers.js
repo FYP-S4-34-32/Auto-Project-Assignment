@@ -6,6 +6,7 @@
 // ========================================================
 
 import { useState, useEffect} from 'react'  
+import SearchBar from '../components/SearchBar'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser'
@@ -15,6 +16,8 @@ const AllUsers = () => {
     var projectAdminsArray = []
     var superAdminsArray = []
     var employeesArray = []
+
+    const [searchInput, setSearchInput] = useState("");
     
     const { user } = useAuthenticationContext() // get the user object from the context 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
@@ -54,6 +57,11 @@ const AllUsers = () => {
         console.log("deleteUser: ", allUsersArray[index].email)
         updateUsers(allUsersArray[index].email)
     }
+    
+    const handleChange = (e) => {
+        e.preventDefault();
+        setSearchInput(e.target.value);
+    };
  
     
     const showAllUsers = allUsers.map((user) => {
@@ -118,7 +126,7 @@ const AllUsers = () => {
         var user = datum
         
         return (
-            <div className="user-div" key={user._id} style={{height:"200px"}}>
+            <div className="user-div" key={user._id} style={{height:"240px"}}>
                 <h3>{user.name}</h3>
                 <p> Organisation: {user.organisation_id}</p>
                 <p>Email: {user.email}</p>
@@ -191,6 +199,7 @@ const AllUsers = () => {
         <div>
             {showUsersPanel(user)}
             <div className="allUsers-div">
+                <SearchBar />
                 {showSelectedUsers()}
                 {deleteUserError && <p>Error: {deleteUserError}</p>}
             </div>

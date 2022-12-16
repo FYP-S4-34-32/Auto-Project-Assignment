@@ -32,6 +32,25 @@ header a {
   margin: 0 auto;
 }
 
+.search {
+  width: 600px; 
+  height: 80px;
+  align-self: center;
+}
+
+.search input {
+  width: 520px;
+  height: 40px;
+  float: left;
+  border-radius: 4px;
+}
+
+.search button {
+  margin-top: 10px;
+  font-size: small;
+  float: right;
+}
+
 /* homepage */
 .home, .createproject {
   display: grid;
@@ -91,7 +110,6 @@ header a {
   font-family: "Poppins";
   border-radius: 4px;
   cursor: pointer; 
-  
 }
 
 .user-profile h2, h4, p, hr{
