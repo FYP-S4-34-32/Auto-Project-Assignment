@@ -33,7 +33,7 @@ const Organisations = () => {
         if (user && user.role === "Super Admin") {
             fetchOrganisations()
         }
-    }, [dispatch, user, organisations])
+    }, [dispatch, user])
 
     // return a template
     return ( 

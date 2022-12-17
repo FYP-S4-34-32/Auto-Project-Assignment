@@ -66,9 +66,9 @@ const OrganisationDetails = () => {
             { organisation && (
                 <article>
                     <h2>{ organisation.name }</h2>
-                    <p>Created { formatDistanceToNow(new Date(organisation.createdAt), { addSuffix: true }) } by { organisation.created_by }</p>
+                    <p>Created { formatDistanceToNow(new Date(organisation.createdAt), { addSuffix: true }) }</p>
                     <div>
-                        <p><strong>Project Description: </strong></p>
+                        <p><strong>Organisation Description: </strong></p>
                         <p>{ organisation.detail }</p>
                     </div>
                     { user.role === 'Super Admin' && <button onClick={ handleClick }>Delete</button> }

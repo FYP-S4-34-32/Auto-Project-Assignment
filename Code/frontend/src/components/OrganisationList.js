@@ -25,7 +25,7 @@ const OrganisationList = ({ organisation }) => {
                 {/*<p><strong>Skills needed: </strong>{ project.skills.map(s => s.skill).join(', ') }</p> */}
                 {/* user.role === 'Admin' && <p><strong>Threshold: </strong>{ project.threshold }</p> } { only display threshold for Admins */}
                 <p><strong>Organisation Code: </strong>{ organisation.code }</p>
-                <p>Created { formatDistanceToNow(new Date(organisation.createdAt), { addSuffix: true }) } by { organisation.created_by }</p>
+                <p>Created { formatDistanceToNow(new Date(organisation.createdAt), { addSuffix: true }) }</p>
             </Link>
         </div>
     )
