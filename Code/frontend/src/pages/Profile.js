@@ -269,9 +269,8 @@ const Profile = () => {
             )
             case "Super Admin":
                 return (
-                    <div className="profile-panel" style={{height:'150px'}}>
-                        <button onClick={() => setSelectedInfo('showUser')} > User Information </button>
-                        <button onClick={() => setSelectedInfo('showOrganisation')} > Organisation </button>
+                    <div className="profile-panel" style={{height:'100px'}}>
+                        <button onClick={() => setSelectedInfo('showUser')} > User Information </button> 
                         <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
                     </div>
             )
