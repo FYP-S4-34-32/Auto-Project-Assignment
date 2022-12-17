@@ -242,6 +242,7 @@ const Profile = () => {
                 return (
                     <div>
                         { showSkillRows }
+                        <button className="editSkillsBtn" onClick={() => editSkills()}>Edit Skills</button>
                     </div>
                 )
         }
