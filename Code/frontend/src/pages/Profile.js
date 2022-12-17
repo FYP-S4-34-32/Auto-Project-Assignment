@@ -26,9 +26,7 @@ const Profile = () => {
     useEffect(() => {
         fetchProfile(user.email);  
         setUserObject(profile);
-    }, [])  
-
-    console.log("FETCHED profile: ", profile)
+    }, [])   
 
     // other variables
     const [selectedInfo, setSelectedInfo] = useState(''); 
@@ -38,11 +36,7 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
-    const [finalSkillsArr, setCompetency] = useState(tempUserSkillsArr);
-
-    console.log("userObject: ", userObject)
-    console.log("finalSkillsArr: ", finalSkillsArr)
-    console.log("tempUserSkillsArr: ", tempUserSkillsArr)
+    const [finalSkillsArr, setCompetency] = useState(tempUserSkillsArr); 
     
     // DEFAULT competency levels for all skills
     const competencyLevels = [
@@ -101,9 +95,7 @@ const Profile = () => {
         temp[index].competency = e.target.value; // replace e.target.value with competency level selected 
 
         setTempUserSkills([...temp]);
-        setCompetency(temp); 
-        console.log("(set Competency) finalSkillsArr: ", finalSkillsArr);
-        console.log("(set Competency) tempUserSkillsArr: ", tempUserSkillsArr);
+        setCompetency(temp);  
     }
 
     // CANCEL EDIT SKILLS
@@ -145,13 +137,13 @@ const Profile = () => {
     const handleSubmitSkills = async(e) => {
         e.preventDefault();   
         
-        let userObj = await updateSkills(user.email, finalSkillsArr);    
-        fetchProfile(user.email);
-        console.log("(handleSubmitSkills) fetched profile: ", profile);
-        console.log("(handleSubmitSkills) userObj.skills: ", userObj.skills); 
+        let userObj = await updateSkills(user.email, finalSkillsArr);  // to update user's skills
+        fetchProfile(user.email);  // to fetch user's profile since it was updated
+        
         setUserObject(userObj);
         setCompetency([...userObj.skills]);
         setTempUserSkills([...userObj.skills]);  
+
         setShowSkillsForm('showSkills');
     }
 
@@ -168,9 +160,7 @@ const Profile = () => {
 
     // to render skills section 
     const showSkills = () => {  
-        validateSkillsArray();   
-        console.log("userObject.skills: ", userObject.skills);
-        console.log("profile.skills: ", profile.skills);
+        validateSkillsArray();    
  
         // select skills
         var showAvailSkills = availSkillsArray.map((availSkill) => {
