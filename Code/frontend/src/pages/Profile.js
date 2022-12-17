@@ -19,7 +19,7 @@ const Profile = () => {
     // user's array of skills
     const [userObject, setUserObject] = useState(user)   
     var userSkillsArr = user.skills;
-    const [tempUserSkillsArr, setTempUserSkills] = useState([]);
+    const [tempUserSkillsArr, setTempUserSkills] = useState(userSkillsArr);
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
@@ -28,8 +28,8 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
-    const [finalSkillsArr, setCompetency] = useState([]);
-
+    const [finalSkillsArr, setCompetency] = useState(tempUserSkillsArr);
+    
     // default competency levels for all skills
     const competencyLevels = [
         {value : "Beginner", label : "Beginner"}, 
@@ -199,7 +199,7 @@ const Profile = () => {
                     </div>
                 ) 
 
-            case 'editSkills': // editing skill competency
+            case 'editSkills': // editing skill competency 
                 return (
                     <div>  
                         <form className='editSkillsForm'>
