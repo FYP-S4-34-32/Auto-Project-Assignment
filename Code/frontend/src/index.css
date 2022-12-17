@@ -4,7 +4,7 @@
 /* layout */
 :root {
   --primary: #1aac83;
-  --error: #e7195a;
+  --error: #e7195a; 
 }
 body {
   background: #f1f1f1;
@@ -29,27 +29,43 @@ header a {
 .pages{
   max-width: 1400px;
   padding: 20px;
-  margin: 0 auto;
+  margin: 0 auto; 
 }
 
-.search {
-  width: 600px; 
-  height: 80px;
-  align-self: center;
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
 
-.search input {
-  width: 520px;
+#deleteButton {
+  font-size: 30px; 
+  stroke-width: 22;
+}
+
+/* search bar */ 
+.search-input {
+  background-color: white;
+  width: 80%;
   height: 40px;
-  float: left;
-  border-radius: 4px;
+  margin-top: 0%;   
+  font-size: 15px;
+  border: 0px;
+  outline: 0; 
+  width: 100%; 
+  padding: 0 1.6rem; 
+  appearance: none; 
+  transition: all .7rem .7rem;
+  transition-property: width, border-radius;
+  z-index: 1;
+  position: relative;
+} 
+
+.search-input:not(:placeholder-shown) {
+  border-radius: .7rem .7rem .7rem .7rem; 
 }
 
-.search button {
-  margin-top: 10px;
-  font-size: small;
-  float: right;
-}
+.search-input:focus {
+  outline: none; 
+} 
 
 /* homepage */
 .home, .createproject {
@@ -86,19 +102,20 @@ header a {
   color: #333;
 }
 
-/* user profile page */
-.user-profile{ /* div */
+/* user profile page */ 
+
+.user-profile { /* div on the right*/
   background: #fff;
   border-radius: 4px; 
-  margin-right: 120px; 
-  margin-top: 40px;
-  margin-left: auto;
-  padding: 20px; 
-  align-self: left;
-  text-align: auto;
+  margin-right: 5%; 
+  margin-top: 3%;
+  margin-left: 0%;
+  padding: 20px;  
+  text-align: auto; 
+  float: right;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
   height: 800px;
-  width: 800px;  
+  width: 58%;  
 }
 
 .cancelBtn, .editContactBtn, .editSkillsBtn {
@@ -120,17 +137,19 @@ hr {
   border-top: 1px solid rgb(213, 212, 212);  
 }
 
-.profile-panel {
+.profile-panel, .selection-panel {
   background: #fff;
   border-radius: 4px;  
-  margin-top: 40px;
-  margin-left: 80px;
+  margin-top: 3%; 
+  margin-left: 5%;
   padding: 30px;  
   align-items: center;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-  height: 200px;
+  height: 250px;
   width: 200px;  
   grid-template-rows: auto;
+  float: left;
+  align-self: left;
 } 
 
 .profile-panel button { 
@@ -161,7 +180,7 @@ hr {
 .changePwdForm {   
   margin-left: 30px;
   margin-right: 30px;
-  width: 730px;   
+  width: 95%;   
   height: 450px;
   box-sizing: border-box;
 }
@@ -205,25 +224,10 @@ input::placeholder {
 
 }
 
-/* All Users Page */
-
-.selection-panel {
-  background: #fff;
-  border-radius: 4px;  
-  margin-top: 49px;
-  margin-left: 80px;
-  padding: 30px;  
-  align-items: center;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-  height: 250px;
-  width: 200px;  
-  grid-template-rows: auto;
-  float: left;
-}
+/* All Users Page */ 
 
 .selection-panel button {
-  margin: 12px;
-  margin-right: 0px;
+  margin: 6%; 
   align-items: center;
   border: none;
   background: none;
@@ -231,22 +235,20 @@ input::placeholder {
   font: inherit;
 }
 
-.allUsers-div { 
-  border-radius: 4px; 
-  margin-right: 80px; 
-  margin-top: 30px;
-  margin-left: auto;
-  padding: 30px;  
-  text-align: auto;  
-  width: 900px;  
+.all-users {  
+  display: grid;
+  margin-right: 5%; 
+  margin-top: 3%;
+  margin-left: 0%;   
+  width: 58%;  
   height: max-content; 
-  align-self: right;
+  float: right; 
 }
 
-.user-div {
-  height: 200px; 
+.user-div { 
   background-color: white;
   border-radius: 4px;
+  width: 100%;  
 }
 
 .user-div h3 { 

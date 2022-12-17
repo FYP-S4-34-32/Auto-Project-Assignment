@@ -126,7 +126,12 @@ const AllUsers = () => {
     const searchResults = searchUser();
     // console.log("searchResults: ", searchResults);  
 
-    const renderSearchResults = searchResults.map((datum, index) => {
+    const submitSearch = () => {
+        console.log("searching...");
+        // searchUser();
+    }
+
+    const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
             case "manageUsers": 
                 var user = datum; 
@@ -137,7 +142,7 @@ const AllUsers = () => {
                         <p>Email: {user.email}</p>
                         <p>Role: {user.role}</p>
                         <p>Contact Info: {user.contact}</p>
-                        <span className="material-symbols-outlined" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                        <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
                     </div>
                 ) 
             case "manageEmployees":
@@ -149,14 +154,14 @@ const AllUsers = () => {
                         <p>Email: {user.email}</p>
                         <p>Role: {user.role}</p>
                         <p>Contact Info: {user.contact}</p>
-                        <span className="material-symbols-outlined" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                        <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
                     </div>
                 )
 
             default:
                 var user = datum;
                 return (
-                     <div className="user-div" key={user._id} style={{height:"200px"}}>
+                     <div className="user-div" key={user._id} style={{height:"210px"}}>
                         <h3>{user.name}</h3> 
                         <p>Organisation: {user.organisation_id}</p>
                         <p>Email: {user.email}</p>
@@ -189,20 +194,18 @@ const AllUsers = () => {
                 )
         }
     }
-
-    // redender page
+ 
     return (
         <div>
             {showUsersPanel(user)}
-            <div className="allUsers-div"> 
-                <form className="search" onSubmit={() => searchUser}>
-                    <input type="text" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />
-                    {/* <button type="submit">Search</button> */}
-                </form> 
+            <div className="all-users">
+                <div>  
+                    <input className="search-input" type="search" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />  
+                    
+                    {renderSearchResults}
 
-                {renderSearchResults}
-
-                {deleteUserError && <p>Error: {deleteUserError}</p>}
+                    {deleteUserError && <p>Error: {deleteUserError}</p>}
+                </div>
             </div>
         </div>
     )
