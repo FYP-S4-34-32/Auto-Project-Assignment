@@ -5,8 +5,7 @@
 // both superadmin and project admin: can edit USER CONTACT INFO, can delete EMPLOYEE accounts
 // ========================================================
 
-import { useState, useEffect} from 'react'  
-import SearchBar from '../components/SearchBar'
+import { useState, useEffect} from 'react'   
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser'
@@ -15,14 +14,13 @@ const AllUsers = () => {
     var allUsersArray = []
     var projectAdminsArray = []
     var superAdminsArray = []
-    var employeesArray = []
-
-    const [searchInput, setSearchInput] = useState("");
+    var employeesArray = [] 
     
     const { user } = useAuthenticationContext() // get the user object from the context 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
     const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
-    const [selectedUsers, setSelectedUsers] = useState('')
+    const [selectedUsers, setSelectedUsers] = useState("")
+    const [searchUsers, setSearch] = useState("") 
     
     // const handleGetAllUsers = async () => {
         
@@ -51,127 +49,129 @@ const AllUsers = () => {
     useEffect(() => {
         getAllUsers();
     }, [])
-    
 
+    // delete a user from the database
     const deleteUser = (index) => { 
         console.log("deleteUser: ", allUsersArray[index].email)
         updateUsers(allUsersArray[index].email)
-    }
+    } 
     
-    const handleChange = (e) => {
-        e.preventDefault();
-        setSearchInput(e.target.value);
-    };
- 
-    
-    const showAllUsers = allUsers.map((user) => {
-        return (
-            <div className="user-div" key={user._id}> 
-                <h3>{user.name}</h3>
-                <p> Organisation: {user.organisation_id}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <p>Contact Info: {user.contact}</p> 
-            </div>
-        )
-    })
+    // search for users
+    const searchUser = () => {  
 
-    const showProjectAdmins = projectAdminsArray.map((user) => {
-        return (
-            <div className="user-div" key={user._id}>
-                <h3>{user.name}</h3>
-                <p> Organisation: {user.organisation_id}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <p>Contact Info: {user.contact}</p>
-            </div>
-        )
-    })
+        console.log("selectedUsers: ", selectedUsers)
+        console.log("searchUsers: ", searchUsers)
 
-    const showSuperAdmins = superAdminsArray.map((user) => {
-        return (
-            <div className="user-div" key={user._id}>
-                <h3>{user.name}</h3>
-                <p> Organisation: {user.organisation_id}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <p>Contact Info: {user.contact}</p>
-            </div>
-        )
-    }) 
-             
+        // super admin
+        if (user.role === "Super Admin") {
+            if (selectedUsers === "allUsers" || selectedUsers === "manageUsers" || selectedUsers === " " || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) { 
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                    return allUsersArray;
+                } 
 
-    const showEmployees = employeesArray.map((user) => {
+                return allUsersArray.filter((user) => {  
+                    return (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) || (user.role).toLowerCase().includes(searchUsers.toLowerCase());
+                });
+            }
 
-        const showSkills = () => {
-            user.skills.map((s) => {
-                return ( 
-                    <p key={ s.skill }>{s.skill}</p> 
-                )
-            })
-        } 
+            if (selectedUsers === "projectAdmins") {
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                    return projectAdminsArray;
+                }
 
-        return (
-            <div className="user-div" key={user._id}>
-                <h3>{user.name}</h3>
-                <p> Organisation: {user.organisation_id}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <p>Contact Info: {user.contact}</p> 
-            </div>
-        )
-    })
+                return projectAdminsArray.filter((user) => {
+                    return (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) || (user.role).toLowerCase().includes(searchUsers.toLowerCase());
+                })
+            }
 
-    const manageUsers = allUsersArray.map((datum, index) => {
-        var user = datum
-        
-        return (
-            <div className="user-div" key={user._id} style={{height:"240px"}}>
-                <h3>{user.name}</h3>
-                <p> Organisation: {user.organisation_id}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <p>Contact Info: {user.contact}</p>
-                <span className="material-symbols-outlined" onClick={() => deleteUser(index)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span> 
+            if (selectedUsers === "superAdmins") {
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                    return superAdminsArray;
+                }
                 
-            </div>
-        )
-    })
+                return superAdminsArray.filter((user) => {
+                    return (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) || (user.role).toLowerCase().includes(searchUsers.toLowerCase());
+                })
+            }
 
-    const manageEmployees = allUsersArray.map((datum, index) => {
-        if (datum.role === "Employee") {
-            var employee = datum
-
-            return (
-                <div className="user-div" key={employee._id} style={{height:"200px"}}>
-                    <h3>{employee.name}</h3>
-                    <p>Email: {employee.email}</p>
-                    <p>Role: {employee.role}</p>
-                    <p>Contact Info: {employee.contact}</p>
-                    <span className="material-symbols-outlined" onClick={() => deleteUser(index)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                </div>
-            )
+            if (selectedUsers === "employees") {
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                    return employeesArray;
+                }
+                
+                return employeesArray.filter((user) => {
+                    return (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) || (user.role).toLowerCase().includes(searchUsers.toLowerCase());
+                })
+            }
         }
-    })
 
-    const showSelectedUsers = () => {
+        // project admins
+        if (user.role === "Admin") { 
+            if (selectedUsers === "employees" || selectedUsers === "manageEmployees" ||  selectedUsers === " " || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) {
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                    return employeesArray;
+                }
+
+                return employeesArray.filter((employee) => {
+                    if (employee.organisation_id === user.organisation_id) {
+                        return employee.name.toLowerCase().includes(searchUsers.toLowerCase());
+                    }
+                })
+            } 
+
+        }
+    }
+
+    const searchResults = searchUser();
+    console.log("searchResults: ", searchResults);  
+
+    const renderSearchResults = searchResults.map((datum, index) => {
         switch (selectedUsers) {
-            case "allUsers":
-                return showAllUsers
-            case "projectAdmins":
-                return showProjectAdmins
-            case "superAdmins":
-                return showSuperAdmins
-            case "employees":
-                return showEmployees
-            case "manageUsers":
-                return manageUsers
-            case "manageEmployees":
-                return manageEmployees
-            default:
-                return showAllUsers
-    }}
+            case "manageUsers": 
+                var user = datum
 
+                return (
+                    <div className="user-div" key={user._id} style={{height:"250px"}}>
+                        <h3>{user.name}</h3>
+                        <p>Organisation: {user.organisation_id}</p>
+                        <p>Email: {user.email}</p>
+                        <p>Role: {user.role}</p>
+                        <p>Contact Info: {user.contact}</p>
+                        <span className="material-symbols-outlined" onClick={() => deleteUser(index)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                    </div>
+                ) 
+            case "manageEmployees":
+                var user = datum
+
+                return ( 
+                    <div className="user-div" key={user._id} style={{height:"250px"}}>
+                        <h3>{user.name}</h3>
+                        <p>Organisation: {user.organisation_id}</p>
+                        <p>Email: {user.email}</p>
+                        <p>Role: {user.role}</p>
+                        <p>Contact Info: {user.contact}</p>
+                        <span className="material-symbols-outlined" onClick={() => deleteUser(index)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                    </div>
+                )
+
+            default:
+                var user = datum
+                return (
+                     <div className="user-div" key={user._id} style={{height:"200px"}}>
+                        <h3>{user.name}</h3>
+                        <p>Organisation: {user.organisation_id}</p>
+                        <p>Email: {user.email}</p>
+                        <p>Role: {user.role}</p>
+                        <p>Contact Info: {user.contact}</p>
+                    </div> 
+                ) 
+
+        }
+    
+            
+    });
+
+    // panel that shows the types of users
     const showUsersPanel = (user) => {
         switch (user.role) {
             case "Super Admin":
@@ -198,9 +198,14 @@ const AllUsers = () => {
     return (
         <div>
             {showUsersPanel(user)}
-            <div className="allUsers-div">
-                <SearchBar />
-                {showSelectedUsers()}
+            <div className="allUsers-div"> 
+                <form className="search" onSubmit={() => searchUser}>
+                    <input type="text" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />
+                    {/* <button type="submit">Search</button> */}
+                </form> 
+
+                {renderSearchResults}
+
                 {deleteUserError && <p>Error: {deleteUserError}</p>}
             </div>
         </div>
