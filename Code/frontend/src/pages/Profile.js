@@ -211,6 +211,7 @@ const Profile = () => {
                 return (
                     <div>
                         { showSkillRows }
+                        <button className="editSkillsBtn" onClick={() => editSkills()}>Edit Skills</button>
                     </div>
                 ) 
 
@@ -252,7 +253,7 @@ const Profile = () => {
         switch(user.role) {
             case "Employee":
                 return (
-                    <div className="profile-panel"> 
+                    <div className="profile-panel" style={{height: '200px'}}> 
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
                         <button onClick={() => setSelectedInfo('showSkills')}> Skills </button>  
@@ -294,7 +295,7 @@ const Profile = () => {
             case 'showSkills':    
                 return (
                     <div className="user-profile">
-                        <button className="editSkillsBtn" onClick={() => editSkills()}>Edit Skills</button>
+                        
                         <h2> Skills </h2>  
                         {showSkills()}
                     </div> 
@@ -362,10 +363,9 @@ const Profile = () => {
                 )
         }
     }
-
-    // RENDER
+ 
     return (
-        <div className="home">  
+        <div>  
             {infoPanel()}
 
             {showSelectedInfo()}  
