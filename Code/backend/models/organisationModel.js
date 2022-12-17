@@ -19,6 +19,10 @@ const organisationSchema = new Schema({
     code: { // some identifier to be assigned to employees 
         type: String,
         default: ""
+    },
+    detail: {
+        type: String,
+        required: true //summary of organisation, compulsory property i.e. cannot be null
     }
 }, {timestamps: true}); // datetime created and updated
 

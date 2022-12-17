@@ -18,6 +18,8 @@ import AllUsers from './pages/AllUsers';
 import ProjectDetails from './components/ProjectDetails';
 import AssignedProjects from './pages/AssignedProjects';
 import SelectPreference from './pages/SelectPreference';
+import Organisations from './pages/Organisations';
+import OrganisationDetails from './components/OrganisationDetails';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -30,11 +32,11 @@ function App() {
           <Routes>
             <Route 
               path = "/" // home page
-              element = { user ? <Navigate to="/projects" /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
+              element = { (user && user.role === "Super Admin") ? <Navigate to="/organisations" /> : (user && user.role === "Admin") || (user && user.role === "Employee") ? <Navigate to="/projects" /> :<Navigate to="/login" /> } // Projects page if user is employee or project admin, organisations page if user is super admin, Login page if there is no user
             />  
             <Route 
               path = "/login" // login page
-              element = { !user ? <Login /> : <Navigate to="/projects" /> } // Projects page if there is a user, Login page if there is no user
+              element = { !user ? <Login /> : (user && user.role === "Super Admin") ? <Navigate to="/organisations" /> : <Navigate to="/projects" /> } // Projects page if there is a user, Login page if there is no user
             />
             <Route 
               path = "/signup" // signup page
@@ -50,7 +52,15 @@ function App() {
             />
             <Route
               path = "/projects" // projects page
-              element = { user ? <Projects /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
+              element = { (user && user.role === "Admin") || (user && user.role === "Employee") ? <Projects /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
+            />
+            <Route
+              path = "/organisations" // organisations page
+              element = { (user && user.role === "Super Admin") ? <Organisations /> : <Navigate to="/login" /> } // Organisations page if user is super admin, Login page if there is no user
+            />
+            <Route 
+                path = "/organisations/:id" // single organisation page
+                element = { (user && user.role === "Super Admin") ? <OrganisationDetails /> : <Navigate to="/login" /> } // OrganisationDetails page if user is super admin, Login page if user is not super admin
             />
             <Route 
                 path = "/projects/:id" // single project page
