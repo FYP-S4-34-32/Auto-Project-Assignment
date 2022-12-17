@@ -18,7 +18,7 @@ export const useSignup = () => {
         const response = await fetch('/api/user/signup', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'}, // type of the data
-            body: JSON.stringify({name, email, password, role}) // sends {name,email, password, role} as the request body
+            body: JSON.stringify({name, email, password, confirmPassword, role}) // sends {name,email, password, role} as the request body
         })
 
         const json = await response.json() // the return value we get back from the userController.js signup function {email, token, role}
