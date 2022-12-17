@@ -30,7 +30,7 @@ router.post('/signup', signupUser)
 router.get('/allprofile', getAllUserInfo)
 
 // GET user info @ /api/user/profile
-router.get('/profile', getUserInfo)
+router.post('/profile', getUserInfo)
 
 // UPDATE user info @ /api/user/updateInfo
 router.post('/updateInfo', updateUserInfo)

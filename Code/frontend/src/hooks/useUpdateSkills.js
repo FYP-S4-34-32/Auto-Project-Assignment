@@ -9,8 +9,7 @@ export const useUpdateSkills = () => {
     const [updateSkillsError, setError] = useState(null)
     const [updateSkillsIsLoading, setIsLoading] = useState(null)  
 
-    const updateSkills = async (email, skills) => { 
-        console.log(JSON.stringify({email, skills}))
+    const updateSkills = async (email, skills) => {  
 
         setIsLoading(true)  
         setError(null) 
@@ -21,8 +20,7 @@ export const useUpdateSkills = () => {
             body: JSON.stringify({email, skills})
         })
 
-        const json = await response.json() 
-        console.log("json.user.skills : ", json.user.skills)
+        const json = await response.json()  
 
         if (!response.ok) {
             setIsLoading(false)
@@ -30,9 +28,7 @@ export const useUpdateSkills = () => {
         }
 
         if(response.ok) { 
-            setIsLoading(false)
-            // setUserSkills(json.user.skills) 
-            // console.log("updated user skills arr: ", userSkills)
+            setIsLoading(false) 
         }
         
         return json.user

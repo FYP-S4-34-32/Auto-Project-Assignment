@@ -5,39 +5,53 @@
 // imports 
 import { useState, useEffect} from 'react'  
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext' 
+import { useFetchProfile } from '../hooks/useFetchProfile'
 import { useUpdateInfo } from '../hooks/useUpdateInfo' 
 import { useChangePassword } from '../hooks/useChangePassword'
-import { useUpdateSkills } from '../hooks/useUpdateSkills' 
+import { useUpdateSkills } from '../hooks/useUpdateSkills'  
 
 const Profile = () => { 
     // hooks
-    var { user } = useAuthenticationContext()   
+    const { user } = useAuthenticationContext()    
+    const { fetchProfile, fetchProfileIsLoading, fetchProfileError, profile } = useFetchProfile() // fetch user's profile info 
     const {updateInfo, isLoading, error} = useUpdateInfo()  
     const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
     const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()  
-
+    
     // user's array of skills
-    const [userObject, setUserObject] = useState(user)   
-    var userSkillsArr = user.skills;
-    const [tempUserSkillsArr, setTempUserSkills] = useState(userSkillsArr);
+    const [userObject, setUserObject] = useState(profile)     
+    const [tempUserSkillsArr, setTempUserSkills] = useState(userObject.skills);
 
+    // to fetch user's profile info upon page load and refresh
+    useEffect(() => {
+        fetchProfile(user.email);  
+        setUserObject(profile);
+    }, [])  
+
+    console.log("FETCHED profile: ", profile)
+
+    // other variables
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
-    const [contact, setContact] = useState(user.contact); 
+    const [contact, setContact] = useState(profile.contact); 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
     const [finalSkillsArr, setCompetency] = useState(tempUserSkillsArr);
+
+    console.log("userObject: ", userObject)
+    console.log("finalSkillsArr: ", finalSkillsArr)
+    console.log("tempUserSkillsArr: ", tempUserSkillsArr)
     
-    // default competency levels for all skills
+    // DEFAULT competency levels for all skills
     const competencyLevels = [
         {value : "Beginner", label : "Beginner"}, 
         {value : "Intermediate", label : "Intermediate"},
         {value : "Advanced", label : "Advanced"}
     ]
 
-    // default available skills, will change based on user's current skills (check validateSkillsArray function)
+    // DEFAULT available skills, will change based on user's current skills (check validateSkillsArray function)
     var availSkillsArray = [ 
         {skill: "0", label: "Select a skill"},
         {skill: "Java", label: "Java"},
@@ -53,9 +67,9 @@ const Profile = () => {
         {skill: "Swift", label: "Swift"}
     ]
 
-    // toggle contact form
+    // TOGGLE contact form
     const showContactForm = () => {
-        setShowContactForm(!contactForm)
+        setShowContactForm(!contactForm);
     };
 
     // validate availSkillsArray: should only have skills that are not already in userSkillsArr
@@ -72,33 +86,35 @@ const Profile = () => {
 
         availSkillsArray = JSON.parse(JSON.stringify(tempAvailSkillsArray));
     }
+
+    // EDIT SKILLS
+    const editSkills = () => {
+        setCompetency([...profile.skills]);
+        setTempUserSkills([...profile.skills]);  
+
+        setShowSkillsForm('editSkills');
+    }
  
-    // update skill competency 
+    // UPDATE SKILL COMPETENCY LEVEL
     const changeCompetency = index => (e) => {  
         let temp = JSON.parse(JSON.stringify(tempUserSkillsArr)); // deep copy of finalSkillsArr
         temp[index].competency = e.target.value; // replace e.target.value with competency level selected 
 
-        setCompetency(temp);
-
-        console.log("edit competency - userSkillsArr", userSkillsArr);
-        console.log("edit competency - user.skills", user.skills);
-        console.log("edit competency - userObject.skills: ", userObject.skills);
-        console.log("edit competency - tempUserSkillsArr: ", tempUserSkillsArr);
-        console.log("edit competency - finalSkillsArr: ", finalSkillsArr);
+        setTempUserSkills([...temp]);
+        setCompetency(temp); 
+        console.log("(set Competency) finalSkillsArr: ", finalSkillsArr);
+        console.log("(set Competency) tempUserSkillsArr: ", tempUserSkillsArr);
     }
 
+    // CANCEL EDIT SKILLS
     const cancelEditSkills = () => {
-        setCompetency([...userObject.skills]);
-        setTempUserSkills([...userObject.skills]); 
+        setCompetency([...profile.skills]);
+        setTempUserSkills([...profile.skills]);  
 
-        console.log("cancel - user skills arr: ", userSkillsArr);
-        console.log("cancel - user.skills: ", user.skills);
-        console.log("cancel - userObject.skills: ", userObject.skills);
-        
         setShowSkillsForm('showSkills');
     }
 
-    // adding new skill
+    // ADD A NEW SKILL
     const addSkill = (e) => { 
         let temp = [...tempUserSkillsArr]; 
         temp.push({skill: e.target.value, competency: "Beginner"}); 
@@ -107,7 +123,7 @@ const Profile = () => {
         setCompetency([...temp]);  
     }
 
-    // delete skill
+    // DELETE A SKILL
     const deleteSkill = (index) => { 
         let temp = [...tempUserSkillsArr]; 
         temp.splice(index, 1);  
@@ -116,37 +132,46 @@ const Profile = () => {
         setCompetency([...tempUserSkillsArr]);    
     }
      
-    // Submit edited contact info
+    // TO HANDLE SUBMITTING OF CONTACT INFO
     const handleSubmitContactInfo = async(e) => {
         e.preventDefault();
 
         setSelectedInfo('showUser');
+        showContactForm();
         setContact(await updateInfo(user.email, contact));
     }
 
-    // Submit edited skills info
+    // HANDLE SUBMITTING OF SKILLS 
     const handleSubmitSkills = async(e) => {
         e.preventDefault();   
         
-        let userObj = await updateSkills(user.email, finalSkillsArr);  
-        
-        setUserObject(userObj); 
+        let userObj = await updateSkills(user.email, finalSkillsArr);    
+        fetchProfile(user.email);
+        console.log("(handleSubmitSkills) fetched profile: ", profile);
+        console.log("(handleSubmitSkills) userObj.skills: ", userObj.skills); 
+        setUserObject(userObj);
+        setCompetency([...userObj.skills]);
         setTempUserSkills([...userObj.skills]);  
         setShowSkillsForm('showSkills');
     }
 
-    // Submit new password
+    // HANDLE CHANGING OF PASSWORD
     const handleSubmitPassword = async(e) => {
         e.preventDefault(); 
  
         await changePassword(user.email, currentPassword, newPassword, confirmPassword);
     } 
- 
-    // skills section 
-    const showSkills = () => {     
-        userSkillsArr = userObject.skills; 
-        validateSkillsArray();  
 
+    // ========================================================================================================
+    // PAGE CONTENT
+    // ========================================================================================================
+
+    // to render skills section 
+    const showSkills = () => {  
+        validateSkillsArray();   
+        console.log("userObject.skills: ", userObject.skills);
+        console.log("profile.skills: ", profile.skills);
+ 
         // select skills
         var showAvailSkills = availSkillsArray.map((availSkill) => {
             return (
@@ -154,8 +179,8 @@ const Profile = () => {
             )
         })
 
-        // show skills
-        var showSkillRows = userSkillsArr.map((s) => {
+        // show skills (current -> from profile.skills)
+        var showSkillRows = profile.skills.map((s) => {
             return (
                 <p key={ s.skill }>{ s.skill }: { s.competency }</p>
             )
@@ -163,20 +188,20 @@ const Profile = () => {
 
         // select competency levels for current skills
         var editingSkillsCompetency = finalSkillsArr.map((datum, index) => {
-            var skill = datum.skill
-            var competency = datum.competency
+            var skill = datum.skill;
+            var competency = datum.competency;
 
             if (competency === "Beginner") {
-                competency = competencyLevels[0].value
+                competency = competencyLevels[0].value;
             }
             else if (competency === "Intermediate") {
-                competency = competencyLevels[1].value
+                competency = competencyLevels[1].value;
             }
             else if (competency === "Advanced") {
-                competency = competencyLevels[2].value
+                competency = competencyLevels[2].value;
             }
             else {
-                competency = competencyLevels[0].value
+                competency = competencyLevels[0].value;
             }
 
             return (
@@ -265,7 +290,8 @@ const Profile = () => {
         }
     }
 
-    // RIGHT DIVIDER: SHOWS INFORMATION
+    // RIGHT DIVIDER: SHOWS USER INFORMATION
+    // where user can view and edit their information
     const showSelectedInfo = () => {
         switch(selectedInfo) {
             case 'showOrganisation':
@@ -279,7 +305,7 @@ const Profile = () => {
             case 'showSkills':    
                 return (
                     <div className="user-profile">
-                        <button className="editSkillsBtn" onClick={() => setShowSkillsForm('editSkills')}>Edit Skills</button>
+                        <button className="editSkillsBtn" onClick={() => editSkills()}>Edit Skills</button>
                         <h2> Skills </h2>  
                         {showSkills()}
                     </div> 
@@ -317,21 +343,21 @@ const Profile = () => {
                         <h2> User Information </h2>
             
                         <h4 > Full Name </h4>
-                        { user && <p> { user.name } </p>}  
+                        { user && <p> { profile.name } </p>}  
             
                         <hr/>
             
                         <h4 > Email </h4>
-                        { user && <p> { user.email } </p>}  
+                        { user && <p> { profile.email } </p>}  
             
                         <hr/>
             
                         <h4> Role </h4>
-                        { user && <p> { user.role } </p>}  
+                        { user && <p> { profile.role } </p>}  
             
                         <hr/>
             
-                        <h4> Contact Info</h4>  <p style={{display:'inline'}}> { contact }</p>
+                        <h4> Contact Info</h4> { profile && <p style={{display:'inline'}}> { profile.contact }</p> }
                         <button className="editContactBtn" onClick={showContactForm}>Edit</button>
 
                         { contactForm && (
@@ -348,6 +374,7 @@ const Profile = () => {
         }
     }
 
+    // RENDER
     return (
         <div className="home">  
             {infoPanel()}
