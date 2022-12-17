@@ -19,7 +19,7 @@ const Profile = () => {
     // user's array of skills
     const [userObject, setUserObject] = useState(user)   
     var userSkillsArr = user.skills;
-    const [tempUserSkillsArr, setTempUserSkills] = useState(userSkillsArr);
+    const [tempUserSkillsArr, setTempUserSkills] = useState([]);
 
     const [selectedInfo, setSelectedInfo] = useState(''); 
     const [contactForm, setShowContactForm] = useState(false);  
@@ -28,7 +28,7 @@ const Profile = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [skillsForm, setShowSkillsForm] = useState(false);
-    const [finalSkillsArr, setCompetency] = useState(tempUserSkillsArr);
+    const [finalSkillsArr, setCompetency] = useState([]);
     
     // default competency levels for all skills
     const competencyLevels = [
