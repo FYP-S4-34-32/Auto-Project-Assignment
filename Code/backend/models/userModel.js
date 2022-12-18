@@ -94,8 +94,7 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
         throw Error('Email is not valid')
     }
 
-    // Passwords do not match
-
+    // Passwords do not match 
     if (password !== confirmPassword) {
         throw Error('Passwords do not match')
     }
@@ -303,10 +302,22 @@ userSchema.statics.deleteUser = async function(email) {
         throw Error("No such user!")
     }
     
-    const deleteUser = await this.deleteOne({ email }) 
-    console.log("(userModel) deleted user: ", deleteUser)
+    const deleteUser = await this.deleteOne({ email })  
 
     return deleteUser
+}
+
+// static method to validate email
+userSchema.statics.validateEmail = async function(email) {
+    // search for user by email 
+    const user = await this.findOne({ email }) 
+
+    // check to see whether a user is found
+    if (!user) { 
+        throw Error("No such user")
+    } 
+ 
+    return "Please check email for password reset link." 
 }
 
 // static method to update project preference

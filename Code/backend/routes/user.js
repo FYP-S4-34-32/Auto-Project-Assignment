@@ -11,7 +11,7 @@ const express = require('express')
 |   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
-const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword, selectPreference } = require('../controllers/userController')
+const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword, selectPreference, validateEmail } = require('../controllers/userController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -25,6 +25,9 @@ router.post('/login', loginUser)
 
 // POST a new user @ /api/user/signup
 router.post('/signup', signupUser)
+
+// POST to validate email @ /api/user/validateEmail
+router.post('/validateEmail', validateEmail)
 
 // GET ALL user info @ /api/user/allprofile
 router.get('/allprofile', getAllUserInfo)

@@ -190,14 +190,28 @@ const changeUserPassword = async (req, res) => {
     }
 }
 
+const validateEmail = async (req, res) => {
+    const { email } = req.body
+
+    try {
+        // invoke validateEmail function in userModel.js
+        const response = await User.validateEmail(email)  
+
+        // return message (success, check email to reset password)
+        res.status(200).json({ response })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
 // DELETE a user
 const deleteUser = async (req, res) => {
     const { email } = req.body 
   
     try {
         // invoke deleteUser function in userModel.js
-        const deletedUser = await User.deleteUser(email) 
-        console.log("(userController) deletedUser: ", deletedUser)
+        const deletedUser = await User.deleteUser(email)  
 
         const users = await User.getAllUsers()
 
@@ -278,5 +292,6 @@ module.exports = {
     deleteUserSkill,
     changeUserPassword,
     deleteUser,
-    selectPreference
+    selectPreference,
+    validateEmail
 }

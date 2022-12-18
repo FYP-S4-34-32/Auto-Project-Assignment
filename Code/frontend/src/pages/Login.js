@@ -3,6 +3,7 @@
 //============//
 
 // imports
+import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useLogin } from '../hooks/useLogin'
 
@@ -44,6 +45,9 @@ const Login = () => {
             <button className="showPwBtn" type="button" onClick={showPassword}>Show Password</button>
 
             <button disabled={ isLoading } style={{float:"right"}}>Login</button> {/*prevent button from being clicked while page is loading*/}
+
+            <Link to="/forgotpassword">Forgot Password</Link> {/*link to register page*/}
+
             {error && <div className="error">{ error }</div>}
         </form>
     )

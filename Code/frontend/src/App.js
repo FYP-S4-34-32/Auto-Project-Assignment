@@ -20,6 +20,7 @@ import AssignedProjects from './pages/AssignedProjects';
 import SelectPreference from './pages/SelectPreference';
 import Organisations from './pages/Organisations';
 import OrganisationDetails from './components/OrganisationDetails';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -79,9 +80,14 @@ function App() {
               element = { (user && user.role === "Employee") ? <SelectPreference/> : <Navigate to="/login" /> }
             />
             <Route
+              path = "/forgotpassword" // reset password page
+              element = { <ForgotPassword /> }
+            />
+            <Route
               path = "*" // 404 page
               element = { <PageNotFound /> }
             /> 
+            
           </Routes>
         </div>
       </BrowserRouter>
