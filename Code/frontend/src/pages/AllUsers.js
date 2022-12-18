@@ -22,6 +22,10 @@ const AllUsers = () => {
     const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
     const [selectedUsers, setSelectedUsers] = useState("")
     const [searchUsers, setSearch] = useState("")  
+    
+    useEffect(() => {
+        getAllUsers();
+    }, [])
 
     const filterUsers = () => {
         allUsersArray = allUsers
@@ -49,10 +53,7 @@ const AllUsers = () => {
 
     filterUsers();
 
-    useEffect(() => {
-        getAllUsers();
-    }, [])
-
+    
     // delete a user from the database
     const deleteUser = (email) => { 
         console.log("to be deleted user's email: ", email)
@@ -126,11 +127,6 @@ const AllUsers = () => {
     const searchResults = searchUser();
     // console.log("searchResults: ", searchResults);  
 
-    const submitSearch = () => {
-        console.log("searching...");
-        // searchUser();
-    }
-
     const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
             case "manageUsers": 
@@ -201,7 +197,7 @@ const AllUsers = () => {
             <div className="all-users">
                 <div>  
                     <input className="search-input" type="search" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />  
-                    
+ 
                     {renderSearchResults}
 
                     {deleteUserError && <p>Error: {deleteUserError}</p>}
