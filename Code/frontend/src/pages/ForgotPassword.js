@@ -5,17 +5,31 @@
 // imports
 import { useState } from 'react' 
 import { useValidateEmail } from '../hooks/useValidateEmail'
+import emailjs from 'emailjs-com';
 
 const ForgotPassword = () => {
     const { validateEmail, invalidEmailError, isValidationLoading, message } = useValidateEmail()
-    const [email, setEmail] = useState('') 
-
+    const [email, setEmail] = useState('')   
+    
     const handleSubmit = async(e) => {  
         e.preventDefault();
         console.log(" tesing: ", email); 
 
         // invoke validateEmail from useValidateEmail.js 
         await validateEmail(email); 
+
+        // if email is valid, send email with password reset link
+        if (message === "Please check email for password reset link.") {
+
+            console.log("email is valid, sending email with password reset link");
+
+            emailjs.sendForm('reset_password_mail', 'template_5c8r2wm', e.target, 'lbG6Vv-BkaG5nzMQz')
+            .then(
+                result => console.log(result.text),
+                error => console.log(error.text)
+            );
+        }
+
     }
 
 
@@ -29,6 +43,7 @@ const ForgotPassword = () => {
                 <label>Email Address:</label>
                 <input
                     type="email"
+                    name="email"
                     onChange={(e) => {setEmail(e.target.value)}} // set email to the value of the target input field
                     value={email} // reflect change in email state
                 />
