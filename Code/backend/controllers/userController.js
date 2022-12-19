@@ -6,12 +6,18 @@
 const User = require('../models/userModel') // MongoDB model created in userModel.js in the models folder
 const mongoose = require('mongoose') // mongoose package for mongodb
 const jwt = require('jsonwebtoken') // jsonwebtoken package to help our backend and frontend to communicate with regards to authentication
+const nodemailer = require('nodemailer') // nodemailer package to send emails
 
 // to generate json web tokens - takes in the _id property of the user
 const createToken = (_id) => {
     // the sign function will take in a SECRET, which is a randomly generated password(by us)
     // to sign the token
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '1d'}) // token expires in 1 day
+}
+
+// generate json web token for resetting of password. Should expire in 30 MIN
+const createResetPasswordToken = (email) => {
+    return jwt.sign({email}, process.env.SECRET, { expiresIn: '30m'}) // token expires in 30 minutes
 }
     
 //================================================================================================================//
@@ -197,8 +203,49 @@ const validateEmail = async (req, res) => {
         // invoke validateEmail function in userModel.js
         const response = await User.validateEmail(email)  
 
-        // return message (success, check email to reset password)
-        res.status(200).json({ response })
+        // user exists, create a reset password token
+        const resetPwdToken = createResetPasswordToken(email) // sensitive! do not send this to the frontend
+
+        const emailMsg = "Hello, " + email + ".\n\nPlease use the following token to reset your password: \n\n" + resetPwdToken + "\n\nThis token will expire in 30 minutes.\n\nThank you.\n\nRegards,\nAutomatic Project Assignment"
+    
+        // save the token to the database
+        const updatedTokenRes = await User.updateResetPasswordToken(email, resetPwdToken)
+        
+        // send token to user's email
+        const client = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+                user: "yinli025@gmail.com", // gmail  
+                pass: "zedggheillupkpyg" // gmail acc's APP password for nodemailer
+            }
+        });
+        
+        client.sendMail(
+            {
+                from: "automatic-project-assignment",
+                to: email,
+                subject: "Reset Password Token",
+                text: emailMsg
+            }
+        )
+
+        res.status(200).json({ response })  
+        
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const { email, token, newPassword, confirmPassword } = req.body
+
+    try {
+        // invoke resetPassword function in userModel.js
+        const response = await User.resetPassword(email, token, newPassword, confirmPassword)  
+
+        res.status(200).json({ response })  
+        
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -293,5 +340,6 @@ module.exports = {
     changeUserPassword,
     deleteUser,
     selectPreference,
-    validateEmail
+    validateEmail,
+    resetPassword
 }

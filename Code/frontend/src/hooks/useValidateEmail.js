@@ -31,7 +31,7 @@ export const useValidateEmail = () => {
 
         if(response.ok) {
             setIsValidationLoading(false)  
-            setMessage(json.response)
+            setMessage(json.response) 
         }
     }
 

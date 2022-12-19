@@ -63,7 +63,12 @@ const userSchema = new Schema({
     project_assigned: [{ // the project assigned to the user
         type: String,
         default: ""
-    }]
+    }],
+
+    resetPasswordToken: {
+        type: String,
+        default: ""
+    } // token for password reset
     // MIGHT NEED TO INCLUDE A COUPLE MORE FIELDS TO TRACK PASSWORD CHANGE e.g. how many days till password has to be changed
 }, {timestamps: true}); // datetime created and updated
 
@@ -314,10 +319,70 @@ userSchema.statics.validateEmail = async function(email) {
 
     // check to see whether a user is found
     if (!user) { 
-        throw Error("No such user")
+        throw Error("Invalid user email")
     } 
  
-    return "Please check email for password reset link." 
+    return "Email is valid" 
+}
+
+userSchema.statics.updateResetPasswordToken = async function(email, resetPasswordToken) {
+    // search for user by email
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    // update resetPasswordToken
+    const update = await this.findOneAndUpdate({ email }, { resetPasswordToken })
+
+    if (!update) {
+        throw Error("Unable to update reset password token")
+    }
+    
+    // console.log("Reset password token updated for user: ", email)
+    // console.log("updated: ", update)
+    return "resetPasswordToken Updated"
+}
+
+userSchema.statics.resetPassword = async function(email, resetPasswordToken, newPassword, confirmPassword) {
+    // search for user by resetPasswordToken
+    const user = await this.findOne({ email })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    if (!resetPasswordToken || !newPassword || !confirmPassword) {
+        throw Error("All fields must be filled")
+    }
+
+    // check if token matches
+    if (user.resetPasswordToken !== resetPasswordToken) {
+        // console.log("user.resetPasswordToken: ", user.resetPasswordToken)
+        // console.log("resetPasswordToken: ", resetPasswordToken)
+        throw Error("Invalid token")
+    }
+
+    if (newPassword !== confirmPassword) {
+        throw Error("Passwords do not match")
+    }
+
+    // if token matches, and passwords match, change password
+    const salt = await bcrypt.genSalt(10) // generate password salt - value determines strength --> default == 10
+    const hash = await bcrypt.hash(newPassword, salt) // hash the password
+
+    // update password
+    const update = await this.findOneAndUpdate({ email }, { password: hash })
+
+    // remove resetPasswordToken
+    const removeToken = await this.findOneAndUpdate({ email }, { resetPasswordToken: " " })
+
+    // console.log("Password updated for user: ", removeToken)
+
+    return "Password Reset Successful"
 }
 
 // static method to update project preference

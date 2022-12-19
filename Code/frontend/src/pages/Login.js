@@ -45,8 +45,9 @@ const Login = () => {
             <button className="showPwBtn" type="button" onClick={showPassword}>Show Password</button>
 
             <button disabled={ isLoading } style={{float:"right"}}>Login</button> {/*prevent button from being clicked while page is loading*/}
-
-            <Link to="/forgotpassword">Forgot Password</Link> {/*link to register page*/}
+            <br/>
+            <br/>
+            <Link to="/forgotpassword" style={{fontSize:"0.9em"}}>Forgot Password</Link> {/*link to register page*/}
 
             {error && <div className="error">{ error }</div>}
         </form>
