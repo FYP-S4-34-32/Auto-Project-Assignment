@@ -49,5 +49,5 @@ npm install react-router-dom
 // date-fns
 npm install date-fns
 
-// emailJS - for sending automated emails
-npm install emailjs-com
+// nodemailer - for sending automated emails
+npm install nodemailer
