@@ -9,6 +9,9 @@ import { useState, useEffect} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser'
+// import { useUsersContext } from '../hooks/useUsersContext'
+// import UserDetails from '../components/UserDetails'
+import { json, Link, Navigate, useNavigate} from 'react-router-dom'
 
 const AllUsers = () => {
     var allUsersArray = []
@@ -18,6 +21,9 @@ const AllUsers = () => {
     var organisationEmployeesArray = []
     
     const { user } = useAuthenticationContext() // get the user object from the context 
+    const navigate = useNavigate();
+
+
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
     const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
     const [selectedUsers, setSelectedUsers] = useState("")
@@ -127,6 +133,17 @@ const AllUsers = () => {
     const searchResults = searchUser();
     // console.log("searchResults: ", searchResults);  
 
+    // pass user details to user details component
+    const passUserDetails = (userDetails) => {
+        console.log("user details: ", userDetails)
+        const id = userDetails._id;
+        const pathname = `/UserDetails/${id}`
+        const state = userDetails
+
+        navigate(pathname, {state}) // pass the user's email as state
+    }
+
+
     const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
             case "manageUsers": 
@@ -155,14 +172,15 @@ const AllUsers = () => {
                 )
 
             default:
-                var user = datum;
+                var userDetails = datum;
                 return (
-                     <div className="user-div" key={user._id} style={{height:"210px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
+                     <div className="user-div" key={userDetails._id} style={{height:"240px"}} onClick={() => passUserDetails(userDetails)}>
+                        <h3>{userDetails.name}</h3> 
+                        <p>Organisation: {userDetails.organisation_id}</p>
+                        <p>Email: {userDetails.email}</p>
+                        <p>Role: {userDetails.role}</p>
+                        <p>Contact Info: {userDetails.contact}</p> 
+                        {/* <button onClick={() => passUserDetails(userDetails)}>View</button> */}
                     </div> 
                 ) 
         } 

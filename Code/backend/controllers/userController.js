@@ -112,13 +112,29 @@ const getUserInfo = async (req, res) => {
     res.status(200).json(userInfo)
 }
 
-// UPDATE user info
+// UPDATE user contact info
 const updateUserInfo = async (req, res) => {
     const {email, contact} = req.body
 
     try {
         // invoke updateInfo function in userModel.js
         const user = await User.updateInfo(email, contact)
+
+        // return the request object
+        res.status(200).json({ user })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
+// UPDATE use role info
+const updateUserRole = async (req, res) => {
+    const {email, role} = req.body
+
+    try {
+        // invoke updateInfo function in userModel.js
+        const user = await User.updateRole(email, role)
 
         // return the request object
         res.status(200).json({ user })
@@ -211,7 +227,7 @@ const validateEmail = async (req, res) => {
         // save the token to the database
         const updatedTokenRes = await User.updateResetPasswordToken(email, resetPwdToken)
         
-        // send token to user's email
+        // send token to user's email address
         const client = nodemailer.createTransport({
             service: "Gmail",
             auth: {
@@ -334,6 +350,7 @@ module.exports = {
     getAllUserInfo,
     getUserInfo,
     updateUserInfo,
+    updateUserRole,
     addUserSkill,
     updateUserSkill,
     deleteUserSkill,

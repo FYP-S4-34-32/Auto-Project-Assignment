@@ -21,6 +21,7 @@ import SelectPreference from './pages/SelectPreference';
 import Organisations from './pages/Organisations';
 import OrganisationDetails from './components/OrganisationDetails';
 import ForgotPassword from './pages/ForgotPassword';
+import UserDetails from './components/UserDetails';
 import CreateOrganisation from './pages/CreateOrganisation';
 
 function App() {
@@ -73,8 +74,12 @@ function App() {
                 element = { user ? <ProjectDetails /> : <Navigate to="/login" /> } // ProjectDetails page if there is a user, Login page if there is no user
             />
             <Route
-              path = "/allusers" // all users page
+              path = "/allusers" // all users page 
               element = { ((user && user.role === "Super Admin") || (user && user.role === "Admin")) ? <AllUsers /> : <Navigate to="/login" /> } // Home page if there is a user and is of role Super Admin, Login page if there is no user
+            />
+            <Route 
+              path = "/UserDetails/:id" // single user page
+              element = { ((user && user.role === "Super Admin") || (user && user.role === "Admin")) ? <UserDetails /> : <Navigate to="/login" /> } // UserDetails page if there is a user and is of role Super Admin or Admin, Login page if there is no user
             />
             <Route
               path = "/assignedprojects" // assigned projects page
