@@ -21,6 +21,7 @@ import SelectPreference from './pages/SelectPreference';
 import Organisations from './pages/Organisations';
 import OrganisationDetails from './components/OrganisationDetails';
 import ForgotPassword from './pages/ForgotPassword';
+import CreateOrganisation from './pages/CreateOrganisation';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -54,6 +55,10 @@ function App() {
             <Route
               path = "/projects" // projects page
               element = { (user && user.role === "Admin") || (user && user.role === "Employee") ? <Projects /> : <Navigate to="/login" /> } // Projects page if there is a user, Login page if there is no user
+            />
+            <Route 
+              path = "/createorganisation" // signup page
+              element = { (user && user.role === "Super Admin") ? <CreateOrganisation /> : <Navigate to="/organisations" /> } // Create Organisations page if user is super admin
             />
             <Route
               path = "/organisations" // organisations page

@@ -41,7 +41,7 @@ const userSchema = new Schema({
         competency: String
     }],
     organisation_id: { // can be organisation name
-        type: Number, // can be String/Number
+        type: String, // can be String/Number
         default: null
     },
     // project_preference: [{ // user's project preference

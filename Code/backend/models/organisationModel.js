@@ -11,7 +11,7 @@ const mongoose = require('mongoose'); // enforcing schema for mongodb
 const Schema = mongoose.Schema;
 
 const organisationSchema = new Schema({
-    name: {
+    orgName: {
         type: String,
         required: true, // compulsory property i.e. cannot be null
         unique: true // unique organisation name(?)

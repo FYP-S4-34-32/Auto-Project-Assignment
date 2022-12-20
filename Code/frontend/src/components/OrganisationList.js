@@ -19,7 +19,7 @@ const OrganisationList = ({ organisation }) => {
     return (
         <div className="project-list" key={ organisation._id }>
             <Link to={ `/organisations/${ organisation._id }` }>
-                <h4>{ organisation.name }</h4>
+                <h4>{ organisation.orgname }</h4>
                 {/* <p><strong>Organisation Title: </strong>{ organisation.title }</p> */}
                 {/* <p><strong>Organisation Description: </strong>{ organisation.description }</p> */}
                 {/*<p><strong>Skills needed: </strong>{ project.skills.map(s => s.skill).join(', ') }</p> */}

@@ -36,13 +36,13 @@ const getSingleOrganisation = async (req, res) => {
 
 // CREATE new organisation
 const createOrganisation = async (req, res) => {
-    const { name, code, detail } = req.body
-    // const { name, code, detail } = req.body
+    const { orgname, code, detail } = req.body
+    // const { orgName, code, detail } = req.body
 
     let emptyFields = []
   
-    if (!name) {
-      emptyFields.push('name')
+    if (!orgname) {
+      emptyFields.push('orgname')
     }
     if (!code) {
         emptyFields.push('code')
@@ -56,8 +56,8 @@ const createOrganisation = async (req, res) => {
 
         const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
 
-      const organisation = await Organisation.create({ name, code, detail, created_by })
-    //   const organisation = await Organisation.create({ name, code, detail, created_by })
+      const organisation = await Organisation.create({ orgname, code, detail, created_by })
+    //   const organisation = await Organisation.create({ orgName, code, detail, created_by })
 
       res.status(200).json(organisation)
 
