@@ -184,7 +184,7 @@ userSchema.statics.getOneUser = async function(email) {
     return user
 }
 
-// static method to update user info
+// static method to update user CONTACT info
 userSchema.statics.updateInfo = async function(email, contact) { 
 
     const user = await this.findOne({ email })
@@ -198,7 +198,23 @@ userSchema.statics.updateInfo = async function(email, contact) {
     const updated = await this.findOneAndUpdate({email}, {contact})  
 
     // return updated user 
-    return this.findOne({ email })
+    return this.findOne({ email }).select('-password')
+}
+
+// static method to update user ROLE
+userSchema.statics.updateRole = async function(email, role) {
+    const user = await this.findOne({ email })
+
+    // user DOES NOT exist
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    // get the user and update role
+    const updated = await this.findOneAndUpdate({email}, {role})
+
+    // return updated user
+    return this.findOne({ email }).select('-password')
 }
 
 // static method to add new skill
@@ -325,6 +341,7 @@ userSchema.statics.validateEmail = async function(email) {
     return "Email is valid" 
 }
 
+// static to update resetPasswordToken when user requests to reset password, and email is validated
 userSchema.statics.updateResetPasswordToken = async function(email, resetPasswordToken) {
     // search for user by email
     const user = await this.findOne({ email })
@@ -346,6 +363,7 @@ userSchema.statics.updateResetPasswordToken = async function(email, resetPasswor
     return "resetPasswordToken Updated"
 }
 
+// static method to reset password
 userSchema.statics.resetPassword = async function(email, resetPasswordToken, newPassword, confirmPassword) {
     // search for user by resetPasswordToken
     const user = await this.findOne({ email })
