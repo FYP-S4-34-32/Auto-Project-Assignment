@@ -50,16 +50,7 @@ const UserDetails = () => {
 
         Project Admin
         -> can edit the Contact information of Employees belonging to the same organisation
-    */
-
-
-    if (user.role !== 'Super Admin' && user.role !== 'Admin') {
-        navigate('/login')
-    }
-
-    if (!userDetails) {
-        // navigate('/AllUsers')
-    } 
+    */ 
 
     const handleSubmitContactInfo = async(e) => {
         e.preventDefault();
