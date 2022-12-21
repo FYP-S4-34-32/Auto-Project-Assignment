@@ -36,7 +36,7 @@ const getSingleOrganisation = async (req, res) => {
 
 // CREATE new organisation
 const createOrganisation = async (req, res) => {
-    const { orgname, code, detail } = req.body
+    const { orgname, organisation_id, detail } = req.body
     // const { orgName, code, detail } = req.body
 
     let emptyFields = []
@@ -44,19 +44,22 @@ const createOrganisation = async (req, res) => {
     if (!orgname) {
       emptyFields.push('orgname')
     }
-    if (!code) {
+    if (!organisation_id) {
         emptyFields.push('code')
       }
     if (!detail) {
       emptyFields.push('detail')
     }
-  
+    if (emptyFields.length > 0) {
+      return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
+    }
+    
     // add to the database
     try {
 
         const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
 
-      const organisation = await Organisation.create({ orgname, code, detail, created_by })
+      const organisation = await Organisation.create({ orgname, organisation_id, detail, created_by })
     //   const organisation = await Organisation.create({ orgName, code, detail, created_by })
 
       res.status(200).json(organisation)

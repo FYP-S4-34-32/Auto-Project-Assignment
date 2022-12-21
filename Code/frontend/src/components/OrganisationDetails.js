@@ -13,9 +13,9 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 const OrganisationDetails = () => {
     var allUsersArray = []
     var projectAdminsArray = []
-    var superAdminsArray = []
     var allEmployeesArray = [] 
     var organisationEmployeesArray = []
+    var organisationUsersArray = []
 
     const { user } = useAuthenticationContext()
     const { organisation, dispatch } = useOrganisationsContext() // note organisation instead of organisations -> because we are setting the state of ONE organisation using SET_ONE_ORGANISATION
@@ -55,15 +55,30 @@ const OrganisationDetails = () => {
         getAllUsers();
     }, [])
 
-    //filter users need to filter match user's organisation id with current organisation's orgname
+    //filter users to match with current organisation id
+    const filterOrganisationUsers = () => {
+        allUsersArray = allUsers
+
+        if (user.role == "Super Admin") {
+            for (var i = 0; i < allUsersArray.length; i++) {
+                if (allUsersArray[i].organisation_id === organisation.organisation_id) {
+                    organisationUsersArray.push(allUsers[i])
+                }
+            }
+        }
+    }
+
+    filterOrganisationUsers();
+    
+    //filter users need to filter match user's organisation id with current organisation's orgname and sort by role
     const filterUsers = () => {
         allUsersArray = allUsers
 
         if (user.role == "Super Admin") {
             for (var i = 0; i < allUsersArray.length; i++) {
-                if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id === "Microsoft") {
+                if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id === organisation.organisation_id) {
                     projectAdminsArray.push(allUsers[i])
-                } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === "Microsoft") {
+                } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === organisation.organisation_id) {
                     allEmployeesArray.push(allUsers[i])
                 }
             }
@@ -88,10 +103,10 @@ const OrganisationDetails = () => {
         if (user.role === "Super Admin") {
             if (selectedUsers === "allUsers" || selectedUsers === "manageUsers" || selectedUsers === " " || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) { 
                 if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
-                    return allUsersArray;
+                    return organisationUsersArray;
                 } 
 
-                return allUsersArray.filter((user) => {  
+                return organisationUsersArray.filter((user) => {  
                     return (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) || (user.role).toLowerCase().includes(searchUsers.toLowerCase());
                 });
             }
@@ -107,7 +122,7 @@ const OrganisationDetails = () => {
             }
 
             if (selectedUsers === "employees") {
-                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
+                if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === "" || !searchUsers) {
                     return allEmployeesArray;
                 }
                 
@@ -119,7 +134,7 @@ const OrganisationDetails = () => {
 
         // super admins
         if (user.role === "Super Admin") { 
-            if (selectedUsers === "employees" || selectedUsers === "manageEmployees" ||  selectedUsers === " " || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) {
+            if (selectedUsers === "employees" || selectedUsers === "manageEmployees" ||  selectedUsers === "" || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) {
                 if (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) {
                     return organisationEmployeesArray;
                 }

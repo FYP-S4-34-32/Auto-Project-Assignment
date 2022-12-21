@@ -11,7 +11,7 @@ const express = require('express')
 |   the routes are requested. e.g. /api/user/login will invoke the loginUser       |
 |   function in userController.js                                                  |
 \* ============================================================================== */
-const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, updateUserRole, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword, selectPreference, validateEmail, resetPassword } = require('../controllers/userController')
+const { loginUser, signupUser, getAllUserInfo, getUserInfo, updateUserInfo, updateUserRole, addUserSkill, updateUserSkill, deleteUserSkill, deleteUser, changeUserPassword, selectPreference, validateEmail, resetPassword, getOrganisationUsers } = require('../controllers/userController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -35,6 +35,9 @@ router.post('/resetPassword', resetPassword)
 // GET ALL user info @ /api/user/allprofile
 router.get('/allprofile', getAllUserInfo)
 
+// GET ALL org users info @ /api/user/organisationUsers
+router.get('/organisationUsers', getOrganisationUsers)
+
 // GET user info @ /api/user/profile
 router.post('/profile', getUserInfo)
 
@@ -47,7 +50,7 @@ router.post('/updateRole', updateUserRole)
 // POST new user skill @ /api/user/
 router.post('/addSkill', addUserSkill)
 
-// UDATE user skill @ /api/user/
+// UPDATE user skill @ /api/user/
 router.post('/updateSkill', updateUserSkill)
 
 // DELETE user skill 
