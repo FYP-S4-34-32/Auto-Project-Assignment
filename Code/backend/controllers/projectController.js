@@ -40,6 +40,9 @@ const getSingleProject = async (req, res) => {
 const createProject = async (req, res) => {
     const { title, description, projectSkills, projectCompetency, threshold } = req.body
 
+    const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
+    const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
+
     let emptyFields = []
   
     if (!title) {
@@ -50,7 +53,10 @@ const createProject = async (req, res) => {
     }
     if (projectSkills.length === 0 || projectCompetency.length === 0) {
         emptyFields.push('noSkill')
-    }    
+    }
+    if (projectSkillsWithoutDummy.length === 0 || projectCompetencyWithoutDummy.length === 0) {
+        emptyFields.push('skillError')
+    }
     if (!threshold || threshold === 0) {
         emptyFields.push('threshold')
     }
@@ -70,17 +76,7 @@ const createProject = async (req, res) => {
     }
 
     // check for duplicated entries
-    const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
-    const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
     const unique = Array.from(new Set(projectSkillsWithoutDummy)) // array of unique projectSkills values
-
-    //  no skills or no competency level selected
-    if (projectCompetencyWithoutDummy.length === 0 || projectSkillsWithoutDummy === 0) { 
-
-        emptyFields.push("skillError")
-
-        return res.status(400).json({ error: "Please ensure a skill and competency level pair is selected", emptyFields })
-    }
 
     // compare the length of projectSkills array with the dummy values removed to the length of the unique array -> equal length = no duplicates | length unequal = duplicate entries found
     if (projectSkillsWithoutDummy.length !== unique.length) {
