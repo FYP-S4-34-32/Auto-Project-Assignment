@@ -57,6 +57,7 @@ const OrganisationDetails = () => {
 
     //filter users need to filter match user's organisation id with current organisation's orgname
     const filterUsers = () => {
+        //console.log("Organisation code name: ", organisation.code)
         allUsersArray = allUsers
 
         if (user.role == "Super Admin") {
@@ -192,7 +193,7 @@ const OrganisationDetails = () => {
         switch (user.role) {
             case "Super Admin":
                 return (
-                    <div className="selection-panel">
+                    <div className="selection-panel" style={{height:"200px"}}>
                         <button onClick={() => setSelectedUsers("allUsers")}>All Users</button>
                         <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
                         <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
@@ -209,7 +210,7 @@ const OrganisationDetails = () => {
         }
     }
 
-    // delete project
+    // delete organisation
     const handleClick = async () => {
         const response = await fetch('/api/organisation/' + id, {
             method: 'DELETE',
@@ -233,10 +234,10 @@ const OrganisationDetails = () => {
 
     return (
         <div>
-            <div className="project-details">
+            <div className="organisation-details">
                 { organisation && (
                     <article>
-                        <h2>{ organisation.orgname }</h2>
+                        <h2>{ organisation.orgname }</h2> 
                         <p>Created { formatDistanceToNow(new Date(organisation.createdAt), { addSuffix: true }) } by { organisation.created_by }</p>
                         <div>
                             <p><strong>Project Description: </strong></p>
@@ -249,6 +250,7 @@ const OrganisationDetails = () => {
             <div>
                 {showUsersPanel(user)}
                 <div className="all-users">
+                    <h2>Organisation Users</h2>
                     <div>  
                         <input className="search-input" type="search" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />  
     
