@@ -364,6 +364,28 @@ input::placeholder {
   display: table-cell;
 }
 
+/* Organisation Details Page */
+.organisation-details {
+  background: #fff;
+  border-radius: 4px;  
+  margin-left: 5%; 
+  margin-right: 5%; 
+  margin-top: 10px; 
+  padding: 30px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  height: max-content;
+  width: 86%;   
+}
+
+.organisation-details button {
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 
 /* new project form */
 /* CreateProject page */
