@@ -10,7 +10,7 @@ import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser' 
 import { useGetAllOrganisations } from '../hooks/useGetAllOrganisations'
-import { json, Link, Navigate, useNavigate} from 'react-router-dom'
+import { useNavigate} from 'react-router-dom'
 
 const AllUsers = () => {
     var allUsersArray = []
@@ -28,21 +28,19 @@ const AllUsers = () => {
     const { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations } = useGetAllOrganisations() // get the getAllOrganisations function from the context
     const [selectedUsers, setSelectedUsers] = useState("All Users")
     const [searchUsers, setSearch] = useState("")  
-    const [filterOrgID, setFilterOrgID] = useState("All Organisations") 
-
-    //console.log("selectedUsers: ", selectedUsers)
+    const [filterOrgID, setFilterOrgID] = useState("All Organisations")  
     
 
     useEffect(() => {
         getAllUsers();
-        getAllOrganisations();
+        getAllOrganisations(user);
     }, [])
 
     const filterUsers = () => {
         allUsersArray = allUsers
         organisationsArray = allOrganisations 
 
-        if (user.role == "Super Admin") {
+        if (user.role === "Super Admin") {
             for (var i = 0; i < allUsersArray.length; i++) {
                 if (allUsersArray[i].role === "Admin") {
                     projectAdminsArray.push(allUsers[i])
@@ -55,10 +53,10 @@ const AllUsers = () => {
         }
 
         // organisation admin can only see employees in their OWN organisation
-        if (user.role == "Admin") {
-            for (var i = 0; i < allUsersArray.length; i++) {
-                if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation === user.organisation) {
-                    organisationEmployeesArray.push(allUsers[i])
+        if (user.role === "Admin") {
+            for (var j = 0; j < allUsersArray.length; j++) {
+                if (allUsersArray[j].role === "Employee" && allUsersArray[j].organisation === user.organisation) {
+                    organisationEmployeesArray.push(allUsers[j])
                 }
             }
         } 
@@ -160,6 +158,7 @@ const AllUsers = () => {
 
     const searchResults = searchUser();
     console.log("searchResults: ", searchResults);  
+    console.log("organisations: ", allOrganisations);
 
     // filter users by organisations
     const OrganisationFilter = () => {
@@ -180,7 +179,8 @@ const AllUsers = () => {
                     </select>
                 </div>
             )
-        }
+        } 
+
     }
 
     // pass user details to user details component
@@ -196,26 +196,26 @@ const AllUsers = () => {
     const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
             case "Manage Users":  // super admin
-                var user = datum; 
+                var userDetail = datum; 
                 return (
-                    <div className="user-div" key={user._id} style={{height:"250px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
+                    <div className="user-div" key={userDetail._id} style={{height:"250px"}}>
+                        <h3>{userDetail.name}</h3> 
+                        <p>Organisation: {userDetail.organisation_id}</p>
+                        <p>Email: {userDetail.email}</p>
+                        <p>Role: {userDetail.role}</p>
+                        <p>Contact Info: {userDetail.contact}</p>
                         <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
                     </div>
                 ) 
             case "Manage Employees": // project admin
-                var user = datum; 
+                var userDetail = datum; 
                 return ( 
-                    <div className="user-div" key={user._id} style={{height:"250px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
+                    <div className="user-div" key={userDetail._id} style={{height:"250px"}}>
+                        <h3>{userDetail.name}</h3> 
+                        <p>Organisation: {userDetail.organisation_id}</p>
+                        <p>Email: {userDetail.email}</p>
+                        <p>Role: {userDetail.role}</p>
+                        <p>Contact Info: {userDetail.contact}</p>
                         <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
                     </div>
                 )

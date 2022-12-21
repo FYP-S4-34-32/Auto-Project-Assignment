@@ -14,13 +14,15 @@ export const useGetAllOrganisations = () => {
     const [getAllOrganisationsIsLoading, setIsLoading] = useState(null) 
     const [allOrganisations, setAllOrganisations] = useState([])
 
-    const getAllOrganisations = async () => { 
+    const getAllOrganisations = async (user) => { 
         setIsLoading(true)  
         setError(null) 
 
         const response = await fetch('/api/organisation/', {
             method: 'GET',
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${ user.token}`  // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
+            }
         })
 
         const json = await response.json()
