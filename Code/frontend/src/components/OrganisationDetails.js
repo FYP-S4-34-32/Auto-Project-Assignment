@@ -61,9 +61,9 @@ const OrganisationDetails = () => {
 
         if (user.role == "Super Admin") {
             for (var i = 0; i < allUsersArray.length; i++) {
-                if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id == "Microsoft") {
+                if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id === "Microsoft") {
                     projectAdminsArray.push(allUsers[i])
-                } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id == "Microsoft") {
+                } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === "Microsoft") {
                     allEmployeesArray.push(allUsers[i])
                 }
             }
@@ -71,6 +71,7 @@ const OrganisationDetails = () => {
     }
 
     filterUsers();
+    // console.log("organisation name: ", organisation.orgName)
 
     
     // delete a user from the database
@@ -133,8 +134,17 @@ const OrganisationDetails = () => {
         }
     }
 
-    const searchResults = searchUser();
-    // console.log("searchResults: ", searchResults);  
+    const searchResults = searchUser(); 
+
+    // pass user details to user details component
+    const passUserDetails = (userDetails) => {
+        console.log("user details: ", userDetails)
+        const id = userDetails._id;
+        const pathname = `/UserDetails/${id}`
+        const state = userDetails
+
+        navigate(pathname, {state}) // pass the user's email as state
+    }
 
     const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
@@ -164,14 +174,14 @@ const OrganisationDetails = () => {
                 )
 
             default:
-                var user = datum;
+                var userDetails = datum;
                 return (
-                     <div className="user-div" key={user._id} style={{height:"210px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
+                     <div className="user-div" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                        <h3>{userDetails.name}</h3> 
+                        <p>Organisation: {userDetails.organisation_id}</p>
+                        <p>Email: {userDetails.email}</p>
+                        <p>Role: {userDetails.role}</p>
+                        <p>Contact Info: {userDetails.contact}</p>
                     </div> 
                 ) 
         } 

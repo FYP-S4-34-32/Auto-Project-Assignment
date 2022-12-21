@@ -119,7 +119,7 @@ header a {
   width: 58%;  
 }
 
-.cancelBtn, .editContactBtn, .editSkillsBtn {
+.cancelBtn, .editContactBtn, .editSkillsBtn, .editRoleBtn {
   /* background: var(--primary); */
   background: rgba(128, 128, 128, 0.268);
   border: 0;
@@ -276,6 +276,94 @@ input::placeholder {
   font-size: 0.9em; 
 }
 
+/* user details page */
+.user-Details-detailsDiv {
+  background: #fff;
+  border-radius: 4px;  
+  margin-left: 0px;  
+  margin-top: 10px;
+  padding-bottom: 30px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+  height: max-content;
+  width: 50%;  
+  float: right;
+}
+
+.user-Details-detailsDiv select { 
+  height: 40px;
+  width: max-content;
+}
+
+.user-Details-detailsDiv form {
+  margin-left: 30px;
+  /* width: ; */
+}
+
+.user-Details-detailsDiv .editRoleBtn {
+  margin-left: 30px;
+}
+
+.user-Details-detailsDiv  .submitBtn {
+  background: var(--primary);
+  border: 0;
+  color: #fff;
+  padding: 10px;
+  font-family: "Poppins";
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-Details-detailsDiv form button {
+  display: inline-block; 
+}
+
+.userDetails-tableDiv {
+  width: 100%;
+  height: 300px; 
+  display: table;
+  border-spacing: 10px;
+}
+
+.cell-display {
+  display: table-cell;
+}
+
+.userDetails-orgDiv {
+  background: #fff; 
+  border-radius: 4px;  
+  margin-top: 3%;  
+  margin-right: 18px;
+  margin-top: 10px;
+  width: 40%;   
+  height: 300px;
+  box-sizing: border-box;
+  /* float: left; */
+  display: table-cell;
+}
+
+.userDetails-skillsDiv {
+  background: #fff;
+  margin-left: 3%;
+  border-radius: 4px;  
+  margin-top: 3%; 
+  margin-left: 18px; 
+  width: 60%;   
+  height: 300px;
+  box-sizing: border-box;
+  /* float: right; */
+  display: table-cell;
+}
+
+.userDetails-projectsDiv {
+  background: #fff; 
+  border-radius: 4px;   
+  margin-left: 10px;
+  width: 97%;
+  height: 320px;
+  float: left;
+  display: table-cell;
+}
+
 
 /* new project form */
 /* CreateProject page */
@@ -302,29 +390,11 @@ input::placeholder {
     box-sizing: border-box; 
     display: block;
 }
-.create div {
-    display: flex;
-}
-.create div select {
-    width: 45%;
-    margin-right: 80px;
-}
-.create div span {
-    cursor: pointer;
-    background: #f1f1f1;
-    padding-top: 17px;
-    padding-right: 1px;
-    align-items: center;
-    color: #333;
-}
 .create textarea {
     overflow-y: hidden;
     resize: none;
     height: 400px;
     font-family: "Poppins";
-}
-button.error {
-    border: 2px solid red;
 }
 label, input {
   display: block;
