@@ -14,7 +14,7 @@ const CreateOrganisation = () => {
     const { user } = useAuthenticationContext()
 
     const [orgname, setOrgname] = useState('') // default value = empty
-    const [code, setCode] = useState('') // default value = empty
+    const [organisation_id, setOrganisation_id] = useState('') // default value = empty
     const [detail, setDetail] = useState('') // default value = empty
     const [error, setError] = useState(null) // default value = empty
 
@@ -32,8 +32,8 @@ const CreateOrganisation = () => {
             return
         }
 
-        // const organisation = { name, code, detail }
-        const organisation = { orgname, code, detail }
+        // const organisation = { name, organisation_id, detail }
+        const organisation = { orgname, organisation_id, detail }
 
         // fetch request to post new data
         const response = await fetch('/api/organisation/createorganisation', {
@@ -59,7 +59,7 @@ const CreateOrganisation = () => {
             
             // reset the form
             setOrgname('') // reset name
-            setCode('') // reset org code
+            setOrganisation_id('') // reset org organisation_id
             setDetail('') // reset description
 
             setEmptyFields([]) // reset the emptyfields array
@@ -80,15 +80,15 @@ const CreateOrganisation = () => {
                 type="text"
                 onChange={ (e) => setOrgname(e.target.value) } // value of the target(input field) of the event e
                 value={ orgname } // reflect changes made outside the form e.g. resetting the form into empty string
-                className={ emptyFields.includes('orgname') ? 'error': '' } // if empty, give it a className
+                className={ emptyFields?.includes('orgname') ? 'error': '' } // if empty, give it a className
             />
 
             <label>Organisation Code:</label>
             <input 
                 type="text"
-                onChange={ (e) => setCode(e.target.value) } // value of the target(input field) of the event e
-                value={ code } // reflect changes made outside the form e.g. resetting the form into empty string
-                className={ emptyFields.includes('code') ? 'error': '' } // if empty, give it a className
+                onChange={ (e) => setOrganisation_id(e.target.value) } // value of the target(input field) of the event e
+                value={ organisation_id } // reflect changes made outside the form e.g. resetting the form into empty string
+                className={ emptyFields?.includes('organisation_id') ? 'error': '' } // if empty, give it a className
             />
 
             <label>Organisation Description:</label>
@@ -102,7 +102,7 @@ const CreateOrganisation = () => {
                 type="text"
                 onChange={(e) => setDetail(e.target.value)} 
                 value={ detail }
-                className={ emptyFields.includes('detail') ? 'error': ''}
+                className={ emptyFields?.includes('detail') ? 'error': ''}
             />
 
             <button>Add New Organisation Listing</button>

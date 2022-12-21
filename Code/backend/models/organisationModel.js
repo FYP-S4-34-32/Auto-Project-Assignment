@@ -11,18 +11,22 @@ const mongoose = require('mongoose'); // enforcing schema for mongodb
 const Schema = mongoose.Schema;
 
 const organisationSchema = new Schema({
-    orgName: {
+    orgname: {
         type: String,
         required: true, // compulsory property i.e. cannot be null
         unique: true // unique organisation name(?)
     },
-    code: { // some identifier to be assigned to employees 
+    organisation_id: { // some identifier to be assigned to employees 
         type: String,
         default: ""
     },
     detail: {
         type: String,
         required: true //summary of organisation, compulsory property i.e. cannot be null
+    },
+    created_by: { // who created the project listing
+        type: String,
+        required: true
     }
 }, {timestamps: true}); // datetime created and updated
 
