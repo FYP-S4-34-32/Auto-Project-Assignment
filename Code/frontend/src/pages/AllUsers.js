@@ -24,7 +24,7 @@ const AllUsers = () => {
     const navigate = useNavigate();
 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
-    const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
+    const { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess} = useDeleteUser() // get the deleteUser function from the context
     const { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations } = useGetAllOrganisations() // get the getAllOrganisations function from the context
     const [selectedUsers, setSelectedUsers] = useState("All Users") // for Super Admins
     const [selectedEmployees, setSelectedEmployees] = useState("Employees") // for Project Admins
@@ -69,8 +69,15 @@ const AllUsers = () => {
 
     // DELETE a user from the database
     const deleteUser = (email) => {  
-        updateUsers(email); 
-        getAllUsers(); // get updated array of users
+        // CONFIRMATION BOX 
+        let answer = window.confirm("Delete user " + email + "?");
+
+        //console.log("answer: ", answer)
+        if (answer) { // if user clicks OK, answer === true
+            updateUsers(email);
+            getAllUsers(); // get updated array of users
+            filterUsers();
+        } 
     } 
     
     // search for users
@@ -79,16 +86,26 @@ const AllUsers = () => {
         if (user.role === "Super Admin") {
             if (selectedUsers === "All Users" || selectedUsers === "Manage Users" || selectedUsers === " " || selectedUsers === "" || selectedUsers === null || selectedUsers === undefined || !selectedUsers) { 
                 
+                // empty search query, no filter by organisation
                 if ((searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID)) {
                     return allUsersArray;
                 } 
 
+                // empty search query, but filter by organisation
                 if ((searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID !== "All Organisations" || filterOrgID !== "" || filterOrgID !== null || filterOrgID !== undefined || filterOrgID)) {
                     return allUsersArray.filter((user) => {
                         return (user.organisation_id) === filterOrgID;
                     });
                 } 
+                
+                // search query, but no filter by organisation
+                if (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) {
+                    return allUsersArray.filter((user) => {
+                        return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) );
+                    });
+                }
 
+                // search query, and filter by organisation
                 return allUsersArray.filter((user) => {   
                     return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) ) && (user.organisation_id) === filterOrgID;
                 });
@@ -96,22 +113,32 @@ const AllUsers = () => {
 
             if (selectedUsers === "Project Admins") { 
 
+                // empty search query, no filter by organisation
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) ) {
                     return projectAdminsArray;
                 }
 
+                // empty search query, but filter by organisation
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID !== "All Organisations" || filterOrgID !== "" || filterOrgID !== null || filterOrgID !== undefined || filterOrgID) ) {
                     return projectAdminsArray.filter((user) => {
                         return (user.organisation_id) === filterOrgID;
                     });
                 } 
 
+                // search query, but no filter by organisation
+                if (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) {
+                    return projectAdminsArray.filter((user) => {
+                        return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) );
+                    });
+                }
+
+                // search query, and filter by organisation
                 return projectAdminsArray.filter((user) => {
                     return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) ) && (user.organisation_id) === filterOrgID ;
                 })
             }
 
-            if (selectedUsers === "Super Admins") {  
+            if (selectedUsers === "Super Admins") {  // DOES NOT BELONG TO ANY ORGANISATION
 
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers ) && (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) ) {
                     return superAdminsArray;
@@ -124,16 +151,27 @@ const AllUsers = () => {
 
             if (selectedUsers === "Employees") { 
 
+                // empty search query, and no filter by organisation
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID)) {
                     return allEmployeesArray;
                 }
 
+                // empty search query, but filter by organisation
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers) && (filterOrgID !== "All Organisations" || filterOrgID !== "" || filterOrgID !== null || filterOrgID !== undefined || filterOrgID) ) {
                     return allEmployeesArray.filter((user) => {
                         return (user.organisation_id) === filterOrgID;
                     });
                 } 
+
+                // search query, but no filter by organisation
+                if (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) {
+
+                    return allEmployeesArray.filter((user) => {
+                        return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) );
+                    });
+                }
                 
+                // search query, and filter by organisation
                 return allEmployeesArray.filter((user) => {
                     return ( (user.name).toLowerCase().includes(searchUsers.toLowerCase()) || (user.email).toLowerCase().includes(searchUsers.toLowerCase()) ) && (user.organisation_id) === filterOrgID ;
                 })
@@ -141,7 +179,7 @@ const AllUsers = () => {
         }
 
         // project admins can only see employees in their OWN organisation
-        console.log("selectedEmployees: ", selectedEmployees)
+        // console.log("selectedEmployees: ", selectedEmployees)
         if (user.role === "Admin") {  
 
             if (selectedEmployees === "Employees" || selectedEmployees === "Manage Employees" ||  selectedEmployees === " " || selectedEmployees === "" || selectedEmployees === null || selectedEmployees === undefined || !selectedUsers) {
@@ -160,7 +198,7 @@ const AllUsers = () => {
     }
 
     const searchResults = searchUser();
-    console.log("searchResults: ", searchResults);   
+    //console.log("searchResults: ", searchResults);   
 
     // filter users by organisations, only for super admins
     const OrganisationFilter = () => {
@@ -188,7 +226,7 @@ const AllUsers = () => {
 
     // pass user details to user details component
     const passUserDetails = (userDetails) => {
-        console.log("user details: ", userDetails)
+        //console.log("user details: ", userDetails)
         const id = userDetails._id;
         const pathname = `/UserDetails/${id}`
         const state = userDetails
@@ -291,6 +329,8 @@ const AllUsers = () => {
                     
                     { user.role === "Super Admin" && <h4>Showing {selectedUsers} from {filterOrgID}</h4>}
                     { user.role === "Admin" && <h4>Showing employees from {user.organisation_id}</h4>}
+
+                    {deleteUserSuccess && <div className="success">{deleteUserSuccess}</div>}
 
                     {renderSearchResults}
 

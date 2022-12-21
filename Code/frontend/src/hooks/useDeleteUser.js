@@ -8,6 +8,7 @@ import { useState } from 'react'
 export const useDeleteUser = () => {
     const [deleteUserError, setError] = useState(null)
     const [deleteUserIsLoading, setIsLoading] = useState(null)  
+    const [deleteUserSuccess, setSuccess] = useState(null)
 
     const updateUsers = async (email) => { 
 
@@ -23,7 +24,6 @@ export const useDeleteUser = () => {
         })
 
         const json = await response.json()
-        console.log("json: ", json)
 
         if (!response.ok) {
             setIsLoading(false)
@@ -32,8 +32,9 @@ export const useDeleteUser = () => {
 
         if(response.ok) { 
             setIsLoading(false) 
+            setSuccess(json.deletedUser)
         }
     }
 
-    return { updateUsers, deleteUserIsLoading, deleteUserError}
+    return { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess}
 }

@@ -15,7 +15,7 @@ const Profile = () => {
     const { user } = useAuthenticationContext()    
     const { fetchProfile, fetchProfileIsLoading, fetchProfileError, profile } = useFetchProfile() // fetch user's profile info 
     const {updateInfo, isLoading, error} = useUpdateInfo()  
-    const {changePassword, changePwIsLoading, changePwError} = useChangePassword()
+    const {changePassword, changePwIsLoading, changePwError, changePwSuccess} = useChangePassword()
     const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()  
     
     // user's array of skills
@@ -319,10 +319,10 @@ const Profile = () => {
                             
                             <button className="cancelBtn" style={{float:"left"}} onClick={() => setSelectedInfo('showUser')}>Cancel</button> 
 
-                            <button className="submitBtn" disabled={ changePwIsLoading }> Submit </button> 
-
-                            {changePwError && <div className="error"> {changePwError} </div>}
+                            <button className="submitBtn" disabled={ changePwIsLoading }> Submit </button>
                         </form>
+                        {changePwError && <div className="error"> {changePwError} </div>}
+                        {changePwSuccess && <div className="success"> {changePwSuccess} </div>}
                     </div>
                 )
              

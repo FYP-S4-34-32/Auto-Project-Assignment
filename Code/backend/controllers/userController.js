@@ -87,8 +87,10 @@ const signupUser = async (req, res) => {
         // create a jsonwebtoken
         const token = createToken(user._id)
 
+        const successMsg = "Account for (" + email + ") created successfully!"
+
         // return the user's name, email, role and the token we just generated in json format
-        res.status(200).json({name, email, token, role})
+        res.status(200).json({name, email, token, role, successMsg})
     } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -214,8 +216,10 @@ const changeUserPassword = async (req, res) => {
         // invoke changePassword function in userModel.js
         const user = await User.changePassword(email, currentPassword, newPassword, confirmPassword)
 
+        const successMsg = "Password changed successfully!"
+
         // return the email and skills
-        res.status(200).json({ user })
+        res.status(200).json({ user, successMsg })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -289,7 +293,7 @@ const deleteUser = async (req, res) => {
         const users = await User.getAllUsers()
 
         // return the email and skills
-        res.status(200).json({ users })
+        res.status(200).json({ users , deletedUser })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
