@@ -35,10 +35,10 @@ const AllUsers = () => {
     useEffect(() => {
         getAllUsers();
 
-        if (user && user.role === "Super Admin")
+        if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
             getAllOrganisations(user); 
     }, [])
-
+ 
     const filterUsers = () => {
         allUsersArray = allUsers
         organisationsArray = allOrganisations 
@@ -63,14 +63,12 @@ const AllUsers = () => {
                 }
             }
         } 
-        console.log("employees in organisation: ", organisationEmployeesArray)
     }
 
     filterUsers();
 
     // DELETE a user from the database
-    const deleteUser = (email) => { 
-        // console.log("to be deleted user's email: ", email)
+    const deleteUser = (email) => {  
         updateUsers(email); 
         getAllUsers(); // get updated array of users
     } 
@@ -162,8 +160,7 @@ const AllUsers = () => {
     }
 
     const searchResults = searchUser();
-    console.log("searchResults: ", searchResults);  
-    // console.log("organisations: ", allOrganisations);
+    console.log("searchResults: ", searchResults);   
 
     // filter users by organisations, only for super admins
     const OrganisationFilter = () => {
@@ -294,7 +291,7 @@ const AllUsers = () => {
                     
                     { user.role === "Super Admin" && <h4>Showing {selectedUsers} from {filterOrgID}</h4>}
                     { user.role === "Admin" && <h4>Showing employees from {user.organisation_id}</h4>}
-                    
+
                     {renderSearchResults}
 
                     {deleteUserError && <p>Error: {deleteUserError}</p>}
