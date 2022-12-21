@@ -302,11 +302,29 @@ input::placeholder {
     box-sizing: border-box; 
     display: block;
 }
+.create div {
+    display: flex;
+}
+.create div select {
+    width: 45%;
+    margin-right: 80px;
+}
+.create div span {
+    cursor: pointer;
+    background: #f1f1f1;
+    padding-top: 17px;
+    padding-right: 1px;
+    align-items: center;
+    color: #333;
+}
 .create textarea {
     overflow-y: hidden;
     resize: none;
     height: 400px;
     font-family: "Poppins";
+}
+button.error {
+    border: 2px solid red;
 }
 label, input {
   display: block;

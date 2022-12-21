@@ -38,8 +38,7 @@ const getSingleProject = async (req, res) => {
 
 // CREATE new project
 const createProject = async (req, res) => {
-    const { title, description, threshold } = req.body
-    // const { title, description, skills, threshold } = req.body
+    const { title, description, projectSkills, projectCompetency, threshold } = req.body
 
     let emptyFields = []
   
@@ -49,29 +48,73 @@ const createProject = async (req, res) => {
     if (!description) {
       emptyFields.push('description')
     }
-    // if (!skills) {
-    //     emptyFields.push('skills')
-    // }    
+    if (projectSkills.length === 0 || projectCompetency.length === 0) {
+        emptyFields.push('noSkill')
+    }    
     if (!threshold || threshold === 0) {
         emptyFields.push('threshold')
     }
     if (emptyFields.length > 0) {
       return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
     }
+
+    /* validating skills and competency */
+    // skills or competency empty while the other is selected
+    for (var i = 0; i < projectSkills.length; i++) {
+        if ((projectSkills[i] === "dummy" && projectCompetency[i] !== "dummy") || (projectSkills[i] !== "dummy" && projectCompetency[i] === "dummy")) {
+
+            emptyFields.push("skillError")
+
+            return res.status(400).json({ error: "Please ensure a skill and competency level pair is selected", emptyFields })
+        }
+    }
+
+    // check for duplicated entries
+    const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
+    const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
+    const unique = Array.from(new Set(projectSkillsWithoutDummy)) // array of unique projectSkills values
+
+    //  no skills or no competency level selected
+    if (projectCompetencyWithoutDummy.length === 0 || projectSkillsWithoutDummy === 0) { 
+
+        emptyFields.push("skillError")
+
+        return res.status(400).json({ error: "Please ensure a skill and competency level pair is selected", emptyFields })
+    }
+
+    // compare the length of projectSkills array with the dummy values removed to the length of the unique array -> equal length = no duplicates | length unequal = duplicate entries found
+    if (projectSkillsWithoutDummy.length !== unique.length) {
+
+        emptyFields.push("skillError")
+
+        return res.status(400).json({ error: "Duplicated skill entries are found", emptyFields })
+    }
+
+    // create the project skills array
+    const skills = []
+
+    for (var i = 0; i < unique.length; i++) {
+        const skill = unique[i]
+        const competency = projectCompetencyWithoutDummy[i]
+        skills[i] = {skill, competency}
+        console.log(skills)
+    }
   
     // add to the database
     try {
 
-        const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
+        // access from the middleware requireAuthentication.js return value
+        const organisation_id = req.user.organisation_id
+        const created_by = req.user.name
 
-      const project = await Project.create({ title, description, threshold, created_by })
-    //   const project = await Project.create({ title, description, skills, threshold, created_by })
+        // create project
+        const project = await Project.create({ organisation_id, title, description, skills, threshold, created_by })
 
-      res.status(200).json(project)
+        res.status(200).json(project)
 
     } catch (error) {
 
-      res.status(400).json({ error: error.message })
+        res.status(400).json({ error: error.message })
 
     }
 }
