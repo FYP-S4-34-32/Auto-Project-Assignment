@@ -53,16 +53,18 @@ const OrganisationDetails = () => {
 
     useEffect(() => {
         getAllUsers();
-    }, [])
+    }, []) 
 
     //filter users to match with current organisation id
     const filterOrganisationUsers = () => {
-        allUsersArray = allUsers
+        if (organisation !== undefined) {
+            allUsersArray = allUsers
 
-        if (user.role == "Super Admin") {
-            for (var i = 0; i < allUsersArray.length; i++) {
-                if (allUsersArray[i].organisation_id === organisation.organisation_id) {
-                    organisationUsersArray.push(allUsers[i])
+            if (user.role == "Super Admin") {
+                for (var i = 0; i < allUsersArray.length; i++) {
+                    if (allUsersArray[i].organisation_id === organisation.organisation_id) {
+                        organisationUsersArray.push(allUsers[i])
+                    }
                 }
             }
         }
@@ -71,19 +73,21 @@ const OrganisationDetails = () => {
     filterOrganisationUsers();
     
     //filter users need to filter match user's organisation id with current organisation's orgname and sort by role
-    const filterUsers = () => {
-        //console.log("Organisation code name: ", organisation.code)
-        allUsersArray = allUsers
+    const filterUsers = () => { 
+        if (organisation !== undefined) {
+            allUsersArray = allUsers
 
-        if (user.role == "Super Admin") {
-            for (var i = 0; i < allUsersArray.length; i++) {
-                if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id === organisation.organisation_id) {
-                    projectAdminsArray.push(allUsers[i])
-                } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === organisation.organisation_id) {
-                    allEmployeesArray.push(allUsers[i])
+            if (user.role == "Super Admin") {
+                for (var i = 0; i < allUsersArray.length; i++) {
+                    if (allUsersArray[i].role === "Admin" && allUsersArray[i].organisation_id === organisation.organisation_id) {
+                        projectAdminsArray.push(allUsers[i])
+                    } else if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === organisation.organisation_id) {
+                        allEmployeesArray.push(allUsers[i])
+                    }
                 }
             }
         }
+        
     }
 
     filterUsers();
