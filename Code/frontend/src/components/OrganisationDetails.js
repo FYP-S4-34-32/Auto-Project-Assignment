@@ -90,8 +90,7 @@ const OrganisationDetails = () => {
         
     }
 
-    filterUsers();
-    // console.log("organisation name: ", organisation.orgName)
+    filterUsers(); 
 
     
     // delete a user from the database
