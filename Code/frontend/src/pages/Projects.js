@@ -40,9 +40,11 @@ const Projects = () => {
         <div> 
             <div className="projects">
                 <h2>Project Listings</h2>
-                { projects && projects.map((project) => ( // will only run when there is a project object
-                    <ProjectList key={ project._id } project={ project } /> // key must be unique
-                ))}
+                { projects && projects.map((project) => {// will only run when there is a project object
+                if (user.organisation_id === project.organisation_id)
+
+                return(<ProjectList key={ project._id } project={ project } />) // key must be unique
+            })}
             </div>  
         </div>
     )

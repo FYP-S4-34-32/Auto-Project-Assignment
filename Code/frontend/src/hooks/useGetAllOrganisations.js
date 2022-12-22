@@ -2,10 +2,6 @@
 // Handles GET all Organisations //
 //===============================//
 
-//=============================//
-// Handles GET all users info //
-//=============================//
-
 // imports
 import { useState } from 'react'
 
@@ -38,5 +34,5 @@ export const useGetAllOrganisations = () => {
         }
     }
 
-    return { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations}
+    return { getAllOrganisations}
 }
