@@ -32,7 +32,7 @@ router.post('/createproject', createProject); // ------------------------> Shoul
 router.delete('/:id', deleteProject);
 
 // UPDATE a new project @ /api/project/:id
-router.patch('/:id', updateProject);
+router.patch('/editproject/:id', updateProject);
 
 // POST project skills @ /api/project/skills/:id
 router.post('/skills/:id', addProjectSkills);

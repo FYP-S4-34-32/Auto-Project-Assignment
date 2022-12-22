@@ -3,7 +3,7 @@
 //================================================//
 
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
@@ -36,6 +36,7 @@ const ProjectDetails = () => {
         // if there is an authenticated user
         if (user) {
             fetchProject()
+            console.log(project)
         }
     }, [dispatch, user, id])
 
@@ -66,6 +67,8 @@ const ProjectDetails = () => {
             { project && (
                 <article>
                     <h2>{ project.title }</h2>
+                    <Link to={`/projects/editproject/` + id} className="material-symbols-outlined">edit</Link>
+                    {/* <span className="material-symbols-outlined">edit</span> */}
                     <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
                     <div>
                         <p><strong>Project Description: </strong></p>

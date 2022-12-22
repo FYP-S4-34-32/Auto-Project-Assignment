@@ -147,14 +147,72 @@ const updateProject = async (req, res) => {
         return res.status(404).json({ error: "Invalid Project ID" }) 
     }
 
+    const { title, description, projectSkills, projectCompetency, threshold } = req.body
+
+    const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
+    const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
+
+    let emptyFields = []
+  
+    if (!title || title.trim() === "") {
+      emptyFields.push('title')
+    }
+    if (!description || description.trim() === "") {
+      emptyFields.push('description')
+    }
+    if (projectSkills.length === 0 || projectCompetency.length === 0) {
+        emptyFields.push('noSkill')
+    }
+    if (projectSkillsWithoutDummy.length === 0 || projectCompetencyWithoutDummy.length === 0) {
+        emptyFields.push('skillError')
+    }
+    if (!threshold || threshold === 0) {
+        emptyFields.push('threshold')
+    }
+    if (emptyFields.length > 0) {
+      return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
+    }
+
+    /* validating skills and competency */
+    // skills or competency empty while the other is selected
+    for (var i = 0; i < projectSkills.length; i++) {
+        if ((projectSkills[i] === "dummy" && projectCompetency[i] !== "dummy") || (projectSkills[i] !== "dummy" && projectCompetency[i] === "dummy")) {
+
+            emptyFields.push("skillError")
+
+            return res.status(400).json({ error: "Please ensure a skill and competency level pair is selected", emptyFields })
+        }
+    }
+
+    // check for duplicated entries
+    const unique = Array.from(new Set(projectSkillsWithoutDummy)) // array of unique projectSkills values
+
+    // compare the length of projectSkills array with the dummy values removed to the length of the unique array -> equal length = no duplicates | length unequal = duplicate entries found
+    if (projectSkillsWithoutDummy.length !== unique.length) {
+
+        emptyFields.push("skillError")
+
+        return res.status(400).json({ error: "Duplicated skill entries are found", emptyFields })
+    }
+
+    // create the project skills array
+    const skills = []
+
+    for (var i = 0; i < unique.length; i++) {
+        const skill = unique[i]
+        const competency = projectCompetencyWithoutDummy[i]
+        skills[i] = {skill, competency}
+        console.log(skills)
+    }
+
     // get the document
     const project = await Project.findOneAndUpdate({ _id: id }, {
-        ...req.body // spread the req.body
+        title, description, skills, threshold
     }) // store the response of findOneAndUpdate() into project variable
 
     // project DOES NOT exist
     if (!project) {
-        return res.status(404).json({ error: "No such project" })
+        return res.status(404).json({ error: "No such project", emptyFields })
     }
 
     // project EXISTS

@@ -24,6 +24,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import UserDetails from './components/UserDetails';
 import CreateOrganisation from './pages/CreateOrganisation';
 import SignUpOrgUsers from './components/SignUpOrgUsers';
+import EditProject from './components/EditProject';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -77,6 +78,10 @@ function App() {
             <Route 
                 path = "/projects/:id" // single project page
                 element = { user ? <ProjectDetails /> : <Navigate to="/login" /> } // ProjectDetails page if there is a user, Login page if there is no user
+            />
+            <Route 
+                path = "/projects/editproject/:id" // edit project
+                element = { user ? <EditProject /> : <Navigate to="/login" /> }
             />
             <Route
               path = "/allusers" // all users page 
