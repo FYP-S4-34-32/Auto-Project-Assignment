@@ -235,8 +235,8 @@ const validateEmail = async (req, res) => {
         const client = nodemailer.createTransport({
             service: "Gmail",
             auth: {
-                user: "yinli025@gmail.com", // gmail  
-                pass: "zedggheillupkpyg" // gmail acc's APP password for nodemailer
+                user: "fyp22s432@gmail.com", // gmail  
+                pass: "xfxwoyshgcbhfewx" // gmail acc's APP password for nodemailer
             }
         });
         
