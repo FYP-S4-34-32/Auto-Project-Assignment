@@ -52,11 +52,17 @@ const EditProject = () => {
                 setDescription(project.description)
                 setThreshold(project.threshold)
 
+                const dummySkill = []
+                const dummyCompetency = []
+
 
                 for (var i = 0; i < project.skills.length; i++) {
-                    originalSkills.push(project.skills[i].skill)
-                    originalCompetency.push(project.skills[i].competency)
+                    dummySkill.push(project.skills[i].skill)
+                    dummyCompetency.push(project.skills[i].competency)
                 }
+
+                setOriginalSkills(dummySkill)
+                setOriginalCompetency(dummyCompetency)
             }
         }
 

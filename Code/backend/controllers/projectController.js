@@ -57,7 +57,7 @@ const createProject = async (req, res) => {
     if (projectSkillsWithoutDummy.length === 0 || projectCompetencyWithoutDummy.length === 0) {
         emptyFields.push('skillError')
     }
-    if (!threshold || threshold === 0) {
+    if (!threshold || Number(threshold) === 0) {
         emptyFields.push('threshold')
     }
     if (emptyFields.length > 0) {
@@ -166,7 +166,7 @@ const updateProject = async (req, res) => {
     if (projectSkillsWithoutDummy.length === 0 || projectCompetencyWithoutDummy.length === 0) {
         emptyFields.push('skillError')
     }
-    if (!threshold || threshold === 0) {
+    if (!threshold || Number(threshold) === 0) {
         emptyFields.push('threshold')
     }
     if (emptyFields.length > 0) {
