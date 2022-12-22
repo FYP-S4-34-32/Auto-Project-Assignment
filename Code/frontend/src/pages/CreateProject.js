@@ -13,7 +13,7 @@ const CreateProject = () => {
 
     const [title, setTitle] = useState('') // default value = empty
     const [description, setDescription] = useState('') // default value = empty
-    const [threshold, setThreshold] = useState('') // default value = empty
+    const [threshold, setThreshold] = useState(null) // default value = empty
     const [error, setError] = useState(null) // default value = no error
 
     // handle adding skills to project
@@ -52,7 +52,7 @@ const CreateProject = () => {
         } else {
             navigate('/')
         }
-    }, [user])
+    }, [user, navigate])
 
     const handleSubmit = async (e) => { // will be reaching out to the api
         e.preventDefault() // prevent the page from refreshing upon submit
@@ -189,7 +189,7 @@ const CreateProject = () => {
             <input 
                 type="number"
                 onChange={ (e) => setThreshold(e.target.value) }
-                value={ threshold }
+                defaultValue={0}
                 className={ emptyFields?.includes('threshold') ? 'error' : '' }
             />
 

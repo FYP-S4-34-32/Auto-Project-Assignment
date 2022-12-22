@@ -23,7 +23,7 @@ const ProjectList = ({ project }) => {
                 {/* <p><strong>Project Title: </strong>{ project.title }</p> */}
                 {/* <p><strong>Project Description: </strong>{ project.description }</p> */}
                 <p><strong>Skills needed: </strong>{ project.skills.map(s => s.skill).join(', ') }</p>
-                { user.role === 'Admin' && <p><strong>Threshold: </strong>{ project.threshold }</p> } {/* only display threshold for Admins */}
+                { user.role === 'Admin' && <p><strong>Number of People Needed: </strong>{ project.threshold }</p> } {/* only display threshold for Admins */}
                 <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
             </Link>
         </div>

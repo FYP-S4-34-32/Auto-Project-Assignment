@@ -10,7 +10,7 @@ const Schema = mongoose.Schema;
 
 const projectSchema = new Schema({
     organisation_id: { // can be organisation name
-        type: Number, // can be String/Number
+        type: String,
         default: null
     },
     title: {
