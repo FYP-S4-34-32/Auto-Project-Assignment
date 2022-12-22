@@ -102,16 +102,6 @@ const getAllUserInfo = async (req, res) => {
     res.status(200).json(users)
 }
 
-// GET organisation users
-const getOrganisationUsers = async (req, res) => {
-    const { organisation_id } = req.body
-
-    const orgUsers = await User.find({ organisation_id })
-
-    res.status(200).json(orgUsers)
-
-}
-
 // GET user info
 const getUserInfo = async (req, res) => {
     const { email } = (req.body) // grab email from the request object
@@ -368,6 +358,5 @@ module.exports = {
     deleteUser,
     selectPreference,
     validateEmail,
-    resetPassword,
-    getOrganisationUsers
+    resetPassword
 }
