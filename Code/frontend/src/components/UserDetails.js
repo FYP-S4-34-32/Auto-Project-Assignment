@@ -137,7 +137,7 @@ const UserDetails = () => {
                     </div>
                      <div className='userDetails-orgDiv' style={{width:"40%"}}>
                         <h4>Organisation</h4>
-                        {userDetails && <p> {userDetails.organisation} </p>}
+                        {userDetails && <p> {userDetails.organisation_id} </p>}
                     </div> 
                 </div>
             ) 
@@ -189,7 +189,7 @@ const UserDetails = () => {
                         <div className="userDetails-tableDiv">
                             <div className='userDetails-orgDiv'>
                                 <h4>Organisation</h4>
-                                {userDetails && <p> {userDetails.organisation} </p>}
+                                {userDetails && <p> {userDetails.organisation_id} </p>}
                             </div>
                 
                             <div className="userDetails-skillsDiv">
