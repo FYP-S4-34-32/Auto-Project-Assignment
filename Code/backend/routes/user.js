@@ -35,9 +35,6 @@ router.post('/resetPassword', resetPassword)
 // GET ALL user info @ /api/user/allprofile
 router.get('/allprofile', getAllUserInfo)
 
-// GET ALL org users info @ /api/user/organisationUsers
-router.get('/organisationUsers', getOrganisationUsers)
-
 // GET user info @ /api/user/profile
 router.post('/profile', getUserInfo)
 
