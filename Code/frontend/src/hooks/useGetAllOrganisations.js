@@ -34,5 +34,5 @@ export const useGetAllOrganisations = () => {
         }
     }
 
-    return { getAllOrganisations}
+    return { getAllOrganisations, getAllOrganisationsError, getAllOrganisationsIsLoading, allOrganisations}
 }

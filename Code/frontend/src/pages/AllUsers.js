@@ -20,6 +20,7 @@ const AllUsers = () => {
     var organisationEmployeesArray = []
     var organisationsArray = []
     
+    
     const { user } = useAuthenticationContext() // get the user object from the context 
     const navigate = useNavigate();
 
@@ -36,11 +37,10 @@ const AllUsers = () => {
 
         if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
             getAllOrganisations(user); 
-    }, [])
+    }, []) 
  
     const filterUsers = () => {
-        allUsersArray = allUsers
-        organisationsArray = allOrganisations 
+        allUsersArray = allUsers 
 
         if (user.role === "Super Admin") {
             for (var i = 0; i < allUsersArray.length; i++) {
@@ -138,7 +138,7 @@ const AllUsers = () => {
             }
 
             if (selectedUsers === "Super Admins") {  // DOES NOT BELONG TO ANY ORGANISATION
-
+                
                 if ( (searchUsers === "" || searchUsers === null || searchUsers === undefined || searchUsers === " " || !searchUsers ) && (filterOrgID === "All Organisations" || filterOrgID === "" || filterOrgID === null || filterOrgID === undefined || !filterOrgID) ) {
                     return superAdminsArray;
                 } 
@@ -177,8 +177,7 @@ const AllUsers = () => {
             }
         }
 
-        // project admins can only see employees in their OWN organisation
-        // console.log("selectedEmployees: ", selectedEmployees)
+        // project admins can only see employees in their OWN organisation 
         if (user.role === "Admin") {  
 
             if (selectedEmployees === "Employees" || selectedEmployees === "Manage Employees" ||  selectedEmployees === " " || selectedEmployees === "" || selectedEmployees === null || selectedEmployees === undefined || !selectedUsers) {
@@ -196,24 +195,29 @@ const AllUsers = () => {
         }
     }
 
-    const searchResults = searchUser();
-    //console.log("searchResults: ", searchResults);   
+    const searchResults = searchUser(); 
 
-    // filter users by organisations, only for super admins
+    // filter users by their organisations, only for Super Admins
     const OrganisationFilter = () => {
-        // selectable options for organisation filter
-        const OrganisationFilterSelection = allOrganisations.map((organisation) => { 
-            return (
-                <option key={organisation._id} value={organisation.organisation_id}>{organisation.organisation_id}</option>
-            )
-        })
+        // console.log("organisationsArray: ", organisationsArray)
+        // console.log("allOrganisations: ", allOrganisations)
 
-        if (user.role === "Super Admin") {
+        // selectable options for organisation filter 
+        if (user.role === "Super Admin") { // super admins can see current organisations
+            organisationsArray = allOrganisations;
+            console.log("organisationsArray: ", organisationsArray)
+
+            const OrganisationFilterSelection = organisationsArray.map((organisation) => { 
+                return (
+                    <option key={organisation._id} value={organisation.organisation_id}>{organisation.organisation_id}</option>
+                )
+            })
+
             // super admins do not belong to any organisation. No need to filter by organisation
             if (selectedUsers !== "Super Admins") { 
                 return (
                     <div className="filter">
-                        <select className="filter-select" onChange={(e) => setFilterOrgID(e.target.value)}>
+                        <select className="filter-select" onChange={(e) => setFilterOrgID(e.target.value)} value={filterOrgID}>
                             <option value="All Organisations">All Organisations</option>
                             { OrganisationFilterSelection }
                         </select>
@@ -316,6 +320,27 @@ const AllUsers = () => {
                 )
         }
     }
+
+    const displayShowMsg = () => {
+        if (user.role === "Super Admin") {
+            if (selectedUsers !== "Super Admins") {
+                return (
+                    <h4>Showing {selectedUsers} from {filterOrgID} </h4>
+                )
+            }
+            else {
+                return (
+                    <h4>Showing {selectedUsers} </h4>
+                )
+            }
+        }
+
+        if (user.role === "Admin") {
+            return (
+                <h4>Showing {selectedEmployees} from {user.organisation_id} </h4>
+            )
+        } 
+    }
  
     return (
         <div>
@@ -324,12 +349,9 @@ const AllUsers = () => {
                 <div>  
                     <input className="search-input" type="search" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />  
                     
-                    {OrganisationFilter()}
-                    
-                    { user.role === "Super Admin" && <h4>Showing {selectedUsers} from {filterOrgID}</h4>}
-                    { user.role === "Admin" && <h4>Showing employees from {user.organisation_id}</h4>}
+                    {OrganisationFilter()} 
 
-                    {deleteUserSuccess && <div className="success">{deleteUserSuccess}</div>}
+                    {displayShowMsg()}
 
                     {renderSearchResults}
 
