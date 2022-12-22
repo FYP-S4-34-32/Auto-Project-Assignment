@@ -271,7 +271,7 @@ const OrganisationDetails = () => {
                         </div>
                         { user.role === 'Super Admin' && <button onClick={ handleClick }>Delete</button> } 
                         <br/>
-                        { user.role === 'Super Admin' && <button className="signUpBtn" onClick={handleSignUpUser}>Sign Up User for {organisation.orgname}</button> }
+                        { user.role === 'Super Admin' && <button className="signUpBtn" onClick={handleSignUpUser}>Create Employee/Project Admin account for {organisation.orgname}</button> }
                     </article>
                 )}
             </div>
