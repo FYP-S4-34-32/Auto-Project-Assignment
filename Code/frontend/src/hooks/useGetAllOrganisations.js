@@ -25,7 +25,7 @@ export const useGetAllOrganisations = () => {
             }
         })
 
-        const json = await response.json()
+        const json = await response.json() 
 
         if (!response.ok) {
             setIsLoading(false)

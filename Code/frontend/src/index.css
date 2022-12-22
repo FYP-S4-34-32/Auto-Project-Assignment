@@ -542,6 +542,18 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm, form.res
   margin: 0; 
 }
 
+/* signup page */
+.signup select {
+  width: max-content;
+  height: 35px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: block;
+}
+
 /* forgot password form */
 .resetPasswordForm h2 {
   text-align: center; 

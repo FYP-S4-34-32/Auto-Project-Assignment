@@ -3,9 +3,10 @@
 //=============//
 
 // imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSignup } from '../hooks/useSignup'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
+import { useGetAllOrganisations } from '../hooks/useGetAllOrganisations'
 
 const Signup = () => {
     const { user } = useAuthenticationContext()
@@ -21,15 +22,37 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [role, setRole] = useState('')
+    const [organisation, setOrganisationID] = useState('')
     const { signup, isLoading, error, successMsg} = useSignup() // from useSignup.js in the hooks folder
+    const { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations } = useGetAllOrganisations() // get the getAllOrga
+
+    var organisationsArray = allOrganisations; 
+
+    useEffect(() => { 
+
+        if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
+            getAllOrganisations(user); 
+    }, [])
+ 
 
     const handleSubmit = async (e) => {
         // prevent refresh upon submit
         e.preventDefault()
 
         // invoke signup function from useSignup.js
-        await signup(name, email, password, confirmPassword, role, user.organisation_id) 
+        if (user.role === "Admin") // if user is a project admin, set organisation to the project admin's organisation
+            await signup(name, email, password, confirmPassword, role, user.organisation_id) 
+        else 
+            if (user.role === "Super Admin") // if user is a super admin, set organisation to the organisation selected by the super admin
+                await signup(name, email, password, confirmPassword, role, organisation)
     }
+ 
+    // only display the organisation dropdown if the user is a super admin
+    const displayOrganisationOptions = organisationsArray.map((organisation) => {
+            return (
+                <option key={organisation._id} value={organisation.organisation_id}> {organisation.organisation_id} </option>
+            )
+    })  
 
     // return a template - signup form
     return (
@@ -54,11 +77,24 @@ const Signup = () => {
                 value={email} // reflect change in email state
             />
             <label>Organisation:</label>
-            <input
-                type="organisation"
-                disabled={true} // disable input field, organisation is same as project admin's organisation
-                value={user.organisation_id}
-            />
+            
+            {/* If user is a PROJECT ADMIN: disable input field, organisation is same as project admin's organisation */}
+            {user.role === "Admin" && 
+                <input
+                    type="organisation"
+                    disabled={true} 
+                    value={user.organisation_id}
+                />
+            }   
+
+            {/* If user is a SUPER ADMIN: enable input field, organisation can be changed */}
+            {user.role === "Super Admin" && 
+                <select value={organisation} onChange={(e) => {setOrganisationID(e.target.value)}}>
+                    <option value="">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
+                    {displayOrganisationOptions}
+                </select>
+            }
+
             <label>Password:</label>
             <input
                 type="password" // hidden
