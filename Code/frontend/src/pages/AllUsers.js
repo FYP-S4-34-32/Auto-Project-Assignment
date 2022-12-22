@@ -31,7 +31,6 @@ const AllUsers = () => {
     const [searchUsers, setSearch] = useState("")  
     const [filterOrgID, setFilterOrgID] = useState("All Organisations")  
 
-
     useEffect(() => {
         getAllUsers();
 
