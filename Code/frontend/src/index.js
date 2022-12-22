@@ -14,7 +14,7 @@ import { OrganisationsContextProvider } from './context/OrganisationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-//   <React.StrictMode>
+  <React.StrictMode>
     <AuthenticationContextProvider>
       <ProjectsContextProvider>
         <OrganisationsContextProvider>
@@ -22,5 +22,5 @@ root.render(
         </OrganisationsContextProvider>
       </ProjectsContextProvider>
     </AuthenticationContextProvider>
-//   </React.StrictMode>
+  </React.StrictMode>
 );
