@@ -141,8 +141,11 @@ const updateUserRole = async (req, res) => {
         // invoke updateInfo function in userModel.js
         const user = await User.updateRole(email, role)
 
+        // success message
+        const successMsg = "Role updated!"
+
         // return the request object
-        res.status(200).json({ user })
+        res.status(200).json({ user, successMsg })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
