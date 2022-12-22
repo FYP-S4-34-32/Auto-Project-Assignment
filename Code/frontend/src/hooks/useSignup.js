@@ -8,6 +8,7 @@ import { useState } from 'react'
 export const useSignup = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
+    const [successMsg, setSuccessMsg] = useState(null)
 
     const signup = async (name, email, password, confirmPassword, role) => {
 
@@ -34,8 +35,9 @@ export const useSignup = () => {
 
             // set loading state back to false
             setIsLoading(false)
+            setSuccessMsg(json.successMsg)
         }
     }
 
-    return { signup, isLoading, error }
+    return { signup, isLoading, error, successMsg }
 }

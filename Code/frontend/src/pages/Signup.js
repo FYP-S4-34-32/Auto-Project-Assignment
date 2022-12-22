@@ -21,7 +21,7 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [role, setRole] = useState('')
-    const { signup, isLoading, error } = useSignup() // from useSignup.js in the hooks folder
+    const { signup, isLoading, error, successMsg} = useSignup() // from useSignup.js in the hooks folder
 
     const handleSubmit = async (e) => {
         // prevent refresh upon submit
@@ -77,6 +77,7 @@ const Signup = () => {
                 
             <button disabled={ isLoading }>Sign up</button> {/*prevent button from being clicked while page is loading*/}
             {error && <div className="error">{ error }</div>}
+            {successMsg && <div className="success">{ successMsg }</div>}
         </form>
     )
 }

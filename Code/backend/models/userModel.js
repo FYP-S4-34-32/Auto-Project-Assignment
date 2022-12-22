@@ -128,7 +128,6 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
     return user
 }
 
-
 //===============================================================================================================================//
 // LOGIN USER: static login method - has to be regular function instead of arrow function because of the usage of 'this' keyword
 // 1. VALIDATE whether email of password FIELD IS EMPTY
@@ -325,7 +324,10 @@ userSchema.statics.deleteUser = async function(email) {
     
     const deleteUser = await this.deleteOne({ email })  
 
-    return deleteUser
+    // return success message after deleting user
+    if (deleteUser.acknowledged === true) {
+        return "User (" + email + ") deleted!"
+    } 
 }
 
 // static method to validate email
