@@ -178,7 +178,7 @@ userSchema.statics.getOneUser = async function(email) {
     // returns the user document except the password field
     const user = await this.findOne({ email }).select('-password')
 
-    console.log(user)
+    // console.log(user)
 
     // user DOES NOT exist
     if (!user) {
@@ -196,6 +196,13 @@ userSchema.statics.updateInfo = async function(email, contact) {
     // user DOES NOT exist
     if (!user) {
         throw Error("No such user")
+    } 
+
+    //console.log(contact.match(/^[0-9]+$/))
+
+    // validate contact info, if it contains only numbers
+    if (Number.isFinite(contact) === null) {  
+        throw Error("Contact info must be numeric. Please enter a valid contact number")
     }
 
     // get the user and update contact info

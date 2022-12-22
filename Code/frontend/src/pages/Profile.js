@@ -14,7 +14,7 @@ const Profile = () => {
     // hooks
     const { user } = useAuthenticationContext()    
     const { fetchProfile, fetchProfileIsLoading, fetchProfileError, profile } = useFetchProfile() // fetch user's profile info 
-    const {updateInfo, isLoading, error} = useUpdateInfo()  
+    const {updateInfo, isLoading, error, updateContactSuccess} = useUpdateInfo()  
     const {changePassword, changePwIsLoading, changePwError, changePwSuccess} = useChangePassword()
     const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()  
     
@@ -131,6 +131,10 @@ const Profile = () => {
         setSelectedInfo('showUser');
         showContactForm();
         setContact(await updateInfo(user.email, contact));
+
+        // to update user's profile after editing and saving contact info
+        fetchProfile(user.email);  
+        setUserObject(profile);
     }
 
     // HANDLE SUBMITTING OF SKILLS 
@@ -353,13 +357,14 @@ const Profile = () => {
 
                         { contactForm && (
                             <form className='newContactForm' onSubmit={handleSubmitContactInfo}> 
-                                <input type="Number" className="newContact" placeholder={"New contact information"} onChange={(e) => {setContact(e.target.value)}}/>
+                                <input type="contact" className="newContact" placeholder={"New contact information"} onChange={(e) => {setContact(e.target.value)}}/>
                                 <button className="submitBtn" disabled={ isLoading }>Submit</button>
                                 <button className="cancelBtn" onClick={showContactForm}>Cancel</button>
                             </form>
                         )}
 
                         {error && <div className="error"> {error} </div>}
+                        {updateContactSuccess && <div className="success"> {updateContactSuccess} </div>}
                     </div>
                 )
         }

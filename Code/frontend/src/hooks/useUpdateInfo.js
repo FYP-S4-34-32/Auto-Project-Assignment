@@ -8,6 +8,7 @@ import { useState } from 'react'
 export const useUpdateInfo = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
+    const [updateContactSuccess, setUpdateContactSuccess] = useState(null)
 
     const updateInfo = async (email, contact) => { 
 
@@ -20,8 +21,7 @@ export const useUpdateInfo = () => {
             body: JSON.stringify({email, contact})
         })
 
-        const json = await response.json() 
-        console.log(json)
+        const json = await response.json()  
 
         if (!response.ok) {
             setIsLoading(false)
@@ -30,11 +30,12 @@ export const useUpdateInfo = () => {
 
         if(response.ok) {
             setIsLoading(false)
+            setUpdateContactSuccess(json.successMsg)
         }
 
         return json.user.contact
     }
 
-    return { updateInfo, isLoading, error }
+    return { updateInfo, isLoading, error, updateContactSuccess}
 }
 

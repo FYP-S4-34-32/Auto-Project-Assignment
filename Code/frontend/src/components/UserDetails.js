@@ -8,14 +8,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext' 
 import { useLocation, Link } from "react-router-dom";
-import { useUpdateInfo } from '../hooks/useUpdateInfo' 
+import { useUpdateInfo } from '../hooks/useUpdateInfo'  // contact info 
 import { useUpdateRole } from '../hooks/useUpdateRole'
 import { setHours } from 'date-fns';
 
 
 const UserDetails = () => {
     const { user } = useAuthenticationContext(); // current user (admin or superadmin)
-    const {updateInfo, isLoading, error} = useUpdateInfo();  
+    const {updateInfo, isLoading, error, updateContactSuccess} = useUpdateInfo();  
     const {updateRole, updateRoleIsLoading, updateRoleError} = useUpdateRole();
     const navigate = useNavigate();
     const location = useLocation(); 
@@ -42,27 +42,20 @@ const UserDetails = () => {
     //             <p> {project.name} </p>
     //         </div>
     //     )
-    // })
+    // }) 
 
-    /*
-        Super Admin
-        -> can edit Project Admin's and Employee's User Role and Contact information
 
-        Project Admin
-        -> can edit the Contact information of Employees belonging to the same organisation
-    */ 
+    console.log("userDetails contact info: ", userDetails.contact)
 
     const handleSubmitContactInfo = async(e) => {
-        e.preventDefault();
-        console.log("userContact: ", userContact)
+        e.preventDefault(); 
 
         setEditContactForm(!editContactForm)
         setUserContact(await updateInfo(userDetails.email, userContact));
     }
      
     const handleSubmitUserRole = async(e) => {
-        e.preventDefault();
-        console.log("to submit userRole: ", userRole)
+        e.preventDefault(); 
 
         setUserRole(await updateRole(userDetails.email, userRole));
         setEditRoleForm(!editRoleForm);
@@ -91,6 +84,7 @@ const UserDetails = () => {
                 </div>
             )
         }
+
 
         // project admins do not have skills/projects, but have organisation
         else if (userDetails.role === 'Admin') {
@@ -179,10 +173,14 @@ const UserDetails = () => {
                                 name="contact"
                                 defaultValue={userDetails.contact}
                                 disabled={!editContactForm}
-                                onChange={(e) => setUserContact(e.target.value)}
+                                onChange={(e) => handleSubmitContactInfo(e.target.value)}
                             />
+
                             <button className="editContactBtn" type="button" onClick={() => setEditContactForm(!editContactForm)} disabled={ isLoading }>Edit</button>
                             {editContactForm && <button className="submitBtn">Save</button>}
+                            {error && <div className="error">{error}</div>}
+                            {updateContactSuccess && <div className="success">Contact info updated successfully</div>}
+
                         </form>        
                     </div>
                     <div style={{width:"50%"}}>
