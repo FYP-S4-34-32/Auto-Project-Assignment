@@ -67,8 +67,7 @@ const ProjectDetails = () => {
             { project && (
                 <article>
                     <h2>{ project.title }</h2>
-                    <Link to={`/projects/editproject/` + id} className="material-symbols-outlined">edit</Link>
-                    {/* <span className="material-symbols-outlined">edit</span> */}
+                    { user.role === "Admin" && <Link to={`/projects/editproject/` + id} className="material-symbols-outlined">edit</Link>}
                     <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
                     <div>
                         <p><strong>Project Description: </strong></p>

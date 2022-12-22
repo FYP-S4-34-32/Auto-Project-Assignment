@@ -47,8 +47,10 @@ const CreateProject = () => {
         }
 
         // if there is an authenticated user
-        if (user) {
+        if (user && user.role === "Admin") {
             fetchSkills()
+        } else {
+            navigate('/')
         }
     }, [user])
 

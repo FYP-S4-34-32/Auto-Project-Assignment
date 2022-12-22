@@ -76,9 +76,11 @@ const EditProject = () => {
         }
 
         // if there is an authenticated user
-        if (user) {
+        if (user && user.role === "Admin") {
             fetchProject()
             fetchSkills()
+        } else {
+            navigate('/')
         }
     }, [])
 
