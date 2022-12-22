@@ -396,6 +396,12 @@ input::placeholder {
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
+  height: 40px;
+  font-family: "Poppins";
+}
+
+.organisation-details .signUpBtn {
+  margin-top: 30px;
 }
 
 

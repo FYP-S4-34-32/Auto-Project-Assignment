@@ -289,7 +289,7 @@ const Profile = () => {
                 return (
                     <div className="user-profile">
                         <h2> Organisation Information </h2>  
-                        {/* to be added */}
+                        <p> Organisation Name: {profile.organisation_id} </p>
                     </div>
                 )
                 

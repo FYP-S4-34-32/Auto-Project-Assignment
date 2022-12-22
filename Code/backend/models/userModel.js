@@ -82,7 +82,7 @@ const userSchema = new Schema({
 // 6. CREATE a new user document and store it to our database in the schema format specified above
 // 7. RETURNS the USER DOCUMENT in the format of the schema
 //=================================================================================================================================//
-userSchema.statics.signup = async function(name, email, password, confirmPassword, role) {
+userSchema.statics.signup = async function(name, email, password, confirmPassword, role, organisation_id) {
     /* validation */
     // NAME OR EMAIL OR PASSWORD IS EMPTY
     if (!email || !password || !name) { 
@@ -104,6 +104,11 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
         throw Error('Passwords do not match')
     }
 
+    // if organisation_id is not provided
+    if (!organisation_id) {
+         throw Error('Please provide the organisation ID')
+    }
+
     // STRENGTH OF PASSWORD
     // if (!validator.isStrongPassword(password)) {
     //     throw Error('Password not strong enough')
@@ -120,7 +125,7 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
     const hash = await bcrypt.hash(password, salt) // hash the password
 
     // save user to the database
-    const user = await this.create({ name, email, password: hash, role })
+    const user = await this.create({ name, email, password: hash, role, organisation_id })
 
     console.log(user)
 

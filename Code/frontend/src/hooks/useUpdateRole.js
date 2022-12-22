@@ -9,8 +9,7 @@ export const useUpdateRole = () => {
     const [updateRoleError, setError] = useState(null)
     const [updateRoleIsLoading, setIsLoading] = useState(null)
 
-    const updateRole = async (email, role) => {
-        console.log(email, role)
+    const updateRole = async (email, role) => { 
 
         setIsLoading(true)  
         setError(null) 

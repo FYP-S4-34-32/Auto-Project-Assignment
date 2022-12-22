@@ -250,6 +250,14 @@ const OrganisationDetails = () => {
         }
     }
 
+    const handleSignUpUser = () => {
+        // navigate to sign up user page, pass organisation.organisation_id as state (Signing up user for this current organisation)
+        const state = organisation.organisation_id;
+        const pathname = "./SignUpOrgUsers"
+        
+        navigate(pathname, {state})
+    }
+
     return (
         <div>
             <div className="organisation-details">
@@ -261,7 +269,9 @@ const OrganisationDetails = () => {
                             <p><strong>Project Description: </strong></p>
                             <p>{ organisation.detail }</p>
                         </div>
-                        { user.role === 'Super Admin' && <button onClick={ handleClick }>Delete</button> }
+                        { user.role === 'Super Admin' && <button onClick={ handleClick }>Delete</button> } 
+                        <br/>
+                        { user.role === 'Super Admin' && <button className="signUpBtn" onClick={handleSignUpUser}>Sign Up User for {organisation.orgname}</button> }
                     </article>
                 )}
             </div>

@@ -9,8 +9,7 @@ export const useUpdateInfo = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
 
-    const updateInfo = async (email, contact) => {
-        console.log(email, contact)
+    const updateInfo = async (email, contact) => { 
 
         setIsLoading(true)  
         setError(null) 

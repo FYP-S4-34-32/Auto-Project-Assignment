@@ -5,14 +5,15 @@
 // imports
 import { useState } from 'react'
 import { useSignup } from '../hooks/useSignup'
+import { useLocation } from 'react-router-dom'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 
-const Signup = () => {
+const SignUpOrgUsers = () => {
     const { user } = useAuthenticationContext()
     const currentUserRole = user.role
+    const location = useLocation(); 
 
-    // another layer of  check
-    if (currentUserRole !== 'Admin' && currentUserRole !== 'Super Admin') {
+    if (currentUserRole !== 'Super Admin') {
         throw Error('You are not authorised to view this page')
     }
 
@@ -21,14 +22,14 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [role, setRole] = useState('')
+    const [organisation_id, setOrganisation_id] = useState(location.state) // organisation_id is passed in from the previous page (organisation details page)
     const { signup, isLoading, error, successMsg} = useSignup() // from useSignup.js in the hooks folder
 
-    const handleSubmit = async (e) => {
-        // prevent refresh upon submit
+    const handleSubmit = async (e) => { 
         e.preventDefault()
 
         // invoke signup function from useSignup.js
-        await signup(name, email, password, confirmPassword, role, user.organisation_id) 
+        await signup(name, email, password, confirmPassword, role, organisation_id) 
     }
 
     // return a template - signup form
@@ -37,7 +38,7 @@ const Signup = () => {
             <h3>Account Creation</h3>
             { (currentUserRole === 'Super Admin') && (
                 <div>
-                    <label>Organisation: </label>
+                    <label>Organisation: {organisation_id}</label>
                     <br></br>
                 </div>
             )}
@@ -57,7 +58,7 @@ const Signup = () => {
             <input
                 type="organisation"
                 disabled={true} // disable input field, organisation is same as project admin's organisation
-                value={user.organisation_id}
+                value={organisation_id}
             />
             <label>Password:</label>
             <input
@@ -89,4 +90,4 @@ const Signup = () => {
 }
 
 // EXPORT
-export default Signup
+export default SignUpOrgUsers

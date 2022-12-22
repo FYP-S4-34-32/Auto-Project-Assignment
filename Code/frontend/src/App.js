@@ -23,6 +23,7 @@ import OrganisationDetails from './components/OrganisationDetails';
 import ForgotPassword from './pages/ForgotPassword';
 import UserDetails from './components/UserDetails';
 import CreateOrganisation from './pages/CreateOrganisation';
+import SignUpOrgUsers from './components/SignUpOrgUsers';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -68,6 +69,10 @@ function App() {
             <Route 
                 path = "/organisations/:id" // single organisation page
                 element = { (user && user.role === "Super Admin") ? <OrganisationDetails /> : <Navigate to="/login" /> } // OrganisationDetails page if user is super admin, Login page if user is not super admin
+            />
+            <Route
+              path = "/organisations/:id/signUpOrgUsers" // projects page
+              element = { (user && user.role === "Super Admin") ? <SignUpOrgUsers /> : <Navigate to="/login" /> } // Signup page if user is super admin, Login page if there is no user
             />
             <Route 
                 path = "/projects/:id" // single project page

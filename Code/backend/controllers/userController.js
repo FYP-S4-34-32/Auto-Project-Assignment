@@ -78,11 +78,11 @@ const signupUser = async (req, res) => {
     // }    "password": "example password"
     // -> so we can destructure the request body and obtain the name, email and password value
 
-    const {name, email, password, confirmPassword, role} = req.body
+    const {name, email, password, confirmPassword, role, organisation_id} = req.body
 
     try {
         // invoke signup function and store return value(user document)
-        const user = await User.signup(name, email, password, confirmPassword, role)
+        const user = await User.signup(name, email, password, confirmPassword, role, organisation_id)
         
         // create a jsonwebtoken
         const token = createToken(user._id)

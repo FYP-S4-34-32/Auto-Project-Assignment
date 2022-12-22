@@ -10,8 +10,7 @@ export const useResetPassword = () => {
     const [resetPasswordLoading, setIsLoading] = useState(null)
     const [resetPasswordSuccess, setSuccess] = useState(null)
 
-    const resetPassword = async (email, token, newPassword, confirmPassword) => {
-        console.log(JSON.stringify({email, token, newPassword, confirmPassword}))
+    const resetPassword = async (email, token, newPassword, confirmPassword) => { 
 
         setIsLoading(true)  
         setError(null) 
