@@ -53,7 +53,7 @@ Document Control: **Last updated @ 9/12/2022**
 ## Sprint 3 - 5 :
 - [x]	As a Project Admin, I want to be able to create new projects so that
 	employees will be able to see them
-- []	As a Project Admin, I want to be able to update project details so
+- [x]	As a Project Admin, I want to be able to update project details so
 	that I can make necessary changes
 - [x]	As a Project Admin, I want to be able to remove projects, so that
 	unavailable projects can be deleted
