@@ -8,6 +8,7 @@ import { useState } from 'react'
 export const useUpdateRole = () => {
     const [updateRoleError, setError] = useState(null)
     const [updateRoleIsLoading, setIsLoading] = useState(null)
+    const [updateRoleSuccess, setSuccess] = useState(null)
 
     const updateRole = async (email, role) => { 
 
@@ -30,10 +31,11 @@ export const useUpdateRole = () => {
 
         if(response.ok) {
             setIsLoading(false)
+            setSuccess(json.successMsg)
         }
 
         return json.user.role
     }
 
-    return { updateRole, updateRoleError, updateRoleIsLoading }
+    return { updateRole, updateRoleError, updateRoleIsLoading, updateRoleSuccess }
 }
