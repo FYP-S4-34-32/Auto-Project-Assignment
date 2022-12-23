@@ -258,10 +258,11 @@ const Profile = () => {
         switch(user.role) {
             case "Employee":
                 return (
-                    <div className="profile-panel" style={{height: '200px'}}> 
+                    <div className="profile-panel" style={{height: '240px'}}> 
                         <button onClick={() => setSelectedInfo('showUser')}> User Information </button>
                         <button onClick={() => setSelectedInfo('showOrganisation') }> Organisation </button>
                         <button onClick={() => setSelectedInfo('showSkills')}> Skills </button>  
+                        <button onClick={() => setSelectedInfo('projectPreferences')} > Project Preferences </button>
                         <button onClick={() => setSelectedInfo('changePassword')} > Change Password </button>
                     </div> 
             )
@@ -306,7 +307,18 @@ const Profile = () => {
                     </div> 
                 )    
             
-            // case for projects to be added 
+            // show employee's project preferences
+            case 'projectPreferences':
+                return (
+                    <div className="user-profile">
+                        <h2> Project Preferences </h2>
+                        {profile.firstChoice && <p> First Choice: <br/>  <br/> {profile.firstChoice} </p>}
+                        <hr/>
+                        {profile.secondChoice && <p> Second Choice: <br/> <br/> {profile.secondChoice} </p>}
+                        <hr/>
+                        {profile.thirdChoice && <p> Third Choice: <br/> <br/> {profile.thirdChoice} </p>}
+                    </div>
+                )
 
             case 'changePassword':
                 return (
