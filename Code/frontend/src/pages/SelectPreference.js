@@ -3,7 +3,7 @@
 //===========================//
 
 // imports 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext' 
 import { useProjectsContext } from "../hooks/useProjectsContext"
@@ -11,6 +11,9 @@ import { useProjectsContext } from "../hooks/useProjectsContext"
 const SelectPreference = () => {
     // hooks
     const { user } = useAuthenticationContext()
+
+    // get the list of available project
+    const { projects, dispatch } = useProjectsContext()
 
     const [firstChoice, setFirstChoice] = useState('') // default value = empty
     const [secondChoice, setSecondChoice] = useState('') // default value = empty
@@ -22,8 +25,34 @@ const SelectPreference = () => {
     // state for empty fields validation
     const [errorFields, setErrorFields] = useState([]) // empty array by default
 
-    // get the list of available project
-    const { projects } = useProjectsContext()
+    // fires when component is rendered
+    useEffect(() => {
+        const fetchProjects = async () => {
+            const response = await fetch('/api/project', {
+                headers: {
+                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
+                }
+            }) // using fetch() api to fetch data ad store in the variable
+            const json = await response.json() // response object into json object, in this case an array of project objects
+
+            // get projects based on matching organisation_id with the user
+            for (var i = 0; i < json.length; i++) {
+                if (json[i].organisation_id !== user.organisation_id) {
+                    json.splice(i, 1)
+                }
+            }
+
+            // response OK
+            if (response.ok) {
+                dispatch({ type: 'SET_PROJECTS', payload: json})
+            }
+        }
+
+        // if there is an authenticated user
+        if (user) {
+            fetchProjects()
+        }
+    }, [dispatch, user])
 
 
     // authorisation check
