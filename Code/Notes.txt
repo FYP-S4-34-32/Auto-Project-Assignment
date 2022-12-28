@@ -1,8 +1,39 @@
 [] signup feature only accessible by super admins and admins
 [] signup form to include {name, contact, role} field
 
--priority fixes-
-[] change employee edit skills competency to disallow manual inputs
-[] figure out database skills array inconsistent data match
-[] auto refresh page to display new contact information changes when edit profile for contact
-[] 
+-priority bug fixes-
+
+[] unlisted - Adding/Editing contact has no validation for now
+- success message only appears after clicking edit after editing
+- if user enters a string, error message will not appear until you press edit again
+- invalid contact number allowed e.g. number not of length 8 or number not beginning with 8 or 9
+
+Super Admin
+——————
+[] Create account
+- can create Super Admins but must still select organisation
+
+[] Delete user accounts for organisation
+- need to refresh to see changes
+
+Project Admin/Admin
+——————————
+
+[] Set the number of Employees required for each Project
+- under Creating/Editing Projects
+
+[] Creating Employees and other Admin accounts
+- creating two accounts one after the other does not reset the success message i.e., the error message, if any, will appear above the success message from the previous account creation
+
+[] Editing Employee Contact
+- some missing contact validation
+- message, both error and success, are hidden until Edit button is clicked again (doesnt happen in Employee side)
+
+[]
+- all users only shows Employees and not other Admins from the same organisation
+
+Employee
+—————
+[] Adding/Updating Contact
+- some missing validation
+- no issues so far
