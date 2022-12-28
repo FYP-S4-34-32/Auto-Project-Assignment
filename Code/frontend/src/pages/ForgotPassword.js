@@ -81,7 +81,7 @@ const ForgotPassword = () => {
                         />}
                         {message && <label>Confirm Password: </label>}
                         {message && <input 
-                            type="confirmPassword"
+                            type="password"
                             name="confirmPassword"
                             onChange={(e) => {setConfirmPassword(e.target.value)}} // set email to the value of the target input field
                             value={confirmPassword} // reflect change in email state
