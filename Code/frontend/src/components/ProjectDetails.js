@@ -36,7 +36,6 @@ const ProjectDetails = () => {
         // if there is an authenticated user
         if (user) {
             fetchProject()
-            console.log(project)
         }
     }, [dispatch, user, id])
 

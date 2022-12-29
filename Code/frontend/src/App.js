@@ -25,7 +25,8 @@ import UserDetails from './components/UserDetails';
 import CreateOrganisation from './pages/CreateOrganisation';
 import SignUpOrgUsers from './components/SignUpOrgUsers';
 import EditProject from './components/EditProject';
-import ProjectAssignment from './pages/ProjectAssignment';
+import Assignment from './pages/Assignment';
+import AssignmentDetails from './components/AssignmentDetails';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -106,7 +107,11 @@ function App() {
             />
             <Route 
                 path = "/assignment" // project assignment page
-                element = { <ProjectAssignment /> }
+                element = { <Assignment /> }
+            />
+            <Route 
+                path = "/assignment/:id" // single project page
+                element = { user ? <AssignmentDetails /> : <Navigate to="/login" /> } // AssignmentDetails page if there is a user, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

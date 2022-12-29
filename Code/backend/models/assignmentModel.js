@@ -13,7 +13,7 @@ const Schema = mongoose.Schema;
 const assignmentSchema = new Schema({
     // admin must insert a title for a particular assignment phase to differentiate OR
     // auto-increment id everytime a new assignment phase is created
-    assignment_title: {
+    title: {
         type: String,
         required: true,
         unique: true
