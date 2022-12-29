@@ -11,16 +11,19 @@ import App from './App';
 import { AuthenticationContextProvider } from './context/AuthenticationContext'
 import { ProjectsContextProvider } from './context/ProjectContext';
 import { OrganisationsContextProvider } from './context/OrganisationContext';
+import { AssignmentContextProvider } from './context/AssignmentContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthenticationContextProvider>
-      <ProjectsContextProvider>
-        <OrganisationsContextProvider>
-          <App />
-        </OrganisationsContextProvider>
-      </ProjectsContextProvider>
+        <AssignmentContextProvider>
+            <ProjectsContextProvider>
+                <OrganisationsContextProvider>
+                    <App />
+                </OrganisationsContextProvider>
+            </ProjectsContextProvider>
+        </AssignmentContextProvider>
     </AuthenticationContextProvider>
   </React.StrictMode>
 );

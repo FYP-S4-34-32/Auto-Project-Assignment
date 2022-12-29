@@ -25,6 +25,7 @@ import UserDetails from './components/UserDetails';
 import CreateOrganisation from './pages/CreateOrganisation';
 import SignUpOrgUsers from './components/SignUpOrgUsers';
 import EditProject from './components/EditProject';
+import ProjectAssignment from './pages/ProjectAssignment';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -102,6 +103,10 @@ function App() {
             <Route
               path = "/forgotpassword" // reset password page
               element = { <ForgotPassword /> }
+            />
+            <Route 
+                path = "/assignment" // project assignment page
+                element = { <ProjectAssignment /> }
             />
             <Route
               path = "*" // 404 page

@@ -11,6 +11,7 @@ const userRoutes = require('./routes/user') // user routes
 const projectRoutes = require('./routes/project') // project routes
 const skillRoutes = require('./routes/skill') // skill routes
 const organisationRoutes = require('./routes/organisation') //organisation routes
+const assignmentRoutes = require('./routes/assignment') // assignment routes
 
 // start up express app
 const app = express()
@@ -30,6 +31,7 @@ app.use('/api/user', userRoutes); // any request to /api/user will be handled in
 app.use('/api/project', projectRoutes); // any request to /api/project will be handled in projectRoute.js in the routes folder
 app.use('/api/skill', skillRoutes); // any request to /api/skill will be handled in skillRoute.js in the routes folder
 app.use('/api/organisation', organisationRoutes); // any request to /api/organisation will be handled in organisationRoutes.js in the routes folder
+app.use('/api/assignment', assignmentRoutes) // any request to /api/assignment will be handled in assignment.js in the routes folder
 
 // connect to MongoDB and listen for requests
 mongoose.connect(process.env.MONGO_URI)
