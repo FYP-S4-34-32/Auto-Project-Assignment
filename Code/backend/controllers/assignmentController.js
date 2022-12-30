@@ -8,7 +8,9 @@ const mongoose = require('mongoose') // mongoose package for mongodb
 
 // GET all assignments
 const getAssignments = async (req, res) => {
-    const assignments = await Assignment.find({}).sort({start_date: 1, end_date: 1}) // sort by earliest start_date
+    const organisation_id = req.user.organisation_id
+    
+    const assignments = await Assignment.find({organisation_id}).sort({start_date: 1, end_date: 1}) // sort by earliest start_date
 
     res.status(200).json(assignments)
 }

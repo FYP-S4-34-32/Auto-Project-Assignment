@@ -17,7 +17,7 @@ const requireAuthentication = require('../middleware/requireAuthentication')
 const router = express.Router()
 
 // fire authentication check before moving on to the remaining routes
-// router.use(requireAuthentication)
+router.use(requireAuthentication)
 
 // GET all assignment object @ /api/assignment/
 router.get('/', getAssignments);

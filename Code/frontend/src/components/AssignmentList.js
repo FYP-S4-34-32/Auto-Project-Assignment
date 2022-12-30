@@ -13,11 +13,6 @@ const AssignmentList = ({ assignment }) => {
     const { user } = useAuthenticationContext()
     const { dispatch } = useAssignmentContext()
 
-    // if there is no user object - not logged in
-    if (!user) {
-        return
-    }
-
     const sDate = new Date(assignment.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const eDate = new Date(assignment.end_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
