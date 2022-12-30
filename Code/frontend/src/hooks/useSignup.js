@@ -28,6 +28,7 @@ export const useSignup = () => {
         if (!response.ok) {
             setIsLoading(false)
             setError(json.error)
+            setSuccessMsg(null)
         }
 
         // if response is ok

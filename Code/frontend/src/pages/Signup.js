@@ -44,7 +44,11 @@ const Signup = () => {
             await signup(name, email, password, confirmPassword, role, user.organisation_id) 
         else 
             if (user.role === "Super Admin") // if user is a super admin, set organisation to the organisation selected by the super admin
+                if (role === "Super Admin"){
+                    await signup(name, email, password, confirmPassword, role, "Undefined")
+                } else {
                 await signup(name, email, password, confirmPassword, role, organisation)
+                }
     }
  
     // only display the organisation dropdown if the user is a super admin
@@ -84,7 +88,7 @@ const Signup = () => {
             {/* If user is a SUPER ADMIN: enable input field, organisation can be changed */}
             {user.role === "Super Admin" && role !== "Super Admin" &&
                 <select value={organisation} onChange={(e) => {setOrganisationID(e.target.value)}}>
-                    <option value="Undefined">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
+                    <option value="">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
                     {displayOrganisationOptions}
                     <option value="Undefined">Null</option>
                 </select>
@@ -95,7 +99,7 @@ const Signup = () => {
                 <input
                 type="organisation"
                 disabled={true} 
-                value = {user.organisation_id}
+                value = "Undefined"
                 />
             } 
 
