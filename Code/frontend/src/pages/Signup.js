@@ -58,12 +58,6 @@ const Signup = () => {
     return (
         <form className="signup" onSubmit={handleSubmit}>
             <h3>Account Creation</h3>
-            { (currentUserRole === 'Super Admin') && (
-                <div>
-                    <label>Organisation: </label>
-                    <br></br>
-                </div>
-            )}
             <label>Name:</label>
             <input
                 type="text"
@@ -90,7 +84,7 @@ const Signup = () => {
             {/* If user is a SUPER ADMIN: enable input field, organisation can be changed */}
             {user.role === "Super Admin" && role !== "Super Admin" &&
                 <select value={organisation} onChange={(e) => {setOrganisationID(e.target.value)}}>
-                    <option value="">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
+                    <option value="Undefined">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
                     {displayOrganisationOptions}
                     <option value="Undefined">Null</option>
                 </select>
@@ -101,10 +95,11 @@ const Signup = () => {
                 <input
                 type="organisation"
                 disabled={true} 
-                value={"Undefined"}
+                value = {user.organisation_id}
                 />
             } 
 
+            <br></br>
             <label>Password:</label>
             <input
                 type="password" // hidden
