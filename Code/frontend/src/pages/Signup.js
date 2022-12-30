@@ -88,12 +88,22 @@ const Signup = () => {
             }   
 
             {/* If user is a SUPER ADMIN: enable input field, organisation can be changed */}
-            {user.role === "Super Admin" && 
+            {user.role === "Super Admin" && role !== "Super Admin" &&
                 <select value={organisation} onChange={(e) => {setOrganisationID(e.target.value)}}>
                     <option value="">Please choose an organisation</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
                     {displayOrganisationOptions}
+                    <option value="Undefined">Null</option>
                 </select>
-            }
+            }        
+
+            {/* If role selected is Super Admin, Organisation will be defaulted to undefined */}
+            {currentUserRole === "Super Admin" && role === "Super Admin" && 
+                <input
+                type="organisation"
+                disabled={true} 
+                value={"Undefined"}
+                />
+            } 
 
             <label>Password:</label>
             <input
@@ -112,7 +122,7 @@ const Signup = () => {
                 <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null --> creation will not take place */}
                 <option value="Employee">Employee</option>
                 <option value="Admin">Admin</option>
-                { (currentUserRole === "Super Admin") && <option value="Super Admin">Super Admin</option> } {/*only display the Super Admin option if the current user is one*/}
+                { (currentUserRole === "Super Admin") && <option value="Super Admin">Super Admin</option> } {/*only display the Super Admin option if the current user is one*/}   
             </select>
             <br></br>
             <br></br>

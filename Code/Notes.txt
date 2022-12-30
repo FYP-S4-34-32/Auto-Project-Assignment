@@ -10,7 +10,7 @@
 
 Super Admin
 ——————
-[] Create account
+[x] Create account
 - can create Super Admins but must still select organisation
 
 [] Delete user accounts for organisation
