@@ -6,6 +6,7 @@ import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useAssignmentContext } from '../hooks/useAssignmentContext'
 import { useEffect } from 'react'
 import AssignmentList from '../components/AssignmentList'
+import AssignmentForm from '../components/AssignmentForm'
 
 const Assignment = () => {
 
@@ -34,8 +35,8 @@ const Assignment = () => {
     }, [dispatch, user])
 
     return (
-        <div> 
-            <div className="projects">
+        <div className='assignment-home'> 
+            <div className="assignments">
                 <h2>Project Assignment</h2>
                 { assignments && assignments.map((assignment) => { // will only run when there is a assignment object
                 if (user.organisation_id === assignment.organisation_id) // check if assignment belongs to user under same organisation
@@ -43,6 +44,7 @@ const Assignment = () => {
                 return(<AssignmentList key={ assignment._id } assignment={ assignment } />) // key must be unique
             })}
             </div>  
+            <AssignmentForm />
         </div>
     )
 }

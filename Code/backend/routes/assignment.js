@@ -25,8 +25,8 @@ router.get('/', getAssignments);
 // GET a single assignment object @ /api/assignment/:id
 router.get('/:id', getSingleAssignment)
 
-// POST new assignment @ /api/assignment/createassignment
-router.post('/createassignment', createAssignment)
+// POST new assignment @ /api/assignment/
+router.post('/', createAssignment)
 
 // DELETE an assignment object @ /api/assignment/:id
 router.delete('/:id', deleteAssignment)
