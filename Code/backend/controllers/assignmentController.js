@@ -8,7 +8,9 @@ const mongoose = require('mongoose') // mongoose package for mongodb
 
 // GET all assignments
 const getAssignments = async (req, res) => {
-    const assignments = await Assignment.find({}).sort({createdAt: -1}) // descending order
+    const organisation_id = req.user.organisation_id
+    
+    const assignments = await Assignment.find({organisation_id}).sort({start_date: 1, end_date: 1}) // sort by earliest start_date
 
     res.status(200).json(assignments)
 }
@@ -39,6 +41,41 @@ const getSingleAssignment = async (req, res) => {
 const createAssignment = async (req, res) => {
     const newAssignment = req.body
 
+    const { title, start_date, end_date, threshold } = req.body
+
+    // track empty fields
+    const emptyFields = []
+    if (!title) {
+        emptyFields.push('title')
+    }
+    if (!start_date) {
+        emptyFields.push('startDate')
+    }
+    if (!end_date) {
+        emptyFields.push('endDate')
+    }
+    if (!threshold) {
+        emptyFields.push('threshold')
+    }
+    if (start_date > end_date) { // startDate later than endDate
+        console.log("error -> Start Date later than End Date")
+        emptyFields.push('startDate')
+        emptyFields.push('endDate')
+    }
+    if (threshold < 1) { // threshold less than 1
+        console.log("error -> threshold less than 1")
+        emptyFields.push('threshold')
+    }
+    const checkTitle = await Assignment.findOne({title}) // find Assignment object with the given title to check for duplicate entry
+    if (checkTitle) {
+        console.log("error -> Duplicate Assignment Title entries")
+        emptyFields.push('title')
+    }
+    if (emptyFields.length > 0) { 
+        return res.status(400).json({error: "Please double check all the fields.", emptyFields})
+    }
+
+    // create new assignment object
     try {
         const assignment = await Assignment.create(newAssignment)
         
@@ -62,7 +99,7 @@ const deleteAssignment = async (req, res) => {
     try {
         const assignment = await Assignment.findOneAndDelete({ _id: id })
         
-        res.status(200).json({ assignment })
+        res.status(200).json(assignment)
     } catch (error) { // catch any error that pops up during the process
     
         res.status(400).json({error: error.message})

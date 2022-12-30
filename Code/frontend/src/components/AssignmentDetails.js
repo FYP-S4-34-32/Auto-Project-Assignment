@@ -55,7 +55,7 @@ const AssignmentDetails = () => {
     }, [setAssignment, setProjects, user, id])
 
     return (
-        <div className="projects">
+        <div className="assignment-details">
             { assignment && (
                 <h2>{ assignment.title }</h2>
             )}

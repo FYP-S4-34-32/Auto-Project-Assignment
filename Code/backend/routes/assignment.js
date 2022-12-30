@@ -17,7 +17,7 @@ const requireAuthentication = require('../middleware/requireAuthentication')
 const router = express.Router()
 
 // fire authentication check before moving on to the remaining routes
-// router.use(requireAuthentication)
+router.use(requireAuthentication)
 
 // GET all assignment object @ /api/assignment/
 router.get('/', getAssignments);
@@ -25,8 +25,8 @@ router.get('/', getAssignments);
 // GET a single assignment object @ /api/assignment/:id
 router.get('/:id', getSingleAssignment)
 
-// POST new assignment @ /api/assignment/createassignment
-router.post('/createassignment', createAssignment)
+// POST new assignment @ /api/assignment/
+router.post('/', createAssignment)
 
 // DELETE an assignment object @ /api/assignment/:id
 router.delete('/:id', deleteAssignment)

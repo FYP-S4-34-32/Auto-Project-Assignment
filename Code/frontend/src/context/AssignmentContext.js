@@ -22,12 +22,11 @@ export const assignmentReducer = (state, action) => {
             }
         case 'CREATE_ASSIGNMENT': 
             return {
-                assignments: [action.payload, ...state.assignment] // payload in this case is a SINGLE new assignment object / ...state.assignment spreads out the current state of the assignment
-                                                                // action.payload is at the front, so newly created assignment will appear at the top instead of the bottom
+                assignments: [action.payload, ...state.assignments]
             }
         case 'DELETE_ASSIGNMENT':
             return {
-                assignments: state.projects.filter((a) =>
+                assignments: state.assignments.filter((a) =>
                     a._id !== action.payload._id // filter out the assignment object to be deleted to update the global state
                 )
             }

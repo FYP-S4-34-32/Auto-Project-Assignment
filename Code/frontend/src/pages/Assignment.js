@@ -6,6 +6,7 @@ import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useAssignmentContext } from '../hooks/useAssignmentContext'
 import { useEffect } from 'react'
 import AssignmentList from '../components/AssignmentList'
+import AssignmentForm from '../components/AssignmentForm'
 
 const Assignment = () => {
 
@@ -16,7 +17,7 @@ const Assignment = () => {
         const fetchAssignment = async () => {
             const response = await fetch('/api/assignment', {
                 headers: {
-                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
+                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the user's token -> backend will validate token -> if valid, grant access to API
                 }
             }) // using fetch() api to fetch data ad store in the variable
             const json = await response.json() // response object into json object, in this case an array of assignment objects
@@ -34,15 +35,14 @@ const Assignment = () => {
     }, [dispatch, user])
 
     return (
-        <div> 
-            <div className="projects">
+        <div className='assignment-home'> 
+            <div className="assignments">
                 <h2>Project Assignment</h2>
-                { assignments && assignments.map((assignment) => { // will only run when there is a assignment object
-                if (user.organisation_id === assignment.organisation_id) // check if assignment belongs to user under same organisation
-
-                return(<AssignmentList key={ assignment._id } assignment={ assignment } />) // key must be unique
-            })}
+                { assignments && assignments.map((assignment) => ( // will only run when there is a assignment object
+                    <AssignmentList key={ assignment._id } assignment={ assignment } /> // key must be unique
+                ))}
             </div>  
+            <AssignmentForm />
         </div>
     )
 }

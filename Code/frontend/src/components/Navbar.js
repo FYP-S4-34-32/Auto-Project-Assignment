@@ -3,16 +3,18 @@
 //=======================================//
 
 // imports
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 
 const Navbar = () => {
     const { logout } = useLogout()
     const { user } = useAuthenticationContext()
+    const navigate = useNavigate()
 
     const handleLogoutClick = () => {
         logout()
+        navigate("/login")
     }
 
     return (
