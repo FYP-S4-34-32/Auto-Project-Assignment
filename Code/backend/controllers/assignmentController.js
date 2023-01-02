@@ -176,69 +176,204 @@ const autoAssign = async (req, res) => {
         }
 
         // an array to track the employees who selected the project in this iteration
-        const firstEmployee = []
-        const secondEmployee = []
-        const thirdEmployee = []
+        const firstChoiceEmployee = []
+        const secondChoiceEmployee = []
+        const thirdChoiceEmployee = []
+        const notSelected = []
 
         // shuffle employee array - so that the project will not process the same order of employees in each iteration
-        // allEmployees.sort(() => Math.random() - 0.5)
+        allEmployees.sort(() => Math.random() - 0.5)
 
-        for (var j = 0; j < allEmployees.length; j++) { // loop through allEmployees array
-            // get employee's preference, skills, and a list of projects already assigned
-            const { first_choice, second_choice, third_choice, skills: employeeSkills, projects_assigned } = allEmployees[j]
-            const employeeSkillOnly = [] // includes employee skill name only
-            const employeeCompetencyOnly = [] // includes employee skill competency level only
+        // loop through allEmployees array
+        for (var j = 0; j < allEmployees.length; j++) {
+            // get employee's preference
+            const { first_choice, second_choice, third_choice } = allEmployees[j]
 
-            // populate employeeSkillOnly and employeeCompetencyOnly array
-            for (var k = 0; k < employeeSkills.length; k++) {
-                employeeSkillOnly.push(employeeSkills[k].skill)
-                employeeCompetencyOnly.push(employeeSkills[k].competency)
+            if (title === first_choice) {
+                firstChoiceEmployee.push(allEmployees[j])
+            } else if (title === second_choice) {
+                secondChoiceEmployee.push(allEmployees[j])
+            } else if (title === third_choice) {
+                thirdChoiceEmployee.push(allEmployees[j])
+            } else {
+                notSelected.push(allEmployees[j])
             }
+        } // end allEmployees loop
 
-            // process project and employee skills
-            const matchingSkills = [] // includes skill and competency
-            const matchingSkillOnly = [] // includes skill name only
-            const matchingCompetencyOnly = [] // includes competency level only
+        // shuffle arrays
+        firstChoiceEmployee.sort(() => Math.random() - 0.5)
+        secondChoiceEmployee.sort(() => Math.random() - 0.5)
+        thirdChoiceEmployee.sort(() => Math.random() - 0.5)
+        notSelected.sort(() => Math.random() - 0.5)
 
-            // populate matchingSkillOnly and matchingCompetencyOnly arrays
-            for (var k = 0; k < projectSkillOnly.length; k++) { // loop through projectSkillsOnly array
-                if (employeeSkillOnly.includes(projectSkillOnly[k])) { // employee has required project skill
-                    matchingSkillOnly.push(projectSkillOnly[k])
-                    matchingCompetencyOnly.push(employeeCompetencyOnly[employeeSkillOnly.indexOf(projectSkillOnly[k])])
+        // loop through first choice
+        if (firstChoiceEmployee.length > 0) {
+            for (var j = 0; j < firstChoiceEmployee.length; j++) {
+                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+                    break
                 }
-            }
 
-            // populate matchingSkills array by combining matchingSkillOnly and matchingCompetencyOnly arrays
-            for (var k = 0; k < matchingSkillOnly.length; k++) {
-                const skill = matchingSkillOnly[k]
-                const competency = matchingCompetencyOnly[k]
-                matchingSkills.push({skill, competency})
-            }
+                // get employee info
+                const { _id, skills: employeeSkills, project_assigned } = firstChoiceEmployee[j]
 
-            return res.status(200).json({matchingSkills})
+                if (project_assigned === threshold) { // employee already assigned max number of projects
+                    continue // to next employee
+                }
+                
+                // get matching skills between project and employee
 
-            /* Project is Employee's First Choice */
-            if (first_choice === title) {
-                /* check the required skills against the skills of the employee */
-                // Employee have ALL the relevant SKILLS and COMPETENCY levels are MET
-                // if (matchingSkills.length === projectSkills.length) {
-                //     if (matchingSkills.competency)
-                // }
+                // compare competency level of the matching skills
+
+                // if all skills and competency level met:
+                //      assign
+                // elif all skills but competency level not met:
+                //      assign
+                // elif more than 50% skills:
+                //      if competency level met:
+                //              assign
+            } 
+        } // end first choice loop
+
+        // loop through second choice
+        if (secondChoiceEmployee.length > 0) {
+            for (var j = 0; j < secondChoiceEmployee.length; j++) {
+                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+                    break
+                }
+
+                // get employee info
+                const { _id, skills: employeeSkills, project_assigned } = secondChoiceEmployee[j]
+
+                if (project_assigned === threshold) { // employee already assigned max number of projects
+                    continue // to next employee
+                }
+
+                // get matching skills between project and employee
+
+                // compare competency level of the matching skills
+
+                // if all skills and competency level met:
+                //      assign
+                // elif all skills but competency level not met:
+                //      assign
+                // elif more than 50% skills:
+                //      if competency level met:
+                //              assign
+            } 
+        } // end second choice loop
+
+        // loop through third choice
+        if (thirdChoiceEmployee.length > 0) {
+            for (var j = 0; j < thirdChoiceEmployee.length; j++) {
+                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+                    break
+                }
+
+                // get employee info
+                const { _id, skills: employeeSkills, project_assigned } = thirdChoiceEmployee[j]
+
+                if (project_assigned === threshold) { // employee already assigned max number of projects
+                    continue // to next employee
+                }
+
+                // get matching skills between project and employee
+
+                // compare competency level of the matching skills
+
+                // if all skills and competency level met:
+                //      assign
+                // elif all skills but competency level not met:
+                //      assign
+                // elif more than 50% skills:
+                //      if competency level met:
+                //              assign
+            } 
+        } // end third choice loop
+
+        // loop through not selected
+        if (notSelected.length > 0) {
+            for (var j = 0; j < notSelected.length; j++) {
+                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+                    break
+                }
+
+                // get employee info
+                const { _id, skills: employeeSkills, project_assigned } = notSelected[j]
+
+                if (project_assigned === threshold) { // employee already assigned max number of projects
+                    continue // to next employee
+                }
+
+                // get matching skills between project and employee
+
+                // compare competency level of the matching skills
+
+                // if all skills and competency level met:
+                //      assign
+                // elif all skills but competency level not met:
+                //      assign
+                // elif more than 50% skills:
+                //      if competency level met:
+                //              assign
+            } 
+        } // end not selected loop
+
+        // for (var j = 0; j < allEmployees.length; j++) { // loop through allEmployees array
+        //     // get employee's preference, skills, and a list of projects already assigned
+        //     const { first_choice, second_choice, third_choice, skills: employeeSkills, projects_assigned } = allEmployees[j]
+        //     const employeeSkillOnly = [] // includes employee skill name only
+        //     const employeeCompetencyOnly = [] // includes employee skill competency level only
+
+        //     // populate employeeSkillOnly and employeeCompetencyOnly array
+        //     for (var k = 0; k < employeeSkills.length; k++) {
+        //         employeeSkillOnly.push(employeeSkills[k].skill)
+        //         employeeCompetencyOnly.push(employeeSkills[k].competency)
+        //     }
+
+        //     // process project and employee skills
+        //     const matchingSkills = [] // includes skill and competency
+        //     const matchingSkillOnly = [] // includes skill name only
+        //     const matchingCompetencyOnly = [] // includes competency level only
+
+        //     // populate matchingSkillOnly and matchingCompetencyOnly arrays
+        //     for (var k = 0; k < projectSkillOnly.length; k++) { // loop through projectSkillsOnly array
+        //         if (employeeSkillOnly.includes(projectSkillOnly[k])) { // employee has required project skill
+        //             matchingSkillOnly.push(projectSkillOnly[k])
+        //             matchingCompetencyOnly.push(employeeCompetencyOnly[employeeSkillOnly.indexOf(projectSkillOnly[k])])
+        //         }
+        //     }
+
+        //     // populate matchingSkills array by combining matchingSkillOnly and matchingCompetencyOnly arrays
+        //     for (var k = 0; k < matchingSkillOnly.length; k++) {
+        //         const skill = matchingSkillOnly[k]
+        //         const competency = matchingCompetencyOnly[k]
+        //         matchingSkills.push({skill, competency})
+        //     }
+
+        //     return res.status(200).json({matchingSkills})
+
+        //     /* Project is Employee's First Choice */
+        //     if (first_choice === title) {
+        //         /* check the required skills against the skills of the employee */
+        //         // Employee have ALL the relevant SKILLS and COMPETENCY levels are MET
+        //         // if (matchingSkills.length === projectSkills.length) {
+        //         //     if (matchingSkills.competency)
+        //         // }
                 
 
-                const numberOfProjectSkills = projectSkills.length // used to check whether employee have > 50% of the required skills
-            }
+        //         const numberOfProjectSkills = projectSkills.length // used to check whether employee have > 50% of the required skills
+        //     }
             
-            // check projects_assigned length against threshold - employee cannot take more projects than threshold specified
-            if (projects_assigned.length === threshold) { // project threshold reached for this employee
-                continue // move on to the next employee
-            }
+        //     // check projects_assigned length against threshold - employee cannot take more projects than threshold specified
+        //     if (projects_assigned.length === threshold) { // project threshold reached for this employee
+        //         continue // move on to the next employee
+        //     }
 
-            // if project already has the minimum number of people required - projectThreshold
-            if (projectThreshold === assigned_to.length) {
-                break // move on to the next project
-            }
-        }
+        //     // if project already has the minimum number of people required - projectThreshold
+        //     if (projectThreshold === assigned_to.length) {
+        //         break // move on to the next project
+        //     }
+        // }
     }
 }
 
