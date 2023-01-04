@@ -49,6 +49,14 @@ const Signup = () => {
                 } else {
                 await signup(name, email, password, confirmPassword, role, organisation)
                 }
+
+        // reset form
+        setName('')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setRole('')
+        setOrganisationID('')
     }
  
     // only display the organisation dropdown if the user is a super admin
