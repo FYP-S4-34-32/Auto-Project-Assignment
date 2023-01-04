@@ -123,7 +123,7 @@ const updateUserInfo = async (req, res) => {
         const user = await User.updateInfo(email, contact)
 
         // success message
-        const successMsg = "Contact number updated!"
+        const successMsg = "Contact info updated!"
 
         // return the request object
         res.status(200).json({ user, successMsg })
@@ -289,7 +289,25 @@ const deleteUser = async (req, res) => {
         const users = await User.getAllUsers()
 
         // return the email and skills
-        res.status(200).json({ users , deletedUser })
+        res.status(200).json({ users })
+    } catch (error) { // catch any error that pops up during the process
+        // return the error message in json
+        res.status(400).json({error: error.message})
+    }
+}
+
+// DELETE many users (more than 1)
+const deleteUsers = async (req, res) => {
+    const { emails } = req.body
+
+    try {
+        // invoke deleteManyUsers function in userModel.js
+        const deletedUsers = await User.deleteUsers(emails)  
+
+        const users = await User.getAllUsers()
+
+        // return the email and skills
+        res.status(200).json({ users , deletedUsers })
     } catch (error) { // catch any error that pops up during the process
         // return the error message in json
         res.status(400).json({error: error.message})
@@ -366,6 +384,7 @@ module.exports = {
     deleteUserSkill,
     changeUserPassword,
     deleteUser,
+    deleteUsers,
     selectPreference,
     validateEmail,
     resetPassword

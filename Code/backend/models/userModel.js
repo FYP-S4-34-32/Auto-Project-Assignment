@@ -99,38 +99,55 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
         throw Error('Email is not valid')
     }
 
-    // Passwords do not match 
-    if (password !== confirmPassword) {
-        throw Error('Passwords do not match')
-    }
-
-    // if organisation_id is not provided
-    if (!organisation_id) {
-         throw Error('Please provide the organisation ID')
-    }
-
-    // STRENGTH OF PASSWORD
-    // if (!validator.isStrongPassword(password)) {
-    //     throw Error('Password not strong enough')
-    // }
-
     // check whether email exist in the database
     const exists = await this.findOne({ email })
 
     if (exists) { // DUPLICATE EMAIL - NOT ALLOWED
         throw Error('Email already in use')
     }
+
+    // Passwords do not match 
+    if (password !== confirmPassword) {
+        throw Error('Passwords do not match')
+    }
+
+    // if organisation_id is not provided
+    if (role === "Employee" && !organisation_id) { 
+         throw Error('Please provide the organisation ID')
+    }
+    
+    if (role === "Admin" && !organisation_id) { 
+        throw Error('Please provide the organisation ID')
+    } 
+
+    // STRENGTH OF PASSWORD
+    // if (!validator.isStrongPassword(password)) {
+    //     throw Error('Password not strong enough')
+    // }
+
+    
     
     const salt = await bcrypt.genSalt(10) // generate password salt - value determines strength --> default == 10
     const hash = await bcrypt.hash(password, salt) // hash the password
 
     // save user to the database
-    const user = await this.create({ name, email, password: hash, role, organisation_id })
+    if (role === "Employee" || role === "Admin") {
+        const user = await this.create({ name, email, password: hash, role, organisation_id })
+    
+        console.log(user)
 
-    console.log(user)
+        // returns the user document we just created
+        return user
+    }
 
-    // returns the user document we just created
-    return user
+    if (role === "Super Admin") {
+        const user = await this.create({ name, email, password: hash, role })
+    
+        console.log(user)
+
+        // returns the user document we just created
+        return user
+    }
 }
 
 //===============================================================================================================================//
@@ -198,12 +215,18 @@ userSchema.statics.updateInfo = async function(email, contact) {
         throw Error("No such user")
     } 
 
-    //console.log(contact.match(/^[0-9]+$/))
+    // console.log(contact.match(/^[0-9]+$/))
+    console.log(contact)
+    console.log(contact.match(/^[8-9][0-9]*$/))
 
-    // validate contact info, if it contains only numbers
-    if (Number.isFinite(contact) === null) {  
-        throw Error("Contact info must be numeric. Please enter a valid contact number")
+    // validate contact info, if it contains only 8 digits that begins with 8 or 9
+    if (contact.match(/^[0-9]+$/) === null || contact.match(/^[8-9][0-9]*$/) === null) {  
+        throw Error("Invalid contact info")
+    } 
+    if (contact.length !== 8) {
+        throw Error("Contact info must be 8 digits long")
     }
+
 
     // get the user and update contact info
     const updated = await this.findOneAndUpdate({email}, {contact})  
@@ -340,6 +363,24 @@ userSchema.statics.deleteUser = async function(email) {
     if (deleteUser.acknowledged === true) {
         return "User (" + email + ") deleted!"
     } 
+}
+
+// static method to delete many users
+userSchema.statics.deleteUsers = async function(emails) {
+    // search for user by email
+    const user = await this.findOne({ email: emails[0] })
+
+    // check to see whether a user is found
+    if (!user) {
+        throw Error("No such user")
+    }
+
+    const deleteUsers = await this.deleteMany({ email: { $in: emails }})
+
+    // return success message after deleting user
+    if (deleteUsers.acknowledged === true) {
+        return "Users deleted!"
+    }
 }
 
 // static method to validate email
