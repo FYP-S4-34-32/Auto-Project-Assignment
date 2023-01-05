@@ -30,7 +30,9 @@ export const useUpdateInfo = () => {
 
         if(response.ok) {
             setIsLoading(false)
-            setUpdateContactSuccess(json.successMsg)
+            setError(json.successMsg) 
+
+            // console.log(error.includes("updated") + " " + error) 
         }
 
         return json.user.contact

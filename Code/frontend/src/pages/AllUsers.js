@@ -9,8 +9,9 @@ import { useState, useEffect} from 'react'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser' 
+import { useDeleteUsers } from '../hooks/useDeleteUsers'
 import { useGetAllOrganisations } from '../hooks/useGetAllOrganisations'
-import { useNavigate} from 'react-router-dom'
+import { useNavigate} from 'react-router-dom' 
 
 const AllUsers = () => {
     var allUsersArray = []
@@ -18,15 +19,16 @@ const AllUsers = () => {
     var superAdminsArray = []
     var allEmployeesArray = [] 
     var organisationEmployeesArray = []
-    var organisationsArray = []
-    
+    var organisationsArray = []  
+    const [deleteUsersArray, setDeleteUsersArray] = useState([]) // email addresses of users to be deleted (for mass deletion)
     
     const { user } = useAuthenticationContext() // get the user object from the context 
     const navigate = useNavigate();
 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
-    const { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess} = useDeleteUser() // get the deleteUser function from the context
+    const { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess, updatedAllUsers1} = useDeleteUser() // get the deleteUser function from the context
     const { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations } = useGetAllOrganisations() // get the getAllOrganisations function from the context
+    const { deleteUsers, updatedAllUsers2 } = useDeleteUsers() // get the deleteUsers function from the context
     const [selectedUsers, setSelectedUsers] = useState("All Users") // for Super Admins
     const [selectedEmployees, setSelectedEmployees] = useState("Employees") // for Project Admins
     const [searchUsers, setSearch] = useState("")  
@@ -66,7 +68,7 @@ const AllUsers = () => {
 
     filterUsers();
 
-    // DELETE a user from the database
+    // DELETE a SINGLE USER from the database
     const deleteUser = (email) => {  
         // CONFIRMATION BOX 
         let answer = window.confirm("Delete user " + email + "?");
@@ -78,8 +80,80 @@ const AllUsers = () => {
             filterUsers();
         } 
     } 
-    
-    // search for users
+
+    // Add a user to the array of users to be deleted
+    const addDeleteUser = (event) => {
+        const {value, checked} = event.target; // value = email address, checked = true/false
+        console.log("Selected User Email: ", value)
+
+        if (checked) {
+            console.log(value + " is checked") 
+
+            if (deleteUsersArray.length === 0) {
+                setDeleteUsersArray([value])  
+            }
+            else {
+                setDeleteUsersArray(pre => [...pre, value]) 
+            }
+
+        } else {
+            console.log(value + " is unchecked") 
+
+            setDeleteUsersArray(pre => {
+                return pre.filter((email) => {
+                    return email !== value
+                })
+            })
+        } 
+    } 
+    // console.log("deleteUsersArray: ", deleteUsersArray) 
+
+    // DISPLAY "delete user" button
+    const deleteUserButton = () => {
+        if (user.role === "Super Admin" && selectedUsers === "Manage Users") {
+            return (
+                <div>
+                    <button className="deleteUsersBtn" onClick={handleDeleteUsers}>Delete Users</button>
+                </div>
+            )
+        }
+
+        if (user.role === "Admin" && selectedEmployees === "Manage Employees") {
+            return (
+                <div >
+                    <button className="deleteUsersBtn" onClick={handleDeleteUsers}>Delete Employees</button>
+                </div>
+            )
+        }
+    }
+
+    // DELETE MULTIPLE USERS from the database
+    const handleDeleteUsers = () => {
+        if (deleteUsersArray.length === 0) {
+            alert("No users selected")
+        }
+        else {
+            // CONFIRMATION BOX 
+            let answer = window.confirm("Delete selected users?");
+
+            if (answer) { // if user clicks OK, answer === true
+                deleteUsers(deleteUsersArray);
+            }
+
+            // clear the array of users to be deleted
+            setDeleteUsersArray([]);
+        }
+
+        // AFTER DELETING USERS, FETCH UPDATED ARRAY OF USERS 
+        getAllUsers(); // get updated array of users
+        filterUsers(); 
+        if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
+            getAllOrganisations(user);  
+
+        console.log("all users: ", allUsers);
+    }
+
+    // SEARCH for users
     const searchUser = () => {   
         // super admin
         if (user.role === "Super Admin") {
@@ -197,7 +271,7 @@ const AllUsers = () => {
 
     const searchResults = searchUser(); 
 
-    // filter users by their organisations, only for Super Admins
+    // FILTER users by their organisations, only for Super Admins
     const OrganisationFilter = () => {
         // console.log("organisationsArray: ", organisationsArray)
         // console.log("allOrganisations: ", allOrganisations)
@@ -205,7 +279,7 @@ const AllUsers = () => {
         // selectable options for organisation filter 
         if (user.role === "Super Admin") { // super admins can see current organisations
             organisationsArray = allOrganisations;
-            console.log("organisationsArray: ", organisationsArray)
+            // console.log("organisationsArray: ", organisationsArray)
 
             const OrganisationFilterSelection = organisationsArray.map((organisation) => { 
                 return (
@@ -245,25 +319,30 @@ const AllUsers = () => {
                 case "Manage Users":  // super admin
                     var userDetail = datum; 
                     return (
-                        <div className="user-div" key={userDetail._id} style={{height:"250px"}}>
-                            <h3>{userDetail.name}</h3> 
-                            <p>Organisation: {userDetail.organisation_id}</p>
-                            <p>Email: {userDetail.email}</p>
-                            <p>Role: {userDetail.role}</p>
-                            <p>Contact Info: {userDetail.contact}</p>
-                            <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                        </div>
+                        <tr>
+                            <td>
+                                <input className="checkBox" type="checkbox" value={userDetail.email} onChange={addDeleteUser}/>
+                            </td>
+                            <td className="user-cell"> 
+                                    <h3>{userDetail.name}</h3> 
+                                    <p>Organisation: {userDetail.organisation_id}</p> 
+                                    <p>Role: {userDetail.role}</p>  
+                            </td>
+                            <td>
+                                <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px"}}>delete</span>
+                            </td>
+                        </tr>
                     ) 
                 default:
                     var userDetails = datum;
                     return (
-                        <div className="user-div" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                        <tr className="user-cell" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
                             <h3>{userDetails.name}</h3> 
                             <p>Organisation: {userDetails.organisation_id}</p>
                             <p>Email: {userDetails.email}</p>
                             <p>Role: {userDetails.role}</p>
                             <p>Contact Info: {userDetails.contact}</p>  
-                        </div> 
+                        </tr> 
                     ) 
             }
         }
@@ -274,25 +353,32 @@ const AllUsers = () => {
                 case "Manage Employees": 
                     var userDetail = datum; 
                     return ( 
-                        <div className="user-div" key={userDetail._id} style={{height:"250px"}}>
-                            <h3>{userDetail.name}</h3> 
-                            <p>Organisation: {userDetail.organisation_id}</p>
-                            <p>Email: {userDetail.email}</p>
-                            <p>Role: {userDetail.role}</p>
-                            <p>Contact Info: {userDetail.contact}</p>
-                            <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                        </div>
+                        <tr>
+                            <td>
+                                <input className="checkBox" type="checkbox" value={userDetail.email} onChange={addDeleteUser}/>
+                            </td>
+                            <td className="user-cell" key={userDetail._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetail)}>
+                                <h3>{userDetail.name}</h3> 
+                                <p>Organisation: {userDetail.organisation_id}</p>
+                                <p>Email: {userDetail.email}</p>
+                                <p>Role: {userDetail.role}</p>
+                                <p>Contact Info: {userDetail.contact}</p>
+                            </td>
+                            <td>
+                                <span className="material-symbols-outlined" id="deleteButton" onClick={deleteUser} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                            </td>
+                        </tr>
                     )
                 default:
                     var userDetails = datum;
                     return (
-                        <div className="user-div" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
-                        <h3>{userDetails.name}</h3> 
-                        <p>Organisation: {userDetails.organisation_id}</p>
-                        <p>Email: {userDetails.email}</p>
-                        <p>Role: {userDetails.role}</p>
-                        <p>Contact Info: {userDetails.contact}</p>  
-                    </div> 
+                        <tr className="user-cell" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                            <h3>{userDetails.name}</h3> 
+                            <p>Organisation: {userDetails.organisation_id}</p>
+                            <p>Email: {userDetails.email}</p>
+                            <p>Role: {userDetails.role}</p>
+                            <p>Contact Info: {userDetails.contact}</p>  
+                        </tr> 
                 ) 
             }
         }
@@ -324,10 +410,17 @@ const AllUsers = () => {
     const displayShowMsg = () => {
         if (user.role === "Super Admin") {
             if (selectedUsers !== "Super Admins") {
-                return (
-                    <h4>Showing {selectedUsers} from {filterOrgID} </h4>
-                )
-            }
+                if (selectedUsers === "Manage Users") {
+                    return (
+                        <h4> Manage Users </h4>
+                    )
+                }
+                else {
+                    return (
+                        <h4>Showing {selectedUsers} from {filterOrgID} </h4>
+                    )
+                }
+            } 
             else {
                 return (
                     <h4>Showing {selectedUsers} </h4>
@@ -336,9 +429,15 @@ const AllUsers = () => {
         }
 
         if (user.role === "Admin") {
-            return (
-                <h4>Showing {selectedEmployees} from {user.organisation_id} </h4>
-            )
+            if (selectedEmployees === "Manage Employees") {
+                return (
+                    <h4> Manage Employees </h4>
+                )
+            } else {
+                return (
+                    <h4>Showing {selectedEmployees} from {user.organisation_id} </h4>
+                )
+            }
         } 
     }
  
@@ -351,10 +450,14 @@ const AllUsers = () => {
                     
                     {OrganisationFilter()} 
 
+                    {deleteUserButton()}
+
                     {displayShowMsg()}
 
-                    {renderSearchResults}
-
+                    <table> 
+                        {renderSearchResults} 
+                    </table>
+                    
                     {deleteUserError && <p>Error: {deleteUserError}</p>}
                 </div>
             </div>

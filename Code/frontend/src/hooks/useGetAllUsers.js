@@ -30,6 +30,8 @@ export const useGetAllUsers = () => {
             setIsLoading(false)
             setAllUsers(json)
         }
+
+        console.log("all users: ", json)
     }
 
     return { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers}

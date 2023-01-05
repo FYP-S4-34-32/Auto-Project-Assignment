@@ -15,7 +15,7 @@ import { set, setHours } from 'date-fns';
 
 const UserDetails = () => {
     const { user } = useAuthenticationContext(); // current user (admin or superadmin)
-    const {updateInfo, isLoading, error, updateContactSuccess} = useUpdateInfo();  
+    const {updateInfo, isLoading, error} = useUpdateInfo();  
     const {updateRole, updateRoleIsLoading, updateRoleError, updateRoleSuccess} = useUpdateRole();
     const navigate = useNavigate();
     const location = useLocation(); 
@@ -24,8 +24,7 @@ const UserDetails = () => {
     const userDetails = location.state // user details passed from UserList.js (not updated)
     const pathname = location.pathname
     const [editContactForm, setEditContactForm] = useState(false) 
-    const [editRoleForm, setEditRoleForm] = useState(false)
-    
+    const [editRoleForm, setEditRoleForm] = useState(false) 
 
     useEffect(() => {
         // get profile of the user
@@ -45,6 +44,7 @@ const UserDetails = () => {
             </div>
         )
     }) 
+
 
     // const displayProjects = userDetails.project_assigned.map((project) => {
     //     return (
@@ -134,13 +134,14 @@ const UserDetails = () => {
                                     value={userContact} 
                                     onChange={(e) => setUserContact(e.target.value)}
                                 />
-
                                 
                                 <button className="submitBtn">Save</button>
-                                {error && <div className="error">{error}</div>}
-                                {updateContactSuccess && <div className="success">Contact info updated successfully</div>}
+                                {error.includes("updated") === "false" && <div className="error">{error}</div>}
+                                {error.includes("updated") === "true" && <div className="success">Contact updated successfully</div>}
                             </form>      
                         }
+
+                        
                           
                     </div>
                      <div className='userDetails-orgDiv' style={{width:"40%"}}>
@@ -197,8 +198,7 @@ const UserDetails = () => {
 
                                 
                                 <button className="submitBtn">Save</button>
-                                {error && <div className="error">{error}</div>}
-                                {updateContactSuccess && <div className="success">Contact info updated successfully</div>}
+                                {error && <div className="error">{error}</div>} 
                             </form>      
                         }
                           
