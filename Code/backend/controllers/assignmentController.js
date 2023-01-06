@@ -162,10 +162,21 @@ const autoAssign = async (req, res) => {
     // get all projects' information
     const allProjects = await getAllProjects(projects)
 
+    // some control flag for the assigning algo
+    let priority = 1 // first iteration of the project prioritises firstChoice options, second iteration prioritises secondChoice options, and so on...
+
     // begin assigning
     for (var i = 0; i < allProjects.length; i++) { // loop through allProjects array
+        console.log("Processing project[", i, "] with priority ", priority)
+    
         // get project title, skills, number of people required, and the employees who are already assigned to it
         const { title, skills: projectSkills, threshold: projectThreshold, assigned_to } = allProjects[i]
+
+        // number of people required for the project fulfilled
+        if (projectThreshold === assigned_to.length) {
+            continue // to next project
+        }
+
         const projectSkillOnly = [] // includes project skill name only
         const projectCompetencyOnly = [] // includes project skill competency level only
 
@@ -176,9 +187,9 @@ const autoAssign = async (req, res) => {
         }
 
         // an array to track the employees who selected the project in this iteration
-        const firstChoiceEmployee = []
-        const secondChoiceEmployee = []
-        const thirdChoiceEmployee = []
+        const firstChoiceEmployees = []
+        const secondChoiceEmployees = []
+        const thirdChoiceEmployees = []
         const notSelected = []
 
         // shuffle employee array - so that the project will not process the same order of employees in each iteration
@@ -187,198 +198,96 @@ const autoAssign = async (req, res) => {
         // loop through allEmployees array
         for (var j = 0; j < allEmployees.length; j++) {
             // get employee's preference
-            const { first_choice, second_choice, third_choice } = allEmployees[j]
+            const { firstChoice, secondChoice, thirdChoice } = allEmployees[j]
 
-            if (title === first_choice) {
-                firstChoiceEmployee.push(allEmployees[j])
-            } else if (title === second_choice) {
-                secondChoiceEmployee.push(allEmployees[j])
-            } else if (title === third_choice) {
-                thirdChoiceEmployee.push(allEmployees[j])
+            if (title === firstChoice) {
+                firstChoiceEmployees.push(allEmployees[j])
+            } else if (title === secondChoice) {
+                secondChoiceEmployees.push(allEmployees[j])
+            } else if (title === thirdChoice) {
+                thirdChoiceEmployees.push(allEmployees[j])
             } else {
                 notSelected.push(allEmployees[j])
             }
         } // end allEmployees loop
 
         // shuffle arrays
-        firstChoiceEmployee.sort(() => Math.random() - 0.5)
-        secondChoiceEmployee.sort(() => Math.random() - 0.5)
-        thirdChoiceEmployee.sort(() => Math.random() - 0.5)
+        firstChoiceEmployees.sort(() => Math.random() - 0.5)
+        secondChoiceEmployees.sort(() => Math.random() - 0.5)
+        thirdChoiceEmployees.sort(() => Math.random() - 0.5)
         notSelected.sort(() => Math.random() - 0.5)
 
+        // console.log("firstChoiceEmployee: ", firstChoiceEmployee.length)
+        // console.log("secondChoiceEmployee: ", secondChoiceEmployee.length)
+        // console.log("thirdChoiceEmployee: ", thirdChoiceEmployee.length)
+        // console.log("notSelected: ", notSelected.length)
+
+        // console.log('\n')
+
+        // console.log(projectSkillOnly) // e.g. ['Swift', 'React Native', 'C']
+        // console.log(projectCompetencyOnly) // e.g. ['Advanced', 'Intermediate', 'Beginner']
+
         // loop through first choice
-        if (firstChoiceEmployee.length > 0) {
-            for (var j = 0; j < firstChoiceEmployee.length; j++) {
-                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
-                    break
-                }
+        if (priority === 1 && firstChoiceEmployees.length > 0) {
+            console.log("Processing priority ", priority, " with firstChoiceEmployees")
+            assignEmployee(firstChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
 
-                // get employee info
-                const { _id, skills: employeeSkills, project_assigned } = firstChoiceEmployee[j]
-
-                if (project_assigned === threshold) { // employee already assigned max number of projects
-                    continue // to next employee
-                }
-                
-                // get matching skills between project and employee
-
-                // compare competency level of the matching skills
-
-                // if all skills and competency level met:
-                //      assign
-                // elif all skills but competency level not met:
-                //      assign
-                // elif more than 50% skills:
-                //      if competency level met:
-                //              assign
-            } 
+            if (i === allProjects.length - 1) {
+                i = -1 // loop through project again
+                priority++ // increment priority - e.g. from firstChoice to secondChoice
+                console.log("priority after incrementing: ", priority)
+                continue
+            } else {
+                continue // move to next project
+            }
         } // end first choice loop
 
         // loop through second choice
-        if (secondChoiceEmployee.length > 0) {
-            for (var j = 0; j < secondChoiceEmployee.length; j++) {
-                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
-                    break
-                }
+        if (priority === 2 && secondChoiceEmployees.length > 0) {
+            console.log("Processing priority ", priority, " with secondChoiceEmployees")
+            assignEmployee(secondChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
 
-                // get employee info
-                const { _id, skills: employeeSkills, project_assigned } = secondChoiceEmployee[j]
-
-                if (project_assigned === threshold) { // employee already assigned max number of projects
-                    continue // to next employee
-                }
-
-                // get matching skills between project and employee
-
-                // compare competency level of the matching skills
-
-                // if all skills and competency level met:
-                //      assign
-                // elif all skills but competency level not met:
-                //      assign
-                // elif more than 50% skills:
-                //      if competency level met:
-                //              assign
-            } 
+            if (i === allProjects.length - 1) {
+                i = -1 // loop through project again
+                priority++ // increment priority - e.g. from firstChoice to secondChoice
+                console.log("priority after incrementing: ", priority)
+                continue
+            } else {
+                continue // move to next project
+            }
         } // end second choice loop
 
         // loop through third choice
-        if (thirdChoiceEmployee.length > 0) {
-            for (var j = 0; j < thirdChoiceEmployee.length; j++) {
-                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
-                    break
-                }
+        if (priority === 3 && thirdChoiceEmployees.length > 0) {
+            console.log("Processing priority ", priority, " with thirdChoiceEmployees")
+            assignEmployee(thirdChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
 
-                // get employee info
-                const { _id, skills: employeeSkills, project_assigned } = thirdChoiceEmployee[j]
-
-                if (project_assigned === threshold) { // employee already assigned max number of projects
-                    continue // to next employee
-                }
-
-                // get matching skills between project and employee
-
-                // compare competency level of the matching skills
-
-                // if all skills and competency level met:
-                //      assign
-                // elif all skills but competency level not met:
-                //      assign
-                // elif more than 50% skills:
-                //      if competency level met:
-                //              assign
-            } 
+            if (i === allProjects.length - 1) {
+                i = -1 // loop through project again
+                priority++ // increment priority - e.g. from firstChoice to secondChoice
+                console.log("priority after incrementing: ", priority)
+                continue
+            } else {
+                continue // move to next project
+            }
         } // end third choice loop
 
-        // loop through not selected
-        if (notSelected.length > 0) {
-            for (var j = 0; j < notSelected.length; j++) {
-                if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
-                    break
-                }
+        // loop through not selected - as of now, this will be our last group of people, im looking into an outliers list next
+        if (priority === 4 && notSelected.length > 0) {
+            console.log("Processing priority ", priority, " with notSelected")
+            assignEmployee(notSelected, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
 
-                // get employee info
-                const { _id, skills: employeeSkills, project_assigned } = notSelected[j]
-
-                if (project_assigned === threshold) { // employee already assigned max number of projects
-                    continue // to next employee
-                }
-
-                // get matching skills between project and employee
-
-                // compare competency level of the matching skills
-
-                // if all skills and competency level met:
-                //      assign
-                // elif all skills but competency level not met:
-                //      assign
-                // elif more than 50% skills:
-                //      if competency level met:
-                //              assign
-            } 
+            if (i === allProjects.length - 1) {
+                console.log("Last person processed")
+                break // exit loop - projects are all processed
+            } else {
+                continue // move to next project
+            }
         } // end not selected loop
-
-        // for (var j = 0; j < allEmployees.length; j++) { // loop through allEmployees array
-        //     // get employee's preference, skills, and a list of projects already assigned
-        //     const { first_choice, second_choice, third_choice, skills: employeeSkills, projects_assigned } = allEmployees[j]
-        //     const employeeSkillOnly = [] // includes employee skill name only
-        //     const employeeCompetencyOnly = [] // includes employee skill competency level only
-
-        //     // populate employeeSkillOnly and employeeCompetencyOnly array
-        //     for (var k = 0; k < employeeSkills.length; k++) {
-        //         employeeSkillOnly.push(employeeSkills[k].skill)
-        //         employeeCompetencyOnly.push(employeeSkills[k].competency)
-        //     }
-
-        //     // process project and employee skills
-        //     const matchingSkills = [] // includes skill and competency
-        //     const matchingSkillOnly = [] // includes skill name only
-        //     const matchingCompetencyOnly = [] // includes competency level only
-
-        //     // populate matchingSkillOnly and matchingCompetencyOnly arrays
-        //     for (var k = 0; k < projectSkillOnly.length; k++) { // loop through projectSkillsOnly array
-        //         if (employeeSkillOnly.includes(projectSkillOnly[k])) { // employee has required project skill
-        //             matchingSkillOnly.push(projectSkillOnly[k])
-        //             matchingCompetencyOnly.push(employeeCompetencyOnly[employeeSkillOnly.indexOf(projectSkillOnly[k])])
-        //         }
-        //     }
-
-        //     // populate matchingSkills array by combining matchingSkillOnly and matchingCompetencyOnly arrays
-        //     for (var k = 0; k < matchingSkillOnly.length; k++) {
-        //         const skill = matchingSkillOnly[k]
-        //         const competency = matchingCompetencyOnly[k]
-        //         matchingSkills.push({skill, competency})
-        //     }
-
-        //     return res.status(200).json({matchingSkills})
-
-        //     /* Project is Employee's First Choice */
-        //     if (first_choice === title) {
-        //         /* check the required skills against the skills of the employee */
-        //         // Employee have ALL the relevant SKILLS and COMPETENCY levels are MET
-        //         // if (matchingSkills.length === projectSkills.length) {
-        //         //     if (matchingSkills.competency)
-        //         // }
-                
-
-        //         const numberOfProjectSkills = projectSkills.length // used to check whether employee have > 50% of the required skills
-        //     }
-            
-        //     // check projects_assigned length against threshold - employee cannot take more projects than threshold specified
-        //     if (projects_assigned.length === threshold) { // project threshold reached for this employee
-        //         continue // move on to the next employee
-        //     }
-
-        //     // if project already has the minimum number of people required - projectThreshold
-        //     if (projectThreshold === assigned_to.length) {
-        //         break // move on to the next project
-        //     }
-        // }
     }
 }
 
-// supporting functions for Assignment
-
+/* Supporting Functions for Assignment */
 // find all projects
 const getAllEmployees = async (employees) => {
     // get all employees' information
@@ -387,7 +296,7 @@ const getAllEmployees = async (employees) => {
         const employee = await User.findOne({ email: employees[i] }) // find employee from User model
 
         if (!employee) { // if no employee object
-            throw Error(`Employee ${employee[i].email} cannot be found`)
+            throw Error(`Employee ${employees[i]} cannot be found`)
         }
 
         allEmployees.push(employee) // add employee object into the allEmployees array
@@ -403,7 +312,7 @@ const getAllProjects = async (projects) => {
         const project = await Project.findById({ _id: projects[i] }) // find project from Project model
 
         if (!project) { // if no project object
-            throw Error(`Project ${project[i].title} cannot be found`)
+            throw Error(`Project ${projects[i]} cannot be found`)
         }
 
         allProjects.push(project) // add employee object into the allProjects array
@@ -411,6 +320,122 @@ const getAllProjects = async (projects) => {
     return allProjects
 }
 
+// sort out employees' skills
+const sortEmployeeSkills = employeeSkills => {
+    const employeeSkillOnly = [] // includes employee skill name only
+    const employeeCompetencyOnly = [] // includes employee skill competency level only
+
+    // populate employeeSkillOnly and employeeCompetencyOnly array
+    for (var i = 0; i < employeeSkills.length; i++) {
+        employeeSkillOnly.push(employeeSkills[i].skill)
+        employeeCompetencyOnly.push(employeeSkills[i].competency)
+    }
+
+    return { employeeSkillOnly, employeeCompetencyOnly }
+}
+
+// find matching skills between project and employee
+const findMatchingSkills = (projectSkillOnly, employeeSkillOnly, employeeCompetencyOnly) => {
+    // process project and employee skills
+    const matchingSkills = [] // includes skill and competency
+    const matchingSkillOnly = [] // includes skill name only
+    const matchingCompetencyOnly = [] // includes competency level only - of matching skills, not indicative of whether it matches the project skill's competency
+
+    // populate matchingSkillOnly and matchingCompetencyOnly arrays
+    for (var i = 0; i < projectSkillOnly.length; i++) { // loop through projectSkillsOnly array
+        if (employeeSkillOnly.includes(projectSkillOnly[i])) { // employee has required project skill
+            matchingSkillOnly.push(projectSkillOnly[i])
+            matchingCompetencyOnly.push(employeeCompetencyOnly[employeeSkillOnly.indexOf(projectSkillOnly[i])])
+        }
+    }
+
+    // populate matchingSkills array by combining matchingSkillOnly and matchingCompetencyOnly arrays
+    for (var i = 0; i < matchingSkillOnly.length; i++) {
+        const skill = matchingSkillOnly[i]
+        const competency = matchingCompetencyOnly[i]
+        matchingSkills.push({skill, competency})
+    }
+
+    return matchingSkills
+}
+
+// compare competency level between project's skills and the matching skills that the employee has
+const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkills) => {
+    let competencyMet = false
+    for (var i = 0; i < matchingSkills.length; i++) { // loop through matching skills only - ignore unmatched skills
+        const { skill, competency: userCompetency } = matchingSkills[i] // destructure the skill and competency value
+        const index = projectSkillOnly.indexOf(skill) // get the index of the skills in projectSkillOnly array and use it to check in projectCompetencyOnly array
+        const projectCompetency = projectCompetencyOnly[index] // get the competency level of the specified skill
+
+        // compare competency
+        if (projectCompetency === "Beginner") { // scenario 1: projectCompetency === Beginner
+            // minimum competency level === Beginner - competency level met
+            competencyMet = true
+        } else if (projectCompetency === "Intermediate") { // scenario 2: projectCompetency === Intermediate
+            // if userCompetency === Beginner - competency level not met
+            if (userCompetency === "Beginner") {
+                competencyMet = false
+            } else if (userCompetency === "Intermediate" || userCompetency === "Advanced") { // competency level met
+                competencyMet = true
+            }
+        } else if (projectCompetency === "Advanced") { // scenario 3: projectCompetency === Advanced
+            // if userCompetency === Beginner || userCompetency === Intermediate - competency level not met
+            if (userCompetency === "Beginner" || userCompetency === "Intermediate") {
+                competencyMet = false
+            } else if (userCompetency === "Advanced") { // competency level met
+                competencyMet = true
+            }
+        }
+    }
+    return competencyMet    
+} 
+
+// based on priority - firstChoice/secondChoice/thirdChoice/notSelected
+const assignEmployee = async (employees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly) => {
+    console.log("inside assignEmployee, employees.length: ", employees.length)
+    for (var i = 0; i < employees.length; i++) {
+        if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+            break
+        }
+
+        // get employee info
+        const { _id, skills: employeeSkills, project_assigned } = employees[i]
+
+        if (project_assigned === threshold) { // employee already assigned max number of projects
+            continue // to next employee
+        }
+        
+        // get matching skills between project and employee
+        const { employeeSkillOnly, employeeCompetencyOnly } = sortEmployeeSkills(employeeSkills)
+
+        const matchingSkills = findMatchingSkills(projectSkillOnly, employeeSkillOnly, employeeCompetencyOnly)
+
+        // compare competency level of the matching skills - projectCompetencyOnly and matchingSkills.competency
+        const competencyMet = compareCompetency(projectSkillOnly, projectCompetencyOnly, matchingSkills)
+
+        console.log(employees[i].email)
+        // console.log(projectSkillOnly)
+        // console.log(projectCompetencyOnly)
+        // console.log(employeeSkillOnly)
+        // console.log(employeeCompetencyOnly)
+        console.log(matchingSkills)
+        console.log(competencyMet)
+        console.log(projectSkillOnly.length / 2)
+
+        // if employee has all the skills the project requires
+        // NOTE: based on our algo, as long as the employee has all the required skills,
+        // its an auto assign since competencyMet or !competencyMet is just beside each other in the priority list
+        if (projectSkillOnly.length === matchingSkills.length) {
+            if (competencyMet) { // AND competency level for every skill is met
+                // assign
+            } else if (!competencyMet) {
+                // assign
+            }
+        } else if ((matchingSkills.length >= projectSkillOnly.length / 2) && competencyMet) { // employee has more than half of the skills required for the project, and competency level is met for them
+            // assign
+        }
+    }
+}
 
 // export functions
 module.exports = {
