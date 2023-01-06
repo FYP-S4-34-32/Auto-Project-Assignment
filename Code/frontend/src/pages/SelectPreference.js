@@ -39,6 +39,7 @@ const SelectPreference = () => {
             for (var i = 0; i < json.length; i++) {
                 if (json[i].organisation_id !== user.organisation_id) {
                     json.splice(i, 1)
+                    i--;
                 }
             }
 
