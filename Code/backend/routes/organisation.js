@@ -10,7 +10,7 @@ const express = require('express')
 |     folder these functions will be invoked and handled in the controller file         |
 |     whenever the routes are requested.                                                |
 \* =================================================================================== */
-const { getOrganisations, getSingleOrganisation, createOrganisation, deleteOrganisation } = require('../controllers/organisationController')
+const { getOrganisations, getSingleOrganisation, createOrganisation, deleteOrganisation, getOrganisationSkills, updateOrganisationSkills} = require('../controllers/organisationController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -30,6 +30,12 @@ router.post('/createorganisation', createOrganisation); // ---------------------
 
 // DELETE an organisation @ /api/organisation/:id
 router.delete('/:id', deleteOrganisation);
+
+// GET all organisation skills @ /api/organisation/:id/skills
+router.post('/getOrganisationSkills', getOrganisationSkills);
+
+// POST an updated array of organisation skills @ /api/organisation/updateOrganisationSkill
+router.post('/updateOrganisationSkils', updateOrganisationSkills);
 
 // UPDATE a new project @ /api/project/:id
 //router.patch('/:id', updateOrganisation);

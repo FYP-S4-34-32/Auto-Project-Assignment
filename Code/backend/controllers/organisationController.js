@@ -59,7 +59,9 @@ const createOrganisation = async (req, res) => {
 
         const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
 
-      const organisation = await Organisation.create({ orgname, organisation_id, detail, created_by })
+        const organisation_skills = []
+
+      const organisation = await Organisation.create({ orgname, organisation_id, detail, created_by,  organisation_skills })
     //   const organisation = await Organisation.create({ orgName, code, detail, created_by })
 
       res.status(200).json(organisation)
@@ -91,10 +93,40 @@ const deleteOrganisation = async (req, res) => {
     res.status(200).json(organisation);
 }
 
+const updateOrganisationSkills = async (req, res) => {
+    const {organisation_id, organisation_skills} = req.body
+
+    try {
+        // Invoke static method in organisationModel.js to update organisation skills
+        const results = await Organisation.updateOrganisationSkills(organisation_id, organisation_skills);
+
+        res.status(200).json(results)
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
+
+const getOrganisationSkills = async (req, res) => { 
+    const { organisation_id } = req.body
+
+    try {
+        // Invoke static method in organisationModel.js to get all skills defined for an organisation
+        const organisation_skills = await Organisation.getOrganisationSkills(organisation_id);
+
+        res.status(200).json(organisation_skills)
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
+
 //export functions
 module.exports = {
     getOrganisations,
     getSingleOrganisation,
     createOrganisation,
-    deleteOrganisation
+    deleteOrganisation,
+    getOrganisationSkills,
+    updateOrganisationSkills
 }

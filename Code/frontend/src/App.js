@@ -27,6 +27,7 @@ import SignUpOrgUsers from './components/SignUpOrgUsers';
 import EditProject from './components/EditProject';
 import Assignment from './pages/Assignment';
 import AssignmentDetails from './components/AssignmentDetails';
+import OrganisationSkills from './pages/OrganisationSkills';
 
 function App() {
   const { user } = useAuthenticationContext()
@@ -112,6 +113,10 @@ function App() {
             <Route 
                 path = "/assignment/:id" // single project page
                 element = { user ? <AssignmentDetails /> : <Navigate to="/login" /> } // AssignmentDetails page if there is a user, Login page if there is no user
+            />
+            <Route
+              path = "/organisationskills" // organisation skills page
+              element = { (user && user.role === "Admin") ? <OrganisationSkills /> : <Navigate to="/login" /> } // OrganisationSkills page if there is a user and is of role Super Admin, Login page if there is no user
             />
             <Route
               path = "*" // 404 page

@@ -9,15 +9,18 @@ import { useFetchProfile } from '../hooks/useFetchProfile'
 import { useUpdateInfo } from '../hooks/useUpdateInfo' 
 import { useChangePassword } from '../hooks/useChangePassword'
 import { useUpdateSkills } from '../hooks/useUpdateSkills'  
+import { useGetOrganisationSkills } from '../hooks/useGetOrgSkills'
 
 const Profile = () => { 
     // hooks
     const { user } = useAuthenticationContext()    
     const { fetchProfile, fetchProfileIsLoading, fetchProfileError, profile } = useFetchProfile() // fetch user's profile info 
+    const { getOrganisationSkills, allSkills } = useGetOrganisationSkills(); // fetch all skills defined for the organisation
     const {updateInfo, isLoading, error, updateContactSuccess} = useUpdateInfo()  
     const {changePassword, changePwIsLoading, changePwError, changePwSuccess} = useChangePassword()
     const {updateSkills, updateSkillsIsLoading, updateSkillsError} = useUpdateSkills()  
-    
+    var availSkillsArray = []; // available skills for user to select from
+
     // user's array of skills
     const [userObject, setUserObject] = useState(profile)     
     const [tempUserSkillsArr, setTempUserSkills] = useState(userObject.skills);
@@ -26,6 +29,7 @@ const Profile = () => {
     useEffect(() => {
         fetchProfile(user.email);  
         setUserObject(profile);
+        getOrganisationSkills(user.organisation_id);
     }, [])   
 
     // other variables
@@ -45,21 +49,39 @@ const Profile = () => {
         {value : "Advanced", label : "Advanced"}
     ]
 
+    console.log("org skills: ", allSkills);
+
+    // DEFAULT AVAILABLE SKILLS -> based on organisation's skills defined. 
+    // will change based on user's current skills (check validateSkillsArray function)
+    const initialiseAvailSkillsArray = () => {
+        var temp = [];
+        temp.push({skill: "0", label: "Select a skill"});
+
+        for (var i = 0; i < allSkills.length; i++) {
+            temp.push({skill: allSkills[i].skillName, label: allSkills[i].skillName});
+        }
+
+        return temp;
+    }
+
+    availSkillsArray = initialiseAvailSkillsArray();
+    // console.log("avail skills: ", availSkillsArray);
+
     // DEFAULT available skills, will change based on user's current skills (check validateSkillsArray function)
-    var availSkillsArray = [ 
-        {skill: "0", label: "Select a skill"},
-        {skill: "Java", label: "Java"},
-        {skill: "MongoDB", label: "MongoDB"},
-        {skill: "React", label: "React"},
-        {skill: "Node.js", label: "Node.js"},
-        {skill: "Python", label: "Python"},
-        {skill: "C++", label: "C++"},
-        {skill: "C#", label: "C#"},
-        {skill: "C", label: "C"},
-        {skill: "PHP", label: "PHP"},
-        {skill: "Ruby", label: "Ruby"},
-        {skill: "Swift", label: "Swift"}
-    ]
+    // var availSkillsArray = [ 
+    //     {skill: "0", label: "Select a skill"},
+    //     {skill: "Java", label: "Java"},
+    //     {skill: "MongoDB", label: "MongoDB"},
+    //     {skill: "React", label: "React"},
+    //     {skill: "Node.js", label: "Node.js"},
+    //     {skill: "Python", label: "Python"},
+    //     {skill: "C++", label: "C++"},
+    //     {skill: "C#", label: "C#"},
+    //     {skill: "C", label: "C"},
+    //     {skill: "PHP", label: "PHP"},
+    //     {skill: "Ruby", label: "Ruby"},
+    //     {skill: "Swift", label: "Swift"}
+    // ]
 
     // TOGGLE contact form
     const showContactForm = () => {
@@ -68,6 +90,7 @@ const Profile = () => {
 
     // validate availSkillsArray: should only have skills that are not already in userSkillsArr
     const validateSkillsArray = () => {
+        
         var tempAvailSkillsArray = availSkillsArray;
 
         for (var i = 0; i < tempUserSkillsArr.length; i++) {
@@ -76,10 +99,11 @@ const Profile = () => {
                     tempAvailSkillsArray.splice(j, 1);
                 }
             }
-        }
-
-        availSkillsArray = JSON.parse(JSON.stringify(tempAvailSkillsArray));
+        } 
+        availSkillsArray = JSON.parse(JSON.stringify(tempAvailSkillsArray)); 
     }
+
+    
 
     // EDIT SKILLS
     const editSkills = () => {
