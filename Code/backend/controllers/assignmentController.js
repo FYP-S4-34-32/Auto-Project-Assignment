@@ -209,6 +209,7 @@ const autoAssign = async (req, res) => {
     // begin assigning
     for (var i = 0; i < allProjects.length; i++) { // loop through allProjects array
         console.log("Processing project[", i, "], title: ", allProjects[i].title, "with priority ", priority)
+        console.log("--------------------------------------------------------------")
     
         // get project title, skills, number of people required, and the employees who are already assigned to it
         const { _id: projectID, title, skills: projectSkills, threshold: projectThreshold, assigned_to } = allProjects[i]
@@ -266,12 +267,9 @@ const autoAssign = async (req, res) => {
             tier = 3
         }
 
-        console.log("current tier: ", tier)
-
         // first choice - prio1 to prio3
         if (priority >= 1 && priority <= 3 && firstChoiceEmployees.length > 0) {
             const prio = processEmployees(tier, firstChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
-            console.log("prio: ", prio)
 
             if (prio.length > 0) {
                 await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
@@ -441,17 +439,29 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
 const assignFunction = async (employees, projectThreshold, assigned_to, threshold, projectID, assignmentID) => {
     console.log("inside assignFunction")
 
-    let currentEmployeeLength = 0
+    console.log("employees: ", employees)
+
+    const project = await Project.findById({ _id: projectID })
+
+    if (!project) {
+        console.log("Project cannot be found")
+        throw Error("Project cannot be found")
+    }
+
+    let currentEmployeeLength = project.assigned_to.employees.length
+    console.log("assigned_to: ", project.assigned_to)
+    console.log("currentEmployeeLength: ", currentEmployeeLength)
 
     // loop through employees
     for (var i = 0; i < employees.length; i++) {
-        if (projectThreshold = currentEmployeeLength) { // number of people required for the project fulfilled
+        if (projectThreshold === currentEmployeeLength) { // number of people required for the project fulfilled
             console.log("number of people required for the project fulfilled")
             break
         }
 
         // get employee info
         const { _id: employeeID, email, project_assigned } = employees[i]
+        const employee = await User.findById({ _id: employeeID })
 
         let assignmentExistsInEmployee
         let assignmentIndex
@@ -477,60 +487,53 @@ const assignFunction = async (employees, projectThreshold, assigned_to, threshol
 
         // assign employee to project - update User, Project, and Assignment model
         // Project
-        console.log("finding project by projectID")
-        const findProject = await Project.findById({ _id: projectID })
+        let assignmentExistsInProject
 
-        // if project does not exists
-        if (!findProject) {
-            console.log("Project cannot be found")
-            throw Error("Project cannot be found")
-        } else {
-            console.log("Project FOUND")
-            let assignmentExistsInProject
-            if (!findProject.assigned_to.assignment_id || findProject.assigned_to.assignment_id === "") {
-                assignmentExistsInProject = false
-            }
-            if (findProject.assigned_to.assignment_id && findProject.assigned_to.assignment_id !== "") {
-                assignmentExistsInProject = true
-            }
+        if (!project.assigned_to.assignment_id || project.assigned_to.assignment_id === "") {
+            assignmentExistsInProject = false
+        }
+        if (project.assigned_to.assignment_id && project.assigned_to.assignment_id !== "") {
+            assignmentExistsInProject = true
+        }
+        
+        // if assignment object does not exist yet
+        if (!assignmentExistsInProject) {
+            console.log("assignment does not exist yet")
+
+            // set assignment id
+            project.assigned_to.assignment_id = assignmentID
+
+            // assign to project
+            project.assigned_to.employees = [...project.assigned_to.employees, email]
+            currentEmployeeLength++
+            await project.save()
+        } else { // assignment object already exist project object
+            console.log("assignment exists")
             
-            // if assignment object does not exist yet
-            if (!assignmentExistsInProject) {
-                console.log("assignment does not exist yet")
-
-                // set assignment id
-                findProject.assigned_to.assignment_id = assignmentID
-
-                // assign to project
-                findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
-                currentEmployeeLength++
-                await findProject.save()
-            } else { // assignment object already exist project object
-                console.log("assignment exists")
-                
-                // assign to prject
-                findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
-                currentEmployeeLength++
-                await findProject.save()
-            }
+            // assign to prject
+            project.assigned_to.employees = [...project.assigned_to.employees, email]
+            currentEmployeeLength++
+            await project.save()
         }
 
         // Employee
         // if assigment does not exist yet
         if (!assignmentExistsInEmployee) {
             // set assignment id
-            employees[i].project_assigned = [...employees[i].project_assigned, { assignment_id: assignmentID, projects: [] }]
+            employee.project_assigned = [...employee.project_assigned, { assignment_id: assignmentID, projects: [] }]
             assignmentIndex = 0 // set assignment index
         }
 
         // assign to employee
-        employees[i].project_assigned[assignmentIndex].projects = [...employees[i].project_assigned[assignmentIndex].projects, projectID]
+        employee.project_assigned[assignmentIndex].projects = [...employee.project_assigned[assignmentIndex].projects, project.title]
+        await employee.save()
     }
 }
 
 // process employees based on choice and tier
 const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOnly/* other params */) => {
     console.log("Currently inside processEmployees function - this is before assignFunction")
+    console.log("Tier = ", tier)
     const prio = []
 
     // loop through employees
