@@ -198,9 +198,11 @@ const autoAssign = async (req, res) => {
 
     // get all employees' information
     const allEmployees = await getAllEmployees(employees)
+    allEmployees.sort(() => Math.random() - 0.5) // shuffle employee array
 
     // get all projects' information
     const allProjects = await getAllProjects(projects)
+    allProjects.sort(() => Math.random() - 0.5) // shuffle project array
 
     // some control flag for the assigning algo
     let priority = 1 // first iteration of the project prioritises firstChoice options, second iteration prioritises secondChoice options, and so on...
