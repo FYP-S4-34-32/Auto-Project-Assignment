@@ -440,9 +440,12 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
 // updated assign function
 const assignFunction = async (employees, projectThreshold, assigned_to, threshold, projectID, assignmentID) => {
     console.log("inside assignFunction")
+
+    let currentEmployeeLength = 0
+
     // loop through employees
     for (var i = 0; i < employees.length; i++) {
-        if (projectThreshold = assigned_to.employees.length) { // number of people required for the project fulfilled
+        if (projectThreshold = currentEmployeeLength) { // number of people required for the project fulfilled
             console.log("number of people required for the project fulfilled")
             break
         }
@@ -500,12 +503,14 @@ const assignFunction = async (employees, projectThreshold, assigned_to, threshol
 
                 // assign to project
                 findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
+                currentEmployeeLength++
                 await findProject.save()
             } else { // assignment object already exist project object
                 console.log("assignment exists")
                 
                 // assign to prject
                 findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
+                currentEmployeeLength++
                 await findProject.save()
             }
         }
@@ -557,7 +562,7 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
             }
         } else if (tier === 3) {
             // if employee has >= 50% of the skills required and competency met
-            if (matchingSkills.length >= projectSkillOnly.length / 2) {
+            if (matchingSkills.length < projectSkillOnly.length && matchingSkills.length >= projectSkillOnly.length / 2) {
                 if (competencyMet) {
                     prio.push(employees[i])
                 }
