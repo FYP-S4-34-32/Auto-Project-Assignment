@@ -313,32 +313,38 @@ const AllUsers = () => {
         if (user.role === "Super Admin") {
             switch (selectedUsers) {
                 case "Manage Users":  // super admin
-                    var userDetail = datum; 
+                    var userDetails = datum; 
                     return (
-                        <tr>
-                            <td>
-                                <input className="checkBox" type="checkbox" value={userDetail.email} onChange={addDeleteUser}/>
-                            </td>
-                            <td className="user-cell"> 
-                                    <h3>{userDetail.name}</h3> 
-                                    <p>Organisation: {userDetail.organisation_id}</p> 
-                                    <p>Role: {userDetail.role}</p>  
-                            </td>
-                            <td>
-                                <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px"}}>delete</span>
-                            </td>
-                        </tr>
+                        <tbody key={userDetails._id}>
+                            <tr>
+                                <td>
+                                    <input className="checkBox" type="checkbox" value={userDetails.email} onChange={addDeleteUser}/>
+                                </td>
+                                <td className="user-cell"> 
+                                        <h3>{userDetails.name}</h3> 
+                                        <p>Organisation: {userDetails.organisation_id}</p> 
+                                        <p>Role: {userDetails.role}</p>  
+                                </td>
+                                <td>
+                                    <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px"}}>delete</span>
+                                </td>
+                            </tr>
+                        </tbody>
                     ) 
                 default:
                     var userDetails = datum;
                     return (
-                        <tr className="user-cell" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
-                            <h3>{userDetails.name}</h3> 
-                            <p>Organisation: {userDetails.organisation_id}</p>
-                            <p>Email: {userDetails.email}</p>
-                            <p>Role: {userDetails.role}</p>
-                            <p>Contact Info: {userDetails.contact}</p>  
-                        </tr> 
+                        <tbody key={userDetails._id}>
+                            <tr className="user-cell"  style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                                <td>
+                                    <h3>{userDetails.name}</h3> 
+                                    <p>Organisation: {userDetails.organisation_id}</p>
+                                    <p>Email: {userDetails.email}</p>
+                                    <p>Role: {userDetails.role}</p>
+                                    <p>Contact Info: {userDetails.contact}</p>  
+                                </td>
+                            </tr> 
+                        </tbody>
                     ) 
             }
         }
@@ -347,34 +353,40 @@ const AllUsers = () => {
             // for project admins
             switch (selectedEmployees) {
                 case "Manage Employees": 
-                    var userDetail = datum; 
+                    var userDetails = datum; 
                     return ( 
-                        <tr>
-                            <td>
-                                <input className="checkBox" type="checkbox" value={userDetail.email} onChange={addDeleteUser}/>
-                            </td>
-                            <td className="user-cell" key={userDetail._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetail)}>
-                                <h3>{userDetail.name}</h3> 
-                                <p>Organisation: {userDetail.organisation_id}</p>
-                                <p>Email: {userDetail.email}</p>
-                                <p>Role: {userDetail.role}</p>
-                                <p>Contact Info: {userDetail.contact}</p>
-                            </td>
-                            <td>
-                                <span className="material-symbols-outlined" id="deleteButton" onClick={deleteUser} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                            </td>
-                        </tr>
+                        <tbody key={userDetails._id}>
+                            <tr>
+                                <td>
+                                    <input className="checkBox" type="checkbox" value={userDetails.email} onChange={addDeleteUser}/>
+                                </td>
+                                <td className="user-cell" style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                                    <h3>{userDetails.name}</h3> 
+                                    <p>Organisation: {userDetails.organisation_id}</p>
+                                    <p>Email: {userDetails.email}</p>
+                                    <p>Role: {userDetails.role}</p>
+                                    <p>Contact Info: {userDetails.contact}</p>
+                                </td>
+                                <td>
+                                    <span className="material-symbols-outlined" id="deleteButton" onClick={deleteUser} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                                </td>
+                            </tr>
+                        </tbody>
                     )
                 default:
                     var userDetails = datum;
                     return (
-                        <tr className="user-cell" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
-                            <h3>{userDetails.name}</h3> 
-                            <p>Organisation: {userDetails.organisation_id}</p>
-                            <p>Email: {userDetails.email}</p>
-                            <p>Role: {userDetails.role}</p>
-                            <p>Contact Info: {userDetails.contact}</p>  
-                        </tr> 
+                        <tbody key={userDetails._id}>
+                            <tr className="user-cell"  style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                                <td>
+                                    <h3>{userDetails.name}</h3> 
+                                    <p>Organisation: {userDetails.organisation_id}</p>
+                                    <p>Email: {userDetails.email}</p>
+                                    <p>Role: {userDetails.role}</p>
+                                    <p>Contact Info: {userDetails.contact}</p>  
+                                </td>
+                            </tr> 
+                        </tbody>
                 ) 
             }
         }
