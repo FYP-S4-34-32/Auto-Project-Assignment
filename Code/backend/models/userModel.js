@@ -44,10 +44,6 @@ const userSchema = new Schema({
         type: String, // can be String/Number
         default: null
     },
-    // project_preference: [{ // user's project preference
-    //     type: String,
-    //     default: ""
-    // }],
     firstChoice: {
         type: String,
         default: ""
@@ -61,10 +57,9 @@ const userSchema = new Schema({
         default: ""
     },
     project_assigned: [{ // the project assigned to the user
-        type: String,
-        default: ""
+        assignment_id: String,
+        projects: Array
     }],
-
     resetPasswordToken: {
         type: String,
         default: ""
