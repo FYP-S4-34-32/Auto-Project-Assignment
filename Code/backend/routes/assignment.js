@@ -10,7 +10,7 @@ const express = require('express')
 |   folder these functions will be invoked and handled in the controller file      |
 |   whenever the routes are requested.                                             |
 \* ============================================================================== */
-const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign } = require('../controllers/assignmentController')
+const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign, resetAssignment } = require('../controllers/assignmentController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -36,6 +36,9 @@ router.patch('/:id', updateAssignment)
 
 // GET an assignment object - testing
 router.get('/test/:id', autoAssign)
+
+// reset assignment results - testing
+router.patch('/test/test', resetAssignment)
 
 // EXPORT router
 module.exports = router

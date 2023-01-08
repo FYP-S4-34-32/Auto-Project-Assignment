@@ -132,6 +132,46 @@ const updateAssignment = async (req, res) => {
 
 }
 
+// // Add employees
+// const addEmployees = async (req, res) => {
+//     const { id } = req.params
+//     const { employees } = req.body
+
+//     // check whether id is a mongoose type object
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//         return res.status(404).json({error: "Invalid Assignment ID"})
+//     }
+
+//     // add employees into assignment object
+//     try {
+//         const assignment = await Assignment.findOneAndUpdate({ _id: id }, {
+//             employees
+//         })
+//     } catch (error) {
+//         res.status(400).json({error: error.message})
+//     }
+// }
+
+// // Add projects
+// const addProjects = async (req, res) => {
+//     const { id } = req.params
+//     const { projects } = req.body
+
+//     // check whether id is a mongoose type object
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//         return res.status(404).json({error: "Invalid Assignment ID"})
+//     }
+
+//     // add employees into assignment object
+//     try {
+//         const assignment = await Assignment.findOneAndUpdate({ _id: id }, {
+//             projects
+//         })
+//     } catch (error) {
+//         res.status(400).json({error: error.message})
+//     }
+// }
+
 // Main Assignment Driver
 const autoAssign = async (req, res) => {
     // req should include id of assignment object in parameter
@@ -164,13 +204,14 @@ const autoAssign = async (req, res) => {
 
     // some control flag for the assigning algo
     let priority = 1 // first iteration of the project prioritises firstChoice options, second iteration prioritises secondChoice options, and so on...
+    let tier
 
     // begin assigning
     for (var i = 0; i < allProjects.length; i++) { // loop through allProjects array
-        console.log("Processing project[", i, "] with priority ", priority)
+        console.log("Processing project[", i, "], title: ", allProjects[i].title, "with priority ", priority)
     
         // get project title, skills, number of people required, and the employees who are already assigned to it
-        const { title, skills: projectSkills, threshold: projectThreshold, assigned_to } = allProjects[i]
+        const { _id: projectID, title, skills: projectSkills, threshold: projectThreshold, assigned_to } = allProjects[i]
 
         // number of people required for the project fulfilled
         if (projectThreshold === assigned_to.length) {
@@ -217,73 +258,79 @@ const autoAssign = async (req, res) => {
         thirdChoiceEmployees.sort(() => Math.random() - 0.5)
         notSelected.sort(() => Math.random() - 0.5)
 
-        // console.log("firstChoiceEmployee: ", firstChoiceEmployee.length)
-        // console.log("secondChoiceEmployee: ", secondChoiceEmployee.length)
-        // console.log("thirdChoiceEmployee: ", thirdChoiceEmployee.length)
-        // console.log("notSelected: ", notSelected.length)
+        if (priority === 1 || priority === 4 || priority === 7 || priority === 10) {
+            tier = 1
+        } else if (priority === 2 || priority === 5 || priority === 8 || priority === 11) {
+            tier = 2
+        } else if (priority === 3 || priority === 6 || priority === 7 || priority === 12) {
+            tier = 3
+        }
 
-        // console.log('\n')
+        console.log("current tier: ", tier)
 
-        // console.log(projectSkillOnly) // e.g. ['Swift', 'React Native', 'C']
-        // console.log(projectCompetencyOnly) // e.g. ['Advanced', 'Intermediate', 'Beginner']
+        // first choice - prio1 to prio3
+        if (priority >= 1 && priority <= 3 && firstChoiceEmployees.length > 0) {
+            const prio = processEmployees(tier, firstChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
+            console.log("prio: ", prio)
 
-        // loop through first choice
-        if (priority === 1 && firstChoiceEmployees.length > 0) {
-            console.log("Processing priority ", priority, " with firstChoiceEmployees")
-            assignEmployee(firstChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
+            if (prio.length > 0) {
+                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+            }
 
             if (i === allProjects.length - 1) {
-                i = -1 // loop through project again
-                priority++ // increment priority - e.g. from firstChoice to secondChoice
-                console.log("priority after incrementing: ", priority)
+                i = -1 // loop through projects again
+                priority++ // increment priority - e.g. prio1 to prio2
                 continue
             } else {
-                continue // move to next project
+                continue // to next project
             }
-        } // end first choice loop
+        } else if (priority >= 4 && priority <= 6 && secondChoiceEmployees.length > 0) {
+            const prio = processEmployees(tier, secondChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
-        // loop through second choice
-        if (priority === 2 && secondChoiceEmployees.length > 0) {
-            console.log("Processing priority ", priority, " with secondChoiceEmployees")
-            assignEmployee(secondChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
+            if (prio.length > 0) {
+                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+            }
 
             if (i === allProjects.length - 1) {
-                i = -1 // loop through project again
-                priority++ // increment priority - e.g. from firstChoice to secondChoice
-                console.log("priority after incrementing: ", priority)
+                i = -1 // loop through projects again
+                priority++ // increment priority - e.g. prio1 to prio2
                 continue
             } else {
-                continue // move to next project
+                continue // to next project
             }
-        } // end second choice loop
+        } else if (priority >= 7 && priority <= 9 && thirdChoiceEmployees.length > 0) {
+            const prio = processEmployees(tier, thirdChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
-        // loop through third choice
-        if (priority === 3 && thirdChoiceEmployees.length > 0) {
-            console.log("Processing priority ", priority, " with thirdChoiceEmployees")
-            assignEmployee(thirdChoiceEmployees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
+            if (prio.length > 0) {
+                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+            }
 
             if (i === allProjects.length - 1) {
-                i = -1 // loop through project again
-                priority++ // increment priority - e.g. from firstChoice to secondChoice
-                console.log("priority after incrementing: ", priority)
+                i = -1 // loop through projects again
+                priority++ // increment priority - e.g. prio1 to prio2
                 continue
             } else {
-                continue // move to next project
+                continue // to next project
             }
-        } // end third choice loop
+        } else if (priority >= 10 && priority <= 12 && notSelected.length > 0) {
+            const prio = processEmployees(tier, notSelected, projectSkillOnly, projectCompetencyOnly)
 
-        // loop through not selected - as of now, this will be our last group of people, im looking into an outliers list next
-        if (priority === 4 && notSelected.length > 0) {
-            console.log("Processing priority ", priority, " with notSelected")
-            assignEmployee(notSelected, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly)
+            if (prio.length > 0) {
+                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+            }
 
             if (i === allProjects.length - 1) {
-                console.log("Last person processed")
-                break // exit loop - projects are all processed
+                if (priority === 12) {
+                    break // or return
+                } else {
+                    i = -1 // loop through projects again
+                    priority++ // increment priority - e.g. prio1 to prio2
+                    continue
+                }
             } else {
-                continue // move to next project
+                continue // to next project
             }
-        } // end not selected loop
+        }
     }
 }
 
@@ -388,23 +435,104 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
         }
     }
     return competencyMet    
-} 
+}
 
-// based on priority - firstChoice/secondChoice/thirdChoice/notSelected
-const assignEmployee = async (employees, threshold, projectThreshold, assigned_to, projectSkillOnly, projectCompetencyOnly) => {
-    console.log("inside assignEmployee, employees.length: ", employees.length)
+// updated assign function
+const assignFunction = async (employees, projectThreshold, assigned_to, threshold, projectID, assignmentID) => {
+    console.log("inside assignFunction")
+    // loop through employees
     for (var i = 0; i < employees.length; i++) {
-        if (projectThreshold === assigned_to.length) { // number of people required for the project fulfilled
+        if (projectThreshold = assigned_to.employees.length) { // number of people required for the project fulfilled
+            console.log("number of people required for the project fulfilled")
             break
         }
 
         // get employee info
-        const { _id, skills: employeeSkills, project_assigned } = employees[i]
+        const { _id: employeeID, email, project_assigned } = employees[i]
 
-        if (project_assigned === threshold) { // employee already assigned max number of projects
+        let assignmentExistsInEmployee
+        let assignmentIndex
+
+        if (project_assigned.length === 0) {
+            assignmentExistsInEmployee = false
+        } else {
+            for (var j = 0; j < project_assigned.length; j++) {
+                if (project_assigned[j].assignment_id === assignmentID) {
+                    assignmentExistsInEmployee = true
+                    assignmentIndex = j
+                    break
+                }
+            }
+        }
+
+        console.log("project_assigned: ", assignmentExistsInEmployee, " at index", assignmentIndex)
+
+        if (assignmentExistsInEmployee && project_assigned[assignmentIndex].projects.length === threshold) {
+            console.log("employee already has max number of projects")
             continue // to next employee
         }
-        
+
+        // assign employee to project - update User, Project, and Assignment model
+        // Project
+        console.log("finding project by projectID")
+        const findProject = await Project.findById({ _id: projectID })
+
+        // if project does not exists
+        if (!findProject) {
+            console.log("Project cannot be found")
+            throw Error("Project cannot be found")
+        } else {
+            console.log("Project FOUND")
+            let assignmentExistsInProject
+            if (!findProject.assigned_to.assignment_id || findProject.assigned_to.assignment_id === "") {
+                assignmentExistsInProject = false
+            }
+            if (findProject.assigned_to.assignment_id && findProject.assigned_to.assignment_id !== "") {
+                assignmentExistsInProject = true
+            }
+            
+            // if assignment object does not exist yet
+            if (!assignmentExistsInProject) {
+                console.log("assignment does not exist yet")
+
+                // set assignment id
+                findProject.assigned_to.assignment_id = assignmentID
+
+                // assign to project
+                findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
+                await findProject.save()
+            } else { // assignment object already exist project object
+                console.log("assignment exists")
+                
+                // assign to prject
+                findProject.assigned_to.employees = [...findProject.assigned_to.employees, email]
+                await findProject.save()
+            }
+        }
+
+        // Employee
+        // if assigment does not exist yet
+        if (!assignmentExistsInEmployee) {
+            // set assignment id
+            employees[i].project_assigned = [...employees[i].project_assigned, { assignment_id: assignmentID, projects: [] }]
+            assignmentIndex = 0 // set assignment index
+        }
+
+        // assign to employee
+        employees[i].project_assigned[assignmentIndex].projects = [...employees[i].project_assigned[assignmentIndex].projects, projectID]
+    }
+}
+
+// process employees based on choice and tier
+const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOnly/* other params */) => {
+    console.log("Currently inside processEmployees function - this is before assignFunction")
+    const prio = []
+
+    // loop through employees
+    for (var i = 0; i < employees.length; i++) {
+        // get employee info
+        const { _id, skills: employeeSkills, project_assigned } = employees[i]
+
         // get matching skills between project and employee
         const { employeeSkillOnly, employeeCompetencyOnly } = sortEmployeeSkills(employeeSkills)
 
@@ -413,28 +541,52 @@ const assignEmployee = async (employees, threshold, projectThreshold, assigned_t
         // compare competency level of the matching skills - projectCompetencyOnly and matchingSkills.competency
         const competencyMet = compareCompetency(projectSkillOnly, projectCompetencyOnly, matchingSkills)
 
-        console.log(employees[i].email)
-        // console.log(projectSkillOnly)
-        // console.log(projectCompetencyOnly)
-        // console.log(employeeSkillOnly)
-        // console.log(employeeCompetencyOnly)
-        console.log(matchingSkills)
-        console.log(competencyMet)
-        console.log(projectSkillOnly.length / 2)
-
-        // if employee has all the skills the project requires
-        // NOTE: based on our algo, as long as the employee has all the required skills,
-        // its an auto assign since competencyMet or !competencyMet is just beside each other in the priority list
-        if (projectSkillOnly.length === matchingSkills.length) {
-            if (competencyMet) { // AND competency level for every skill is met
-                // assign
-            } else if (!competencyMet) {
-                // assign
+        if (tier === 1) {
+            // if employee has all skills and competency met
+            if (projectSkillOnly.length === matchingSkills.length) {
+                if (competencyMet) {
+                    prio.push(employees[i])
+                }
             }
-        } else if ((matchingSkills.length >= projectSkillOnly.length / 2) && competencyMet) { // employee has more than half of the skills required for the project, and competency level is met for them
-            // assign
+        } else if (tier === 2) {
+            // if employee has all skills but competency not met
+            if (projectSkillOnly.length === matchingSkills.length) {
+                if (!competencyMet) {
+                    prio.push(employees[i])
+                }
+            }
+        } else if (tier === 3) {
+            // if employee has >= 50% of the skills required and competency met
+            if (matchingSkills.length >= projectSkillOnly.length / 2) {
+                if (competencyMet) {
+                    prio.push(employees[i])
+                }
+            }
         }
     }
+    return prio
+}
+
+const resetAssignment = async (req, res) => {
+    console.log("inside resetAssignment")
+    // reset projects
+    const allProjects = await Project.find({ organisation_id: "MSFT" })
+
+    for (var i = 0; i < allProjects.length; i++) {
+        allProjects[i].assigned_to.assignment_id = ""
+        allProjects[i].assigned_to.employees = []
+        allProjects[i].save()
+    }
+
+    // reset employees
+    const allEmployees = await User.find({ organisation_id: "MSFT", role: "Employee" })
+
+    for (var i = 0; i < allEmployees.length; i++) {
+        allEmployees[i].project_assigned = []
+        allEmployees[i].save()
+    }
+
+    return res.status(200).json(allProjects)
 }
 
 // export functions
@@ -443,6 +595,9 @@ module.exports = {
     getSingleAssignment,
     createAssignment,
     deleteAssignment,
+    // addEmployees,
+    // addProjects,
     updateAssignment,
-    autoAssign
+    autoAssign,
+    resetAssignment
 }

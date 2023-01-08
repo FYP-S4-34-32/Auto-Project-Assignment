@@ -31,9 +31,10 @@ const projectSchema = new Schema({
         required: true,
         default: 0
     },
-    assigned_to: [{ // employees who are working on the project
-        type: String
-    }],
+    assigned_to: {
+        assignment_id: String,
+        employees: Array // employees who are working on the project
+    },
     created_by: { // who created the project listing
         type: String,
         required: true
