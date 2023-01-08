@@ -116,7 +116,7 @@ const AllUsers = () => {
             )
         }
 
-        if (user.role === "Admin" && selectedEmployees === "ManageEmployees") {
+        if (user.role === "Admin" && selectedEmployees === "Manage Employees") {
             return (
                 <div >
                     <button className="deleteUsersBtn" onClick={HandleDeleteUsers}>Delete Employees</button>
@@ -150,7 +150,6 @@ const AllUsers = () => {
                     getAllOrganisations(user);  
             }  
         } 
-        
     }
 
     // SEARCH for users
@@ -326,7 +325,7 @@ const AllUsers = () => {
                                         <p>Role: {userDetails.role}</p>  
                                 </td>
                                 <td>
-                                    <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px"}}>delete</span>
+                                    <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(userDetails.email)} style={{float:"right", marginRight:"30px"}}>delete</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -368,7 +367,7 @@ const AllUsers = () => {
                                     <p>Contact Info: {userDetails.contact}</p>
                                 </td>
                                 <td>
-                                    <span className="material-symbols-outlined" id="deleteButton" onClick={deleteUser} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                                    <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(userDetails.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
                                 </td>
                             </tr>
                         </tbody>

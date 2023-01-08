@@ -30,6 +30,13 @@ const SignUpOrgUsers = () => {
 
         // invoke signup function from useSignup.js
         await signup(name, email, password, confirmPassword, role, organisation_id) 
+
+        // reset form
+        setName('')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setRole('')
     }
 
     // return a template - signup form

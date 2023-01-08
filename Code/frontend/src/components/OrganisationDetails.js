@@ -8,6 +8,7 @@ import { useAuthenticationContext } from "../hooks/useAuthenticationContext";
 import { useOrganisationsContext } from "../hooks/useOrganisationsContext";
 import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useDeleteUser } from '../hooks/useDeleteUser'
+import { useDeleteUsers } from '../hooks/useDeleteUsers'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 const OrganisationDetails = () => {
@@ -16,6 +17,7 @@ const OrganisationDetails = () => {
     var allEmployeesArray = [] 
     var organisationEmployeesArray = []
     var organisationUsersArray = []
+    const [deleteUsersArray, setDeleteUsersArray] = useState([])
 
     const { user } = useAuthenticationContext()
     const { organisation, dispatch } = useOrganisationsContext() // note organisation instead of organisations -> because we are setting the state of ONE organisation using SET_ONE_ORGANISATION
@@ -24,7 +26,8 @@ const OrganisationDetails = () => {
     const navigate = useNavigate()
 
     const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
-    const { updateUsers, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
+    const { deleteOneUser, deleteUserIsLoading, deleteUserError } = useDeleteUser() // get the deleteUser function from the context
+    const { deleteUsers} = useDeleteUsers() 
     const [selectedUsers, setSelectedUsers] = useState("")
     const [searchUsers, setSearch] = useState("")  
 
@@ -92,13 +95,73 @@ const OrganisationDetails = () => {
 
     filterUsers(); 
 
-    
     // delete a user from the database
-    const deleteUser = (email) => { 
+    const deleteUser = async (email) => { 
         console.log("to be deleted user's email: ", email)
-        updateUsers(email); 
+        await deleteOneUser(email); 
         getAllUsers(); // get updated array of users
+        filterUsers(); // get updated array of users
     } 
+
+    // Add a user to the array of users to be deleted
+    const addDeleteUser = (event) => {
+        const {value, checked} = event.target; // value = email address, checked = true/false 
+
+        if (checked) { 
+
+            if (deleteUsersArray.length === 0) {
+                setDeleteUsersArray([value])  
+            }
+            else {
+                setDeleteUsersArray(pre => [...pre, value]) 
+            }
+
+        } else { 
+
+            setDeleteUsersArray(pre => {
+                return pre.filter((email) => {
+                    return email !== value
+                })
+            })
+        } 
+    }  
+
+     // DISPLAY "delete user" button
+    const deleteUserButton = () => {
+        if (user.role === "Super Admin" && selectedUsers === "manageUsers") {
+            return (
+                <div>
+                    <button className="deleteUsersBtn" onClick={HandleDeleteUsers}>Delete Users</button>
+                </div>
+            )
+        } 
+    }
+
+
+    // DELETE MULTIPLE USERS from the database
+    const HandleDeleteUsers = async(e) => {
+        e.preventDefault();
+
+        if (deleteUsersArray.length === 0) {
+            alert("No users selected")
+        }
+        else {
+            // CONFIRMATION BOX 
+            let answer = window.confirm("Delete selected users?");
+
+            if (answer) { // if user clicks OK, answer === true
+                await deleteUsers(deleteUsersArray); // returns updated array of users  
+
+                // clear the array of users to be deleted
+                setDeleteUsersArray([]); 
+
+                // // AFTER DELETING USERS, FETCH UPDATED ARRAY OF USERS  
+                getAllUsers(); // get updated array of users
+                filterOrganisationUsers(allUsers); // filter the updated array of users 
+            }  
+        } 
+        
+    }
     
     // search for users
     const searchUser = () => {   
@@ -149,7 +212,6 @@ const OrganisationDetails = () => {
                     }
                 })
             } 
-
         }
     }
 
@@ -168,63 +230,57 @@ const OrganisationDetails = () => {
     const renderSearchResults = searchResults.map((datum) => {
         switch (selectedUsers) {
             case "manageUsers": 
-                var user = datum; 
+                var userDetails = datum; 
                 return (
-                    <div className="user-div" key={user._id} style={{height:"250px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
-                        <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                    </div>
-                ) 
-            case "manageEmployees":
-                var user = datum; 
-                return ( 
-                    <div className="user-div" key={user._id} style={{height:"250px"}}>
-                        <h3>{user.name}</h3> 
-                        <p>Organisation: {user.organisation_id}</p>
-                        <p>Email: {user.email}</p>
-                        <p>Role: {user.role}</p>
-                        <p>Contact Info: {user.contact}</p>
-                        <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(datum.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
-                    </div>
-                )
+                    <tbody key={user._id}>
+                        <tr>
+                            <td>
+                                <input className="checkBox" type="checkbox" value={userDetails.email} onChange={addDeleteUser}/>
+                            </td>
+                            <td className="user-cell"> 
+                                <h3>{userDetails.name}</h3> 
+                                <p>Organisation: {userDetails.organisation_id}</p>
+                                <p>Email: {userDetails.email}</p>
+                                <p>Role: {userDetails.role}</p>
+                                <p>Contact Info: {userDetails.contact}</p>
+                            </td>
+                            <td>
+                                <span className="material-symbols-outlined" id="deleteButton" onClick={() => deleteUser(userDetails.email)} style={{float:"right", marginRight:"30px", marginBottom:"30px"}}>delete</span>
+                            </td>
+                        </tr>
+                    </tbody> 
+                )  
 
             default:
                 var userDetails = datum;
                 return (
-                     <div className="user-div" key={userDetails._id} style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
-                        <h3>{userDetails.name}</h3> 
-                        <p>Organisation: {userDetails.organisation_id}</p>
-                        <p>Email: {userDetails.email}</p>
-                        <p>Role: {userDetails.role}</p>
-                        <p>Contact Info: {userDetails.contact}</p>
-                    </div> 
+                    <tbody key={userDetails._id}>
+                        <tr className="user-cell" style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
+                        <td>
+                            <h3>{userDetails.name}</h3> 
+                            <p>Organisation: {userDetails.organisation_id}</p>
+                            <p>Email: {userDetails.email}</p>
+                            <p>Role: {userDetails.role}</p>
+                            <p>Contact Info: {userDetails.contact}</p>
+                        </td>
+                    </tr> 
+                    </tbody>
+                     
                 ) 
         } 
     });
 
     // panel that shows the types of users
     const showUsersPanel = (user) => {
-        switch (user.role) {
-            case "Super Admin":
-                return (
-                    <div className="selection-panel" style={{height:"200px"}}>
-                        <button onClick={() => setSelectedUsers("allUsers")}>All Users</button>
-                        <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
-                        <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
-                        <button onClick={() =>setSelectedUsers("manageUsers")}>Manage Users</button>
-                    </div>
-                )
-            case "Admin":
-                return (
-                    <div className="selection-panel" style={{height:"100px"}}> 
-                        <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
-                        <button onClick={() =>setSelectedUsers("manageEmployees")}>Manage Employees</button>
-                    </div>
-                )
+        if (user.role === "Super Admin") { 
+            return (
+                <div className="selection-panel" style={{height:"200px"}}>
+                    <button onClick={() => setSelectedUsers("allUsers")}>All Users</button>
+                    <button onClick={() => setSelectedUsers("projectAdmins")}>Project Admins</button>
+                    <button onClick={() =>setSelectedUsers("employees")}>Employees</button>
+                    <button onClick={() =>setSelectedUsers("manageUsers")}>Manage Users</button>
+                </div>
+            )
         }
     }
 
@@ -281,8 +337,12 @@ const OrganisationDetails = () => {
                     <h2>Organisation Users</h2>
                     <div>  
                         <input className="search-input" type="search" placeholder="Search User" onChange={(e) => setSearch(e.target.value)} />  
-    
-                        {renderSearchResults}
+                        {deleteUserButton()}
+                        <br/>
+                        <table>
+                            {renderSearchResults}
+                        </table>
+                        
                         {deleteUserError && <p>Error: {deleteUserError}</p>}
                     </div>
                 </div>
