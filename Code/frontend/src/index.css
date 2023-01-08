@@ -271,12 +271,12 @@ input::placeholder {
 
 .all-users table {
   width: 100%;
-  border-collapse: collapse;
+  /* border: 1px solid white; */
   border-radius: 4px;
 }
 
 .all-users table, tr {
-  border: 1px solid rgba(140, 135, 135, 0.169);
+  border-bottom: 1px solid rgba(140, 135, 135, 0.169);
   background-color: white;
 }
 
@@ -363,7 +363,7 @@ input::placeholder {
 
 .user-Details-detailsDiv form {
   margin-left: 30px;
-  /* width: ; */
+  width: 70%;
 }
 
 .user-Details-detailsDiv .editRoleBtn {

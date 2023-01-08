@@ -156,7 +156,7 @@ userSchema.statics.signup = async function(name, email, password, confirmPasswor
 // 2. FIND whether there is a MATCHING email in our database
 // 3. IF a user document is NOT found, means the email does not exist in our database
 // 4. IF a user is FOUND, COMPARE the hash of the PASSWORD we receive to the password in our database
-// 5. IF passwords hashes MATCH, login SUCCESSFUL
+// 5. IF passwords hashes MATCH, login SUCCESSFULx
 // 6. RETURNS the USER DOCUMENT in the format of the schema
 //===============================================================================================================================//
 
@@ -187,7 +187,7 @@ userSchema.statics.login = async function(email, password) {
 
 // static method to retrieve ALL user info EXCEPT password
 userSchema.statics.getAllUsers = async function() {
-    return this.find({}).sort({createdAt: 1}).select('-password')
+    return this.find().select('-password')
 }
 
 // static method to retrieve user info EXCEPT password
@@ -216,8 +216,8 @@ userSchema.statics.updateInfo = async function(email, contact) {
     } 
 
     // console.log(contact.match(/^[0-9]+$/))
-    console.log(contact)
-    console.log(contact.match(/^[8-9][0-9]*$/))
+    // console.log(contact)
+    // console.log(contact.match(/^[8-9][0-9]*$/))
 
     // validate contact info, if it contains only 8 digits that begins with 8 or 9
     if (contact.match(/^[0-9]+$/) === null || contact.match(/^[8-9][0-9]*$/) === null) {  
@@ -376,6 +376,7 @@ userSchema.statics.deleteUsers = async function(emails) {
     }
 
     const deleteUsers = await this.deleteMany({ email: { $in: emails }})
+    
 
     // return success message after deleting user
     if (deleteUsers.acknowledged === true) {

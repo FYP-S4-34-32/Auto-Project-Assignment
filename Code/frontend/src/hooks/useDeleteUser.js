@@ -10,7 +10,7 @@ export const useDeleteUser = () => {
     const [deleteUserIsLoading, setIsLoading] = useState(null)  
     const [deleteUserSuccess, setSuccess] = useState(null) 
 
-    const updateUsers = async (email) => { 
+    const deleteOneUser = async (email) => { 
 
         console.log("to delete user's userEmail: ", JSON.stringify({email}))
         setIsLoading(true)  
@@ -36,5 +36,5 @@ export const useDeleteUser = () => {
         } 
     }
 
-    return { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess}
+    return { deleteOneUser, deleteUserIsLoading, deleteUserError, deleteUserSuccess}
 }

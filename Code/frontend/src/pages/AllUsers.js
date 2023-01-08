@@ -14,7 +14,7 @@ import { useGetAllOrganisations } from '../hooks/useGetAllOrganisations'
 import { useNavigate} from 'react-router-dom' 
 
 const AllUsers = () => {
-    var allUsersArray = []
+    var allUsersArray = [] // all users in the database
     var projectAdminsArray = []
     var superAdminsArray = []
     var allEmployeesArray = [] 
@@ -25,10 +25,10 @@ const AllUsers = () => {
     const { user } = useAuthenticationContext() // get the user object from the context 
     const navigate = useNavigate();
 
-    const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context
-    const { updateUsers, deleteUserIsLoading, deleteUserError, deleteUserSuccess, updatedAllUsers1} = useDeleteUser() // get the deleteUser function from the context
+    const { getAllUsers, getAllUsersIsLoading, getAllUsersError, allUsers } = useGetAllUsers() // get the getAllUsers function from the context 
+    const { deleteOneUser, deleteUserIsLoading, deleteUserError, deleteUserSuccess} = useDeleteUser() // get the deleteUser function from the context
     const { getAllOrganisations, getAllOrganisationsIsLoading, getAllOrganisationsError, allOrganisations } = useGetAllOrganisations() // get the getAllOrganisations function from the context
-    const { deleteUsers, updatedAllUsers2 } = useDeleteUsers() // get the deleteUsers function from the context
+    const { deleteUsers} = useDeleteUsers() // get the deleteUsers function from the context
     const [selectedUsers, setSelectedUsers] = useState("All Users") // for Super Admins
     const [selectedEmployees, setSelectedEmployees] = useState("Employees") // for Project Admins
     const [searchUsers, setSearch] = useState("")  
@@ -40,9 +40,10 @@ const AllUsers = () => {
         if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
             getAllOrganisations(user); 
     }, []) 
- 
-    const filterUsers = () => {
-        allUsersArray = allUsers 
+
+
+    const filterUsers = (userArr) => {
+        allUsersArray = userArr 
 
         if (user.role === "Super Admin") {
             for (var i = 0; i < allUsersArray.length; i++) {
@@ -66,28 +67,27 @@ const AllUsers = () => {
         } 
     }
 
-    filterUsers();
+    filterUsers(allUsers);
+    
 
     // DELETE a SINGLE USER from the database
-    const deleteUser = (email) => {  
+    const deleteUser = async(email) => {  
         // CONFIRMATION BOX 
         let answer = window.confirm("Delete user " + email + "?");
 
         //console.log("answer: ", answer)
         if (answer) { // if user clicks OK, answer === true
-            updateUsers(email);
+            await deleteOneUser(email);
             getAllUsers(); // get updated array of users
-            filterUsers();
+            filterUsers(allUsers);
         } 
     } 
 
     // Add a user to the array of users to be deleted
     const addDeleteUser = (event) => {
-        const {value, checked} = event.target; // value = email address, checked = true/false
-        console.log("Selected User Email: ", value)
+        const {value, checked} = event.target; // value = email address, checked = true/false 
 
-        if (checked) {
-            console.log(value + " is checked") 
+        if (checked) { 
 
             if (deleteUsersArray.length === 0) {
                 setDeleteUsersArray([value])  
@@ -96,8 +96,7 @@ const AllUsers = () => {
                 setDeleteUsersArray(pre => [...pre, value]) 
             }
 
-        } else {
-            console.log(value + " is unchecked") 
+        } else { 
 
             setDeleteUsersArray(pre => {
                 return pre.filter((email) => {
@@ -105,30 +104,31 @@ const AllUsers = () => {
                 })
             })
         } 
-    } 
-    // console.log("deleteUsersArray: ", deleteUsersArray) 
+    }  
 
     // DISPLAY "delete user" button
     const deleteUserButton = () => {
         if (user.role === "Super Admin" && selectedUsers === "Manage Users") {
             return (
                 <div>
-                    <button className="deleteUsersBtn" onClick={handleDeleteUsers}>Delete Users</button>
+                    <button className="deleteUsersBtn" onClick={HandleDeleteUsers}>Delete Users</button>
                 </div>
             )
         }
 
-        if (user.role === "Admin" && selectedEmployees === "Manage Employees") {
+        if (user.role === "Admin" && selectedEmployees === "ManageEmployees") {
             return (
                 <div >
-                    <button className="deleteUsersBtn" onClick={handleDeleteUsers}>Delete Employees</button>
+                    <button className="deleteUsersBtn" onClick={HandleDeleteUsers}>Delete Employees</button>
                 </div>
             )
         }
     }
 
     // DELETE MULTIPLE USERS from the database
-    const handleDeleteUsers = () => {
+    const HandleDeleteUsers = async(e) => {
+        e.preventDefault();
+
         if (deleteUsersArray.length === 0) {
             alert("No users selected")
         }
@@ -137,20 +137,20 @@ const AllUsers = () => {
             let answer = window.confirm("Delete selected users?");
 
             if (answer) { // if user clicks OK, answer === true
-                deleteUsers(deleteUsersArray);
-            }
+                await deleteUsers(deleteUsersArray); // returns updated array of users  
 
-            // clear the array of users to be deleted
-            setDeleteUsersArray([]);
-        }
+                // clear the array of users to be deleted
+                setDeleteUsersArray([]); 
 
-        // AFTER DELETING USERS, FETCH UPDATED ARRAY OF USERS 
-        getAllUsers(); // get updated array of users
-        filterUsers(); 
-        if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
-            getAllOrganisations(user);  
-
-        console.log("all users: ", allUsers);
+                // // AFTER DELETING USERS, FETCH UPDATED ARRAY OF USERS  
+                getAllUsers(); // get updated array of users
+                filterUsers(allUsers); // filter the updated array of users
+                
+                if (user && user.role === "Super Admin") // only super admins can see all organisations, hence only get all organisations if user is a super admin
+                    getAllOrganisations(user);  
+            }  
+        } 
+        
     }
 
     // SEARCH for users
@@ -265,21 +265,17 @@ const AllUsers = () => {
                     }
                 })
             } 
-
         }
     }
 
     const searchResults = searchUser(); 
 
     // FILTER users by their organisations, only for Super Admins
-    const OrganisationFilter = () => {
-        // console.log("organisationsArray: ", organisationsArray)
-        // console.log("allOrganisations: ", allOrganisations)
+    const OrganisationFilter = () => { 
 
         // selectable options for organisation filter 
         if (user.role === "Super Admin") { // super admins can see current organisations
-            organisationsArray = allOrganisations;
-            // console.log("organisationsArray: ", organisationsArray)
+            organisationsArray = allOrganisations; 
 
             const OrganisationFilterSelection = organisationsArray.map((organisation) => { 
                 return (

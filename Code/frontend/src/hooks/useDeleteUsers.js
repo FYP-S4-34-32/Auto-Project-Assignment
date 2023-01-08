@@ -9,11 +9,11 @@ export const useDeleteUsers = () => {
     const [deleteUsersError, setError] = useState(null)
     const [deleteUsersIsLoading, setIsLoading] = useState(null)  
     const [deleteUsersSuccess, setSuccess] = useState(null)
-    const [updatedAllUsers2, setUpdatedAllUsers2] = useState([])
+    //const [updatedAllUsers, setUpdatedAllUsers] = useState([])
 
     const deleteUsers = async (emails) => { 
 
-        console.log("to delete users Emails: ", JSON.stringify({emails}))
+        // console.log("to delete users Emails: ", JSON.stringify({emails}))
         setIsLoading(true)  
         setError(null)
 
@@ -25,7 +25,7 @@ export const useDeleteUsers = () => {
 
         const json = await response.json()
 
-        console.log("json: ", json)
+        // console.log("json: ", json)
 
         if (!response.ok) {
             setIsLoading(false)
@@ -35,10 +35,11 @@ export const useDeleteUsers = () => {
         if(response.ok) {
             setIsLoading(false)
             setSuccess(json.deletedUsers)
-            setUpdatedAllUsers2(json.users)
+            // setUpdatedAllUsers(json.users)
         }
 
+        return json.users
     }
 
-    return { deleteUsers, deleteUsersIsLoading, deleteUsersError, deleteUsersSuccess, updatedAllUsers2}
+    return { deleteUsers, deleteUsersIsLoading, deleteUsersError, deleteUsersSuccess}
 }

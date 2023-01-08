@@ -10,8 +10,7 @@ import { useAuthenticationContext } from '../hooks/useAuthenticationContext'
 import { useLocation, Link } from "react-router-dom";
 import { useFetchProfile } from '../hooks/useFetchProfile';
 import { useUpdateInfo } from '../hooks/useUpdateInfo'  // contact info 
-import { useUpdateRole } from '../hooks/useUpdateRole'
-import { set, setHours } from 'date-fns';
+import { useUpdateRole } from '../hooks/useUpdateRole' 
 
 const UserDetails = () => {
     const { user } = useAuthenticationContext(); // current user (admin or superadmin)
@@ -135,14 +134,11 @@ const UserDetails = () => {
                                     onChange={(e) => setUserContact(e.target.value)}
                                 />
                                 
-                                <button className="submitBtn">Save</button>
-                                {error.includes("updated") === "false" && <div className="error">{error}</div>}
-                                {error.includes("updated") === "true" && <div className="success">Contact updated successfully</div>}
+                                <button className="submitBtn">Save</button> 
+                                <button className="cancelBtn">Cancel</button>
                             </form>      
                         }
-
-                        
-                          
+                        {error && <div className="error">{error}</div>}
                     </div>
                      <div className='userDetails-orgDiv' style={{width:"40%"}}>
                         <h4>Organisation</h4>
@@ -196,7 +192,6 @@ const UserDetails = () => {
                                     onChange={(e) => setUserContact(e.target.value)}
                                 />
 
-                                
                                 <button className="submitBtn">Save</button>
                                 {error && <div className="error">{error}</div>} 
                             </form>      
@@ -220,7 +215,6 @@ const UserDetails = () => {
                             <h4>Projects</h4>
                         </div> 
                     </div> 
-                   
                 </div>
             )
         }
@@ -228,7 +222,7 @@ const UserDetails = () => {
 
     return (
         <div className="user-Details">
-            {/* <Link to="/AllUsers"> Back to Users</Link> */}
+            <Link to="/AllUsers"> Back to Users</Link>
             <h2>User Details</h2>  
             
             {displayUserDetails()}     
