@@ -274,7 +274,7 @@ const autoAssign = async (req, res) => {
             const prio = processEmployees(tier, firstChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
             if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+                await assignFunction(prio, projectThreshold, threshold, projectID, id)
             }
 
             if (i === allProjects.length - 1) {
@@ -288,7 +288,7 @@ const autoAssign = async (req, res) => {
             const prio = processEmployees(tier, secondChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
             if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+                await assignFunction(prio, projectThreshold, threshold, projectID, id)
             }
 
             if (i === allProjects.length - 1) {
@@ -302,7 +302,7 @@ const autoAssign = async (req, res) => {
             const prio = processEmployees(tier, thirdChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
             if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+                await assignFunction(prio, projectThreshold, threshold, projectID, id)
             }
 
             if (i === allProjects.length - 1) {
@@ -316,7 +316,7 @@ const autoAssign = async (req, res) => {
             const prio = processEmployees(tier, notSelected, projectSkillOnly, projectCompetencyOnly)
 
             if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, assigned_to, threshold, projectID, id)
+                await assignFunction(prio, projectThreshold, threshold, projectID, id)
             }
 
             if (i === allProjects.length - 1) {
@@ -331,7 +331,12 @@ const autoAssign = async (req, res) => {
                 continue // to next project
             }
         }
-    }
+    } // end of assignment
+
+    // update stats
+    updateStats(id)
+
+    return res.status(200).json("Auto assignment is complete")
 }
 
 /* Supporting Functions for Assignment */
@@ -438,7 +443,7 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
 }
 
 // updated assign function
-const assignFunction = async (employees, projectThreshold, assigned_to, threshold, projectID, assignmentID) => {
+const assignFunction = async (employees, projectThreshold, threshold, projectID, assignmentID) => {
     console.log("inside assignFunction")
 
     console.log("employees: ", employees)
@@ -578,9 +583,10 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
 }
 
 const resetAssignment = async (req, res) => {
-    console.log("inside resetAssignment")
+    const organisation_id = "MSFT"
+
     // reset projects
-    const allProjects = await Project.find({ organisation_id: "MSFT" })
+    const allProjects = await Project.find({ organisation_id })
 
     for (var i = 0; i < allProjects.length; i++) {
         allProjects[i].assigned_to.assignment_id = ""
@@ -589,14 +595,96 @@ const resetAssignment = async (req, res) => {
     }
 
     // reset employees
-    const allEmployees = await User.find({ organisation_id: "MSFT", role: "Employee" })
+    const allEmployees = await User.find({ organisation_id, role: "Employee" })
 
     for (var i = 0; i < allEmployees.length; i++) {
         allEmployees[i].project_assigned = []
         allEmployees[i].save()
     }
 
-    return res.status(200).json(allProjects)
+    return res.status(200).json("Assignment resetted")
+}
+
+// stats
+const updateStats = async (_id) => {
+    // get _id for assignment
+    const assignment = await Assignment.findById({ _id })
+    console.log("assignment: ", assignment)
+
+    const employees = assignment.employees
+
+    const assignedFirst = []
+    const assignedSecond = []
+    const assignedThird = []
+    const assignedNotSelected = []
+    const notAssigned = []
+
+    // go through each employee
+    for (var i = 0; i < employees.length; i++) {
+        // get employee info
+        const employee = await User.findOne({ email: employees[i] })
+        const { firstChoice, secondChoice, thirdChoice, project_assigned } = employee
+
+        // get projects employee is assigned to
+        const employeeProjects = []
+    
+        // no project assigned
+        if (project_assigned.length === 0) {
+            notAssigned.push(employee.email)
+            continue
+        }
+
+        // go through the projects assigned to them - project_assigned = { assignment_id, projects: [] }
+        for (var j = 0; j < project_assigned.length; j++) {
+            if (project_assigned[j].assignment_id === _id) { // get projects from that assignment
+                for (var k = 0; k < project_assigned[j].projects.length; k++) {
+                    employeeProjects.push(project_assigned[j].projects[k]) // push project into employeeProjects array
+                }
+                break // exit loop
+            }
+        }
+
+        for (var j = 0; j < employeeProjects.length; j++) {
+            if (employeeProjects[j] === firstChoice) {
+                assignedFirst.push(employee.email)
+            } else if (employeeProjects[j] === secondChoice) {
+                assignedSecond.push(employee.email)
+            } else if (employeeProjects[j] === thirdChoice) {
+                assignedThird.push(employee.email)
+            } else {
+                assignedNotSelected.push(employee.email)
+            }
+        }
+    }
+
+    console.log("assignedFirst: ", assignedFirst.length)
+    console.log("assignedSecond: ", assignedSecond.length)
+    console.log("assignedThird: ", assignedThird.length)
+    console.log("assignedNotSelected: ", assignedNotSelected.length)
+    console.log("notAssigned: ", notAssigned.length)
+
+    // % of employees assigned their first choice - 2dp
+    const firstChoicePercentage = Math.round((assignedFirst.length / employees.length * 100) * 100) / 100
+
+    // % of employees assigned their second choice
+    const secondChoicePercentage = Math.round((assignedSecond.length / employees.length * 100) * 100) / 100
+
+    // % of employees assigned their third choice
+    const thirdChoicePercentage = Math.round((assignedThird.length / employees.length * 100) * 100) / 100
+
+    // % of employees not assigned to any of their choices
+    const notSelectedPercentage = Math.round((assignedNotSelected.length / employees.length * 100) * 100) / 100
+
+    // % of employees not assigned to any projects
+    const notAssignedPercentage = Math.round((notAssigned.length / employees.length * 100) * 100) / 100
+
+    // update assignment object
+    assignment.first_choice = firstChoicePercentage
+    assignment.second_choice = secondChoicePercentage
+    assignment.third_choice = thirdChoicePercentage
+    assignment.not_selected = notSelectedPercentage
+    assignment.not_assigned = notAssignedPercentage
+    await assignment.save()
 }
 
 // export functions

@@ -42,6 +42,21 @@ const assignmentSchema = new Schema({
     employees: [{ // can use email OR _id as identifier
         type: String,
     }],
+    first_choice: {
+        type: Number
+    },
+    second_choice: {
+        type: Number
+    },
+    third_choice: {
+        type: Number
+    },
+    not_selected: {
+        type: Number
+    },
+    not_assigned: {
+        type: Number
+    },
     created_by: { // who created the assignment phase - admin email OR _id
         type: String,
         required: true
