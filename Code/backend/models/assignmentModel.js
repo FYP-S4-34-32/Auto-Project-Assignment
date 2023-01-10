@@ -32,14 +32,14 @@ const assignmentSchema = new Schema({
             return new Date(this.start_date.getTime() + 7 * 24 * 60 * 60 * 1000)
         }
     },
-    projects: [{ // project title OR _id as identifier
+    projects: [{ // project title as identifier
         type: String,
     }],
     threshold: { // number of projects each employee can take
         type: Number,
         required: true
     },
-    employees: [{ // can use email OR _id as identifier
+    employees: [{ // can use email as identifier
         type: String,
     }],
     first_choice: {

@@ -35,6 +35,18 @@ const projectSchema = new Schema({
         assignment_id: String,
         employees: Array // employees who are working on the project
     },
+    firstChoice: {
+        type: Number
+    },
+    secondChoice: {
+        type: Number
+    },
+    thirdChoice: {
+        type: Number
+    },
+    notSelected: {
+        type: Number
+    },
     created_by: { // who created the project listing
         type: String,
         required: true
