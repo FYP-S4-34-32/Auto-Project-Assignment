@@ -132,46 +132,6 @@ const updateAssignment = async (req, res) => {
 
 }
 
-// // Add employees
-// const addEmployees = async (req, res) => {
-//     const { id } = req.params
-//     const { employees } = req.body
-
-//     // check whether id is a mongoose type object
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//         return res.status(404).json({error: "Invalid Assignment ID"})
-//     }
-
-//     // add employees into assignment object
-//     try {
-//         const assignment = await Assignment.findOneAndUpdate({ _id: id }, {
-//             employees
-//         })
-//     } catch (error) {
-//         res.status(400).json({error: error.message})
-//     }
-// }
-
-// // Add projects
-// const addProjects = async (req, res) => {
-//     const { id } = req.params
-//     const { projects } = req.body
-
-//     // check whether id is a mongoose type object
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//         return res.status(404).json({error: "Invalid Assignment ID"})
-//     }
-
-//     // add employees into assignment object
-//     try {
-//         const assignment = await Assignment.findOneAndUpdate({ _id: id }, {
-//             projects
-//         })
-//     } catch (error) {
-//         res.status(400).json({error: error.message})
-//     }
-// }
-
 // Main Assignment Driver
 const autoAssign = async (req, res) => {
     // req should include id of assignment object in parameter
@@ -205,13 +165,13 @@ const autoAssign = async (req, res) => {
     allProjects.sort(() => Math.random() - 0.5) // shuffle project array
 
     // some control flag for the assigning algo
-    let priority = 1 // first iteration of the project prioritises firstChoice options, second iteration prioritises secondChoice options, and so on...
-    let tier
+    let priority = 1 // refer to priority list at the bottom
+    let tier // refer to tier list at the bottom
 
     // begin assigning
     for (var i = 0; i < allProjects.length; i++) { // loop through allProjects array
         console.log("Processing project[", i, "], title: ", allProjects[i].title, "with priority ", priority)
-        console.log("--------------------------------------------------------------")
+        console.log("-----------------------------------------------------------------------")
     
         // get project title, skills, number of people required, and the employees who are already assigned to it
         const { _id: projectID, title, skills: projectSkills, threshold: projectThreshold, assigned_to } = allProjects[i]
@@ -261,20 +221,35 @@ const autoAssign = async (req, res) => {
         thirdChoiceEmployees.sort(() => Math.random() - 0.5)
         notSelected.sort(() => Math.random() - 0.5)
 
+        // set
         if (priority === 1 || priority === 4 || priority === 7 || priority === 10) {
             tier = 1
         } else if (priority === 2 || priority === 5 || priority === 8 || priority === 11) {
             tier = 2
         } else if (priority === 3 || priority === 6 || priority === 7 || priority === 12) {
             tier = 3
+        } else if (priority >= 13 && priority <= 16) {
+            tier = 4
+        } else if (priority >= 17 && priority <= 20) {
+            tier = 5
+        } else if (priority >= 21 && priority <= 24) {
+            tier = 6
+        } else if (priority >= 25 && priority <= 28) {
+            tier = 7
         }
 
-        // first choice - prio1 to prio3
-        if (priority >= 1 && priority <= 3 && firstChoiceEmployees.length > 0) {
-            const prio = processEmployees(tier, firstChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
+        // first choice
+        if ((priority >= 1 && priority <= 3) || // 1: all skills + competency met; 2: all skills + competency not met; 3: >= half skills + competency met
+                priority === 13 || // >= half skills + competency not met
+                priority === 17 || // < half skills + competency met
+                priority === 21 || // < half skills + competency not met
+                priority === 25) { // none of the required skills
+            if (firstChoiceEmployees.length > 0) {
+                const prio = processEmployees(tier, firstChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
-            if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                if (prio.length > 0) {
+                    await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                }
             }
 
             if (i === allProjects.length - 1) {
@@ -284,11 +259,17 @@ const autoAssign = async (req, res) => {
             } else {
                 continue // to next project
             }
-        } else if (priority >= 4 && priority <= 6 && secondChoiceEmployees.length > 0) {
-            const prio = processEmployees(tier, secondChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
+        } else if ((priority >= 4 && priority <= 6) || // 4: all skills + competency met; 5: all skills + competency not met; 6: >= half skills + competency met
+                priority === 14 || // >= half skills + competency not met
+                priority === 18 || // < half skills + competency met
+                priority === 22 || // < half skills + competency not met
+                priority === 26) { // none of the required skills
+            if (secondChoiceEmployees.length > 0) {
+                const prio = processEmployees(tier, secondChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
-            if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                if (prio.length > 0) {
+                    await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                }                
             }
 
             if (i === allProjects.length - 1) {
@@ -298,11 +279,17 @@ const autoAssign = async (req, res) => {
             } else {
                 continue // to next project
             }
-        } else if (priority >= 7 && priority <= 9 && thirdChoiceEmployees.length > 0) {
-            const prio = processEmployees(tier, thirdChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
+        } else if ((priority >= 7 && priority <= 9) || // 7: all skills + competency met; 8: all skills + competency not met; 9: >= half skills + competency met
+                priority === 15 || // >= half skills + competency not met
+                priority === 19 || // < half skills + competency met
+                priority === 23 || // < half skills + competency not met
+                priority === 27) { // none of the required skills
+            if (thirdChoiceEmployees.length > 0) {
+                const prio = processEmployees(tier, thirdChoiceEmployees, projectSkillOnly, projectCompetencyOnly)
 
-            if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                if (prio.length > 0) {
+                    await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                }
             }
 
             if (i === allProjects.length - 1) {
@@ -312,15 +299,22 @@ const autoAssign = async (req, res) => {
             } else {
                 continue // to next project
             }
-        } else if (priority >= 10 && priority <= 12 && notSelected.length > 0) {
-            const prio = processEmployees(tier, notSelected, projectSkillOnly, projectCompetencyOnly)
+        } else if ((priority >= 10 && priority <= 12) || // 10: all skills + competency met; 11: all skills + competency not met; 12: >= half skills + competency met
+                priority === 16 || // >= half skills + competency not met
+                priority === 20 || // < half skills + competency met
+                priority === 24 || // < half skills + competency not met
+                priority === 28) { // none of the required skills)
+            
+            if (notSelected.length > 0) {
+                const prio = processEmployees(tier, notSelected, projectSkillOnly, projectCompetencyOnly)
 
-            if (prio.length > 0) {
-                await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                if (prio.length > 0) {
+                    await assignFunction(prio, projectThreshold, threshold, projectID, id)
+                }
             }
 
             if (i === allProjects.length - 1) {
-                if (priority === 12) {
+                if (priority === 28) { // end of priority tree
                     break // or return
                 } else {
                     i = -1 // loop through projects again
@@ -446,8 +440,6 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
 const assignFunction = async (employees, projectThreshold, threshold, projectID, assignmentID) => {
     console.log("inside assignFunction")
 
-    console.log("employees: ", employees)
-
     const project = await Project.findById({ _id: projectID })
 
     if (!project) {
@@ -456,8 +448,6 @@ const assignFunction = async (employees, projectThreshold, threshold, projectID,
     }
 
     let currentEmployeeLength = project.assigned_to.employees.length
-    console.log("assigned_to: ", project.assigned_to)
-    console.log("currentEmployeeLength: ", currentEmployeeLength)
 
     // loop through employees
     for (var i = 0; i < employees.length; i++) {
@@ -485,8 +475,6 @@ const assignFunction = async (employees, projectThreshold, threshold, projectID,
             }
         }
 
-        console.log("project_assigned: ", assignmentExistsInEmployee, " at index", assignmentIndex)
-
         if (assignmentExistsInEmployee && project_assigned[assignmentIndex].projects.length === threshold) {
             console.log("employee already has max number of projects")
             continue // to next employee
@@ -505,8 +493,6 @@ const assignFunction = async (employees, projectThreshold, threshold, projectID,
         
         // if assignment object does not exist yet
         if (!assignmentExistsInProject) {
-            console.log("assignment does not exist yet")
-
             // set assignment id
             project.assigned_to.assignment_id = assignmentID
 
@@ -515,9 +501,7 @@ const assignFunction = async (employees, projectThreshold, threshold, projectID,
             currentEmployeeLength++
             await project.save()
         } else { // assignment object already exist project object
-            console.log("assignment exists")
-            
-            // assign to prject
+            // assign to project
             project.assigned_to.employees = [...project.assigned_to.employees, email]
             currentEmployeeLength++
             await project.save()
@@ -538,9 +522,8 @@ const assignFunction = async (employees, projectThreshold, threshold, projectID,
 }
 
 // process employees based on choice and tier
-const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOnly/* other params */) => {
-    console.log("Currently inside processEmployees function - this is before assignFunction")
-    console.log("Tier = ", tier)
+const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOnly) => {
+    console.log("Currently inside processEmployees function, tier = ", tier)
     const prio = []
 
     // loop through employees
@@ -556,26 +539,45 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
         // compare competency level of the matching skills - projectCompetencyOnly and matchingSkills.competency
         const competencyMet = compareCompetency(projectSkillOnly, projectCompetencyOnly, matchingSkills)
 
-        if (tier === 1) {
-            // if employee has all skills and competency met
+        if (tier === 1) { // if employee has all skills and competency met
             if (projectSkillOnly.length === matchingSkills.length) {
                 if (competencyMet) {
                     prio.push(employees[i])
                 }
             }
-        } else if (tier === 2) {
-            // if employee has all skills but competency not met
+        } else if (tier === 2) { // if employee has all skills but competency not met
             if (projectSkillOnly.length === matchingSkills.length) {
                 if (!competencyMet) {
                     prio.push(employees[i])
                 }
             }
-        } else if (tier === 3) {
-            // if employee has >= 50% of the skills required and competency met
+        } else if (tier === 3) { // if employee has >= 50% of the skills required and competency met
             if (matchingSkills.length < projectSkillOnly.length && matchingSkills.length >= projectSkillOnly.length / 2) {
                 if (competencyMet) {
                     prio.push(employees[i])
                 }
+            }
+        } else if (tier === 4) { // if employee has >= 50% of the skills required but competency not met
+            if (matchingSkills.length < projectSkillOnly.length && matchingSkills.length >= projectSkillOnly.length / 2) {
+                if (!competencyMet) {
+                    prio.push(employees[i])
+                }
+            }
+        } else if (tier === 5) { // if employeee >0% && <50% of skills and competency met
+            if (matchingSkills.length > 0 && matchingSkills.length < projectSkillOnly.length / 2) {
+                if (competencyMet) {
+                    prio.push(employees[i])
+                }
+            }
+        } else if (tier === 6) { // if employeee >0% && <50% of skills but competency not met
+            if (matchingSkills.length > 0 && matchingSkills.length < projectSkillOnly.length / 2) {
+                if (!competencyMet) {
+                    prio.push(employees[i])
+                }
+            }
+        } else if (tier === 7) { // if employeee has none of the required skills
+            if (matchingSkills.length === 0) {
+                prio.push(employees[i])
             }
         }
     }
@@ -602,6 +604,15 @@ const resetAssignment = async (req, res) => {
         allEmployees[i].save()
     }
 
+    // reset assignment stats
+    const assignment = await Assignment.findByIdAndUpdate({ _id: "63b7a00db3d8e3b10e123b1b"}, {
+        first_choice: null,
+        second_choice: null,
+        third_choice: null,
+        not_selected: null,
+        not_assigned: null
+    })
+
     return res.status(200).json("Assignment resetted")
 }
 
@@ -609,8 +620,6 @@ const resetAssignment = async (req, res) => {
 const updateStats = async (_id) => {
     // get _id for assignment
     const assignment = await Assignment.findById({ _id })
-    console.log("assignment: ", assignment)
-
     const employees = assignment.employees
 
     const assignedFirst = []
@@ -644,7 +653,9 @@ const updateStats = async (_id) => {
             }
         }
 
+        console.log(employees[i], "assigned to: ")
         for (var j = 0; j < employeeProjects.length; j++) {
+            console.log(employeeProjects[j])
             if (employeeProjects[j] === firstChoice) {
                 assignedFirst.push(employee.email)
             } else if (employeeProjects[j] === secondChoice) {
@@ -655,6 +666,7 @@ const updateStats = async (_id) => {
                 assignedNotSelected.push(employee.email)
             }
         }
+        console.log()
     }
 
     console.log("assignedFirst: ", assignedFirst.length)
@@ -693,9 +705,47 @@ module.exports = {
     getSingleAssignment,
     createAssignment,
     deleteAssignment,
-    // addEmployees,
-    // addProjects,
     updateAssignment,
     autoAssign,
     resetAssignment
 }
+
+
+// Priority Tree
+// Prio 1: FIRST choice and ALL skills and competency MET - TIER 1
+// Prio 2: FIRST choice and ALL skills but competency NOT met - TIER 2
+// Prio 3: FIRST choice and >=50% of skills and competency met - TIER 3
+// Prio 4: SECOND choice and ALL skills and competency MET - TIER 1
+// Prio 5: SECOND choice and ALL skills but competency NOT met - TIER 2
+// Prio 6: SECOND choice and >=50% of skills and competency met - TIER 3
+// Prio 7: THIRD choice and ALL skills and competency MET - TIER 1
+// Prio 8: THIRD choice and ALL skills but competency NOT met - TIER 2
+// Prio 9: THIRD choice and >=50% of skills and competency met - TIER 3
+// Prio 10: NOT SELECTED and ALL skills and competency MET - TIER 1
+// Prio 11: NOT SELECTED and ALL skills but competency NOT met - TIER 2
+// Prio 12: NOT SELECTED and >=50% of skills and competency met - TIER 3
+// Prio 13: FIRST choice and >=50% of skills but competency not met - TIER 4
+// Prio 14: SECOND choice and >=50% of skills but competency not met - TIER 4
+// Prio 15: THIRD choice and >=50% of skills but competency not met - TIER 4
+// Prio 16: NOT SELECTED and >=50% of skills but competency not met - TIER 4
+// Prio 17: FIRST choice and >0% && <50% of skills and competency met - TIER 5
+// Prio 18: SECOND choice and >0% && <50% of skills and competency met - TIER 5
+// Prio 19: THIRD choice and >0% && <50% of skills and competency met - TIER 5
+// Prio 20: NOT SELECTED and >0% && <50% of skills and competency met - TIER 5
+// Prio 21: FIRST choice and >0% && <50% of skills but competency not met - TIER 6
+// Prio 22: SECOND SELECTED and >0% && <50% of skills but competency not met - TIER 6
+// Prio 23: THIRD SELECTED and >0% && <50% of skills but competency not met - TIER 6
+// Prio 24: NOT SELECTED and >0% && <50% of skills but competency not met - TIER 6
+// Prio 25: FIRST choice and no required skills - TIER 7
+// Prio 26: SECOND choice and no required skills - TIER 7
+// Prio 27: THIRD choice and no required skills - TIER 7
+// Prio 28: NOT SELECTED and no required skills - TIER 7
+
+
+// tier1: ALL skills and competency MET
+// tier2: ALL skills but competency not met
+// tier3: >=50% skills and competency met
+// tier4 : >= 50% skills but competency not met
+// tier5: >0% && <50% of skills and competency met 
+// tier6: >0% && 50% of skills but competency not met
+// tier7: no required skills
