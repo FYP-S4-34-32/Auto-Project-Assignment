@@ -132,6 +132,62 @@ const updateAssignment = async (req, res) => {
 
 }
 
+// UPDATE employees
+const updateEmployees = async (req, res) => {
+    const { id } = req.params
+
+    const { employees } = req.body
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Assignment ID"})
+    }
+
+    // update assignment object
+    try {
+        const assignment = await Assignment.findById({ _id: id })
+
+        for (var i = 0; i < employees.length; i++) {
+            assignment.employees = [...assignment.employees, employees[i]]
+        }
+        await assignment.save()
+
+        res.status(200).json({ assignment })
+
+    } catch (error) { // catch any error that pops up during the process
+        res.status(400).json({error: error.message})
+    }
+
+}
+
+// UPDATE project
+const updateProjects = async (req, res) => {
+    const { id } = req.params
+
+    const { projects } = req.body
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Assignment ID"})
+    }
+
+    // update assignment object
+    try {
+        const assignment = await Assignment.findById({ _id: id })
+
+        for (var i = 0; i < projects.length; i++) {
+            assignment.projects = [...assignment.projects, projects[i]]
+        }
+        await assignment.save()
+
+        res.status(200).json({ assignment })
+
+    } catch (error) { // catch any error that pops up during the process
+        res.status(400).json({error: error.message})
+    }
+
+}
+
 // Main Assignment Driver
 const autoAssign = async (req, res) => {
     // req should include id of assignment object in parameter
@@ -755,6 +811,8 @@ module.exports = {
     createAssignment,
     deleteAssignment,
     updateAssignment,
+    updateEmployees,
+    updateProjects,
     autoAssign,
     resetAssignment
 }
