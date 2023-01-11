@@ -132,7 +132,7 @@ const updateAssignment = async (req, res) => {
 
 }
 
-// UPDATE employees
+// ADD employees into assignment object
 const updateEmployees = async (req, res) => {
     const { id } = req.params
 
@@ -160,7 +160,42 @@ const updateEmployees = async (req, res) => {
 
 }
 
-// UPDATE project
+// DELETE employee from assignment
+const deleteEmployees = async(req, res) => {
+    const { id } = req.params
+
+    const { employees } = req.body
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Assignment ID"})
+    }
+
+    // update assignment object
+    try {
+        const assignment = await Assignment.findById({ _id: id })
+
+        for (var i = 0; i < employees.length; i++) {
+            if (assignment.employees.includes(employees[i])) {
+                console.log("removing employee: ", employees[i])
+                const index = assignment.employees.indexOf(employees[i])
+
+                // remove employee
+                assignment.employees.splice(index, 1)
+
+                console.log("assignment.employees after removing: ", assignment.employees)
+            }
+        }
+        await assignment.save()
+
+        res.status(200).json({ assignment })
+
+    } catch (error) { // catch any error that pops up during the process
+        res.status(400).json({error: error.message})
+    }
+}
+
+// ADD projects into assignment object
 const updateProjects = async (req, res) => {
     const { id } = req.params
 
@@ -186,6 +221,41 @@ const updateProjects = async (req, res) => {
         res.status(400).json({error: error.message})
     }
 
+}
+
+// DELETE project from assignment
+const deleteProjects = async(req, res) => {
+    const { id } = req.params
+
+    const { projects } = req.body
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Assignment ID"})
+    }
+
+    // update assignment object
+    try {
+        const assignment = await Assignment.findById({ _id: id })
+
+        for (var i = 0; i < projects.length; i++) {
+            if (assignment.projects.includes(projects[i])) {
+                console.log("removing projects: ", projects[i])
+                const index = assignment.projects.indexOf(projects[i])
+
+                // remove project
+                assignment.projects.splice(index, 1)
+
+                console.log("assignment.projects after removing: ", assignment.projects)
+            }
+        }
+        await assignment.save()
+
+        res.status(200).json({ assignment })
+
+    } catch (error) { // catch any error that pops up during the process
+        res.status(400).json({error: error.message})
+    }
 }
 
 // Main Assignment Driver
@@ -812,7 +882,9 @@ module.exports = {
     deleteAssignment,
     updateAssignment,
     updateEmployees,
+    deleteEmployees,
     updateProjects,
+    deleteProjects,
     autoAssign,
     resetAssignment
 }
