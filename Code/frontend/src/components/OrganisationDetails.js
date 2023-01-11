@@ -232,7 +232,7 @@ const OrganisationDetails = () => {
             case "manageUsers": 
                 var userDetails = datum; 
                 return (
-                    <tbody key={user._id}>
+                    <tbody key={userDetails._id}>
                         <tr>
                             <td>
                                 <input className="checkBox" type="checkbox" value={userDetails.email} onChange={addDeleteUser}/>
@@ -256,16 +256,15 @@ const OrganisationDetails = () => {
                 return (
                     <tbody key={userDetails._id}>
                         <tr className="user-cell" style={{height:"210px"}} onClick={() => passUserDetails(userDetails)}>
-                        <td>
-                            <h3>{userDetails.name}</h3> 
-                            <p>Organisation: {userDetails.organisation_id}</p>
-                            <p>Email: {userDetails.email}</p>
-                            <p>Role: {userDetails.role}</p>
-                            <p>Contact Info: {userDetails.contact}</p>
-                        </td>
-                    </tr> 
+                            <td>
+                                <h3>{userDetails.name}</h3> 
+                                <p>Organisation: {userDetails.organisation_id}</p>
+                                <p>Email: {userDetails.email}</p>
+                                <p>Role: {userDetails.role}</p>
+                                <p>Contact Info: {userDetails.contact}</p>
+                            </td>
+                        </tr> 
                     </tbody>
-                     
                 ) 
         } 
     });
