@@ -22,21 +22,35 @@ const OrganisationSkills = () => {
             getOrganisationSkills(organisation_id);
     }, []) 
 
-    const addNewSkill = async(e) => {
-        e.preventDefault(); 
+    // Check if skill has already been aded
+    const validateSkill = (skillName) => {
+        allSkills.forEach(skill => {
+            if (skill.skillName === skillName) {
+                return false;
+            }
+        })
+        return true; 
+    }
 
+
+    const addNewSkill = async(e) => {
+        e.preventDefault();  
         let skillsArr = JSON.parse(JSON.stringify(allSkills));
-        if (skillName !== "" && !skillsArr.includes(skillName)) {
+
+        if (skillName !== "" || !validateSkill(skillName)) {
+            console.log("skill can be added");
             skillsArr.push({skillName}); 
-            console.log("new skill added to array: ", skillsArr);
             await updateOrgSkill(organisation_id, skillsArr);
 
             // after adding the new skill, get all org skills again (update)
             getOrganisationSkills(organisation_id); 
-        }
+            console.log("updated allSkills", allSkills);
+        } 
         // clear the input field
         setSkillName("");
     } 
+
+    
 
     const displaySkills = allSkills.map((skill) => {
         return (
