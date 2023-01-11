@@ -431,6 +431,34 @@ input::placeholder {
   display: table-cell;
 }
 
+/* Organisation SKills Page */
+.allSkills-div {
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 10px; /* space between columns, change as needed */
+  grid-row-gap: 10px; /* space between rows, change as needed */
+}
+
+.skill-div { 
+  display: block;
+  height: 2%;
+  width: fit-content;
+  background-color: #fff;
+  margin: 2%;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.skill-div span {
+  font-size: 15px;
+  padding: 5px;
+}
+
+.skill-div material-symbols-outlined {
+  float: right;
+  padding-left: 10px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+}
+
 /* Organisation Details Page */
 .organisation-details {
   background: #fff;

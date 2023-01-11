@@ -32,7 +32,6 @@ const OrganisationSkills = () => {
         return true; 
     }
 
-
     const addNewSkill = async(e) => {
         e.preventDefault();  
         let skillsArr = JSON.parse(JSON.stringify(allSkills));
@@ -42,7 +41,7 @@ const OrganisationSkills = () => {
             skillsArr.push({skillName}); 
             await updateOrgSkill(organisation_id, skillsArr);
 
-            // after adding the new skill, get all org skills again (update)
+            // after adding the new skill, get all org skills again (updated)
             getOrganisationSkills(organisation_id); 
             console.log("updated allSkills", allSkills);
         } 
@@ -50,12 +49,36 @@ const OrganisationSkills = () => {
         setSkillName("");
     } 
 
-    
+    const deletASkill = async(index) => {  
+        // get the skill name from the button
+        const skill = index;
+        console.log("skill to be deleted: ", skill);
 
-    const displaySkills = allSkills.map((skill) => {
+        // pop a confirmation message
+        if (window.confirm("Are you sure you want to delete the skill: " + skill.skillName + "?")) {
+            // remove the skill from the array 
+            let skillsArr = allSkills.filter((skill) => skill._id !== index._id);
+
+            
+            console.log("updated skillsArr", skillsArr);
+
+            // update the skills array in the database
+            await updateOrgSkill(organisation_id, skillsArr);
+
+            // after deleting the skill, get all organisation's skills again (updated)
+            getOrganisationSkills(organisation_id); 
+            console.log("skill deleted");
+            console.log("updated allSkills", allSkills);
+        }
+    }
+
+    const displaySkills = allSkills.map((datum, index) => {
+        var skill = datum;
         return (
             <div className="skill-div" key={skill._id}>
                 <span>{skill.skillName}</span>
+                <span className="material-symbols-outlined" onClick={() => {deletASkill(skill)}}>delete</span>
+                <br/>
             </div>
         )
     }) 
@@ -75,7 +98,10 @@ const OrganisationSkills = () => {
             <h2>Organisation Skills</h2> 
             
             {displayMsg()}
-            {displaySkills}
+            <div className='allSkills-div'>
+                {displaySkills}
+            </div>
+            
 
             <h3>Add New Skill</h3>
             <form onSubmit={addNewSkill}>
