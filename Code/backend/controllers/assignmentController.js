@@ -177,13 +177,10 @@ const deleteEmployees = async(req, res) => {
 
         for (var i = 0; i < employees.length; i++) {
             if (assignment.employees.includes(employees[i])) {
-                console.log("removing employee: ", employees[i])
                 const index = assignment.employees.indexOf(employees[i])
 
                 // remove employee
                 assignment.employees.splice(index, 1)
-
-                console.log("assignment.employees after removing: ", assignment.employees)
             }
         }
         await assignment.save()
@@ -240,13 +237,10 @@ const deleteProjects = async(req, res) => {
 
         for (var i = 0; i < projects.length; i++) {
             if (assignment.projects.includes(projects[i])) {
-                console.log("removing projects: ", projects[i])
                 const index = assignment.projects.indexOf(projects[i])
 
                 // remove project
                 assignment.projects.splice(index, 1)
-
-                console.log("assignment.projects after removing: ", assignment.projects)
             }
         }
         await assignment.save()
