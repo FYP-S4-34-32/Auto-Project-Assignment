@@ -415,6 +415,11 @@ const AllUsers = () => {
     }
 
     const displayShowMsg = () => {
+        var display = selectedUsers;
+        if (selectedUsers === "All Users") {
+            display = "Users";
+        }
+
         if (user.role === "Super Admin") {
             if (selectedUsers !== "Super Admins") {
                 if (selectedUsers === "Manage Users") {
@@ -424,13 +429,13 @@ const AllUsers = () => {
                 }
                 else {
                     return (
-                        <h4>Showing {selectedUsers} from {filterOrgID} </h4>
+                        <h4>Showing {searchResults.length} {display} from {filterOrgID} </h4>
                     )
                 }
             } 
             else {
                 return (
-                    <h4>Showing {selectedUsers} </h4>
+                    <h4>Showing {searchResults.length} {display} </h4>
                 )
             }
         }
@@ -442,7 +447,7 @@ const AllUsers = () => {
                 )
             } else {
                 return (
-                    <h4>Showing {selectedEmployees} from {user.organisation_id} </h4>
+                    <h4>Showing {searchResults.length}  {selectedEmployees} from {user.organisation_id} </h4>
                 )
             }
         } 

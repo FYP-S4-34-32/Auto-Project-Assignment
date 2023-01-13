@@ -13,8 +13,7 @@ const OrganisationSkills = () => {
     const { getOrganisationSkills, allSkills } = useGetOrganisationSkills();
     const { updateOrgSkill, updateOrgSkillsError, updateOrgSkillLoading} = useUpdateOrgSkill();
     const [skillName, setSkillName] = useState("");
-    const organisation_id = user.organisation_id;
-    const { orgSkillsArray, setOrgSkillsArray} = useState(allSkills);
+    const organisation_id = user.organisation_id; 
 
     // get all skills defined for the organisation
     useEffect(() => { 
@@ -51,24 +50,18 @@ const OrganisationSkills = () => {
 
     const deletASkill = async(index) => {  
         // get the skill name from the button
-        const skill = index;
-        console.log("skill to be deleted: ", skill);
+        const skill = index; 
 
         // pop a confirmation message
         if (window.confirm("Are you sure you want to delete the skill: " + skill.skillName + "?")) {
             // remove the skill from the array 
-            let skillsArr = allSkills.filter((skill) => skill._id !== index._id);
-
-            
-            console.log("updated skillsArr", skillsArr);
+            let skillsArr = allSkills.filter((skill) => skill._id !== index._id); 
 
             // update the skills array in the database
             await updateOrgSkill(organisation_id, skillsArr);
 
             // after deleting the skill, get all organisation's skills again (updated)
-            getOrganisationSkills(organisation_id); 
-            console.log("skill deleted");
-            console.log("updated allSkills", allSkills);
+            getOrganisationSkills(organisation_id);  
         }
     }
 
