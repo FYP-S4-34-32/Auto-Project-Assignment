@@ -103,12 +103,13 @@ const AssignmentDetails = () => {
     // will change based on current list of added employees
     const initialiseAvailEmployeesArray = () => {
         var temp = [];
-        temp.push({name: "0", email: "Select an Employee"});
+        temp.push({name: "0", label: "Select an Employee"});
 
         for (var i = 0; i < tempAssignmentEmployeesArr.length; i++) {
             temp.push({name: tempAssignmentEmployeesArr[i].name, email: tempAssignmentEmployeesArr[i].email  });
         }
 
+        console.log("initialised avail employees", temp);
         return temp;
     }
 
@@ -116,50 +117,49 @@ const AssignmentDetails = () => {
     
     // validate add employees list: should only have employees that are not already in array
     const validateAssignmentEmployeeArr = () => {
-        var tempAssnEmployeesArr = organisationUsersArray;
+        var tempAssnEmployeesArr = availEmployeesArray;
+        console.log("addEmployeeArr: ", addEmployeeArr);
 
-        for (var i = 0; i < assignment.employees.length; i++) {
+        for (var i = 0; i < addEmployeeArr.length; i++) {
             for (var j = 0; j < tempAssnEmployeesArr.length; j++) {
-                if (assignment.employees[i] === tempAssnEmployeesArr[j].email) {
+                if (addEmployeeArr[i].email === tempAssnEmployeesArr[j].email) {
                     tempAssnEmployeesArr.splice(j, 1);
                 }
             }
         }
         availEmployeesArray = JSON.parse(JSON.stringify(tempAssnEmployeesArr)); 
+        console.log("(validateAssignmentEmployeeArr) avail employees: ", availEmployeesArray);
     }
 
-    const validateEmployeeArr = () => {
-        var temparr = tempAssignmentEmployeesArr;
-        console.log(temparr);
-        console.log(addEmployeeArr);
+    // const validateEmployeeArr = () => {
+    //     var temparr = availEmployeesArray; 
+    //     console.log("tempAssignmentEmployeesArr: ", availEmployeesArray);
     
-        for (var i = 0; i < temparr.length; i++) {
-            for (var j = 0; j < addEmployeeArr.length; j++) {
-                if (addEmployeeArr[j].email === temparr[i].email) {
-                    temparr.splice(i, 1);
-                }
-            }
-        }
-        temparr.sort((a, b) => {
-            var nameA = a.name.split(',')[0];
-            var nameB = b.name.split(',')[0];
-            var numA = a.name.split(',')[1];
-            var numB = b.name.split(',')[1];
-            if(nameA === nameB) return numA - numB;
-            if(nameA > nameB) return 1;
-            if(nameA < nameB) return -1;
-            return 0;
-        });
-        
+    //     for (var i = 0; i < temparr.length; i++) {
+    //         for (var j = 0; j < addEmployeeArr.length; j++) {
+    //             if (addEmployeeArr[j].email === temparr[i].email) {
+    //                 temparr.splice(i, 1);
+    //             }
+    //         }
+    //     }
+    //     temparr.sort((a, b) => {
+    //         var nameA = a.name.split(',')[0];
+    //         var nameB = b.name.split(',')[0];
+    //         var numA = a.name.split(',')[1];
+    //         var numB = b.name.split(',')[1];
+    //         if(nameA === nameB) return numA - numB;
+    //         if(nameA > nameB) return 1;
+    //         if(nameA < nameB) return -1;
+    //         return 0;
+    //     });
     
-        availEmployeesArray = JSON.parse(JSON.stringify(temparr)); 
-        //console.log(availEmployeesArray);
-    }
+    //     availEmployeesArray = JSON.parse(JSON.stringify(temparr)); 
+    //     console.log("(validateEmployeeArr) avail employees: ", availEmployeesArray);
+    // }
     
 
     // EDIT EMPLOYEES LIST
     const editEmployees = () => {
-
         filterOrganisationUsers(); 
         validateAssignmentEmployeeArr();
         setAddEmployeeArr([...assignment.employees]);
@@ -181,11 +181,9 @@ const AssignmentDetails = () => {
         let newEmployee = {name: selectedOption.name, email: selectedOption.email};
         temp.push(newEmployee); 
         setAddUser(newEmployee);
-        console.log(temp)
+        // console.log(temp)
         setAddEmployeeArr([...temp]);
-    }
-    
-    
+    } 
 
      // DELETE AN EMPLOYEE
      const deleteEmployees = (index) => { 
@@ -203,7 +201,7 @@ const AssignmentDetails = () => {
     // HANDLE SUBMITTING OF EMPLOYEES 
     const handleSubmitEmployees = async(e) => {
         e.preventDefault();   
-        console.log(addEmployeeArr)
+        // console.log(addEmployeeArr)
         
         await updateEmployees(user, id, addEmployeeArr);  // to update employees
         fetchAssignment() // to fetch user's profile since it was updated
@@ -218,7 +216,7 @@ const AssignmentDetails = () => {
     // to render employees section
     const showEmployees = () => {  
 
-        validateEmployeeArr();
+        validateAssignmentEmployeeArr();
         console.log(availEmployeesArray);
         //console.log(tempAssignmentEmployeesArr);
         //console.log(addEmployeeArr);
@@ -226,12 +224,18 @@ const AssignmentDetails = () => {
         // select Employees
         var showAvaiEmployees = [...availEmployeesArray].map((datum, index) => {
             var avaiEmployee = datum;
-            return (
-                <option key={ index } value={JSON.stringify({name: avaiEmployee.name, email: avaiEmployee.email})}>{ avaiEmployee.name }, {avaiEmployee.email} </option>
-            )
+            if (avaiEmployee.name === "0") {
+                return (
+                    <option key={ index } value={avaiEmployee.label}>{avaiEmployee.label} </option>
+                )
+            }
+            else {
+                return (
+                    <option key={ index } value={JSON.stringify({name: avaiEmployee.name, email: avaiEmployee.email})}>{ avaiEmployee.name }, {avaiEmployee.email} </option>
+                )
+            }
+           
         })
-
-
 
         // show Employees (current -> from assignment.employees)
         var showEmployeeRows = assignment.employees.map((employee, index) => {
@@ -266,8 +270,7 @@ const AssignmentDetails = () => {
                         <form className='editEmployeesForm'>
                             <h3>Add New Employees</h3>
                             <div> 
-                                <select className="employeeSelection" onChange={addEmployees} defaultValue="">
-                                    <option value="" disabled>Select an employee</option>
+                                <select className="employeeSelection" onChange={addEmployees} value="Select a user to be added"> 
                                     {showAvaiEmployees}
                                 </select>
                             </div>
