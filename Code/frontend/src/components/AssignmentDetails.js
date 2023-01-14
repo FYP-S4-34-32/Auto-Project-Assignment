@@ -193,9 +193,11 @@ const AssignmentDetails = () => {
         //setTempAssignmentEmployees([...addEmployeeArr])    
 
         // Move the deleted employee back to the availEmployeesArray
+        availEmployeesArray = availEmployeesArray.filter(employee => employee.name !== '0')
         availEmployeesArray.push(deletedEmployee[0])
         setTempAssignmentEmployees([...availEmployeesArray]);
     }
+
 
 
     // HANDLE SUBMITTING OF EMPLOYEES 
