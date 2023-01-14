@@ -35,7 +35,7 @@ router.delete('/:id', deleteAssignment)
 router.patch('/:id', updateAssignment)
 
 // UPDATE an assignment object @ /api/assignment/updateEmployees/:id
-router.patch('/updateEmployees/:id', updateEmployees)
+router.post('/updateEmployees/:id', updateEmployees)
 
 // UPDATE an assignment object @ /api/assignment/updateEmployees/:id
 router.delete('/updateEmployees/:id', deleteEmployees)

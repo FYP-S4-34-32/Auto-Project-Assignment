@@ -39,6 +39,8 @@ const AssignmentList = ({ assignment }) => {
         }
     }
 
+    
+
     return (
         <div className="project-list" key={ assignment._id }>
             <Link to={ `/assignment/${ assignment._id }` }>

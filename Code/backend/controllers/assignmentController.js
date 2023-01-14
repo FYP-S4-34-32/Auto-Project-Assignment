@@ -147,9 +147,7 @@ const updateEmployees = async (req, res) => {
     try {
         const assignment = await Assignment.findById({ _id: id })
 
-        for (var i = 0; i < employees.length; i++) {
-            assignment.employees = [...assignment.employees, employees[i]]
-        }
+        assignment.set({employees});
         await assignment.save()
 
         res.status(200).json({ assignment })
@@ -157,8 +155,8 @@ const updateEmployees = async (req, res) => {
     } catch (error) { // catch any error that pops up during the process
         res.status(400).json({error: error.message})
     }
-
 }
+
 
 // DELETE employee from assignment
 const deleteEmployees = async(req, res) => {

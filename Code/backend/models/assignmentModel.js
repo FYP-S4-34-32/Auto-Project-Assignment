@@ -40,7 +40,8 @@ const assignmentSchema = new Schema({
         required: true
     },
     employees: [{ // can use email as identifier
-        type: String,
+        name: String,
+        email: String
     }],
     first_choice: {
         type: Number
