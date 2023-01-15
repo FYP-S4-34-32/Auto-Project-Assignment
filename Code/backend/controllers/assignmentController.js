@@ -457,10 +457,10 @@ const getAllEmployees = async (employees) => {
     // get all employees' information
     const allEmployees = []
     for (var i = 0; i < employees.length; i++) { // loop through employees
-        const employee = await User.findOne({ email: employees[i] }) // find employee from User model
+        const employee = await User.findOne({ email: employees[i].email }) // find employee from User model
 
         if (!employee) { // if no employee object
-            throw Error(`Employee ${employees[i]} cannot be found`)
+            throw Error(`Employee ${employees[i].email} cannot be found`)
         }
 
         allEmployees.push(employee) // add employee object into the allEmployees array
@@ -706,7 +706,7 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
 
 // reset assignment
 const resetAssignment = async (req, res) => {
-    const assignment = await Assignment.findOne({ title: "Assignment MSFT 1"})
+    const assignment = await Assignment.findOne({ title: "Assignment 6"})
 
     if (!assignment) {
         return res.status(404).json({error: "Assignment cannot be found"})
@@ -737,7 +737,7 @@ const resetAssignment = async (req, res) => {
 
     // reset employees
     for (var i = 0; i < employees.length; i++) {
-        const employee = await User.findOne({ email: employees[i] })
+        const employee = await User.findOne({ email: employees[i].email })
 
         employee.project_assigned = []
         employee.save()
@@ -762,7 +762,7 @@ const updateStats = async (_id) => {
     // go through each employee
     for (var i = 0; i < employees.length; i++) {
         // get employee info
-        const employee = await User.findOne({ email: employees[i] })
+        const employee = await User.findOne({ email: employees[i].email })
         const { firstChoice, secondChoice, thirdChoice, project_assigned } = employee
 
         // get projects employee is assigned to
