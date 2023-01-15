@@ -108,8 +108,7 @@ const AssignmentDetails = () => {
         for (var i = 0; i < tempAssignmentEmployeesArr.length; i++) {
             temp.push({name: tempAssignmentEmployeesArr[i].name, email: tempAssignmentEmployeesArr[i].email  });
         }
-
-        console.log("initialised avail employees", temp);
+ 
         return temp;
     }
 
@@ -117,8 +116,7 @@ const AssignmentDetails = () => {
     
     // validate add employees list: should only have employees that are not already in array
     const validateAssignmentEmployeeArr = () => {
-        var tempAssnEmployeesArr = availEmployeesArray;
-        console.log("addEmployeeArr: ", addEmployeeArr);
+        var tempAssnEmployeesArr = availEmployeesArray; 
 
         for (var i = 0; i < addEmployeeArr.length; i++) {
             for (var j = 0; j < tempAssnEmployeesArr.length; j++) {
@@ -127,36 +125,8 @@ const AssignmentDetails = () => {
                 }
             }
         }
-        availEmployeesArray = JSON.parse(JSON.stringify(tempAssnEmployeesArr)); 
-        console.log("(validateAssignmentEmployeeArr) avail employees: ", availEmployeesArray);
+        availEmployeesArray = JSON.parse(JSON.stringify(tempAssnEmployeesArr));  
     }
-
-    // const validateEmployeeArr = () => {
-    //     var temparr = availEmployeesArray; 
-    //     console.log("tempAssignmentEmployeesArr: ", availEmployeesArray);
-    
-    //     for (var i = 0; i < temparr.length; i++) {
-    //         for (var j = 0; j < addEmployeeArr.length; j++) {
-    //             if (addEmployeeArr[j].email === temparr[i].email) {
-    //                 temparr.splice(i, 1);
-    //             }
-    //         }
-    //     }
-    //     temparr.sort((a, b) => {
-    //         var nameA = a.name.split(',')[0];
-    //         var nameB = b.name.split(',')[0];
-    //         var numA = a.name.split(',')[1];
-    //         var numB = b.name.split(',')[1];
-    //         if(nameA === nameB) return numA - numB;
-    //         if(nameA > nameB) return 1;
-    //         if(nameA < nameB) return -1;
-    //         return 0;
-    //     });
-    
-    //     availEmployeesArray = JSON.parse(JSON.stringify(temparr)); 
-    //     console.log("(validateEmployeeArr) avail employees: ", availEmployeesArray);
-    // }
-    
 
     // EDIT EMPLOYEES LIST
     const editEmployees = () => {
@@ -180,8 +150,7 @@ const AssignmentDetails = () => {
         let selectedOption = JSON.parse(e.target.value);
         let newEmployee = {name: selectedOption.name, email: selectedOption.email};
         temp.push(newEmployee); 
-        setAddUser(newEmployee);
-        // console.log(temp)
+        setAddUser(newEmployee); 
         setAddEmployeeArr([...temp]);
     } 
 
@@ -198,12 +167,9 @@ const AssignmentDetails = () => {
         setTempAssignmentEmployees([...availEmployeesArray]);
     }
 
-
-
     // HANDLE SUBMITTING OF EMPLOYEES 
     const handleSubmitEmployees = async(e) => {
-        e.preventDefault();   
-        // console.log(addEmployeeArr)
+        e.preventDefault();    
         
         await updateEmployees(user, id, addEmployeeArr);  // to update employees
         fetchAssignment() // to fetch user's profile since it was updated
@@ -218,10 +184,7 @@ const AssignmentDetails = () => {
     // to render employees section
     const showEmployees = () => {  
 
-        validateAssignmentEmployeeArr();
-        console.log(availEmployeesArray);
-        //console.log(tempAssignmentEmployeesArr);
-        //console.log(addEmployeeArr);
+        validateAssignmentEmployeeArr(); 
 
         // select Employees
         var showAvaiEmployees = [...availEmployeesArray].map((datum, index) => {
@@ -301,7 +264,7 @@ const AssignmentDetails = () => {
     // where user can select what info to view
     const infoPanel = () => {
                 return (
-                    <div className="profile-panel" style={{height:'150px'}}>
+                    <div className="selection-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showAssignmentDetails')}> Assignment Details </button>
                         <button onClick={() => setSelectedInfo('addProjects') }> Add Projects </button>
                         <button onClick={() => setSelectedInfo('addEmployees')} > Add Employees </button>
@@ -319,7 +282,7 @@ const AssignmentDetails = () => {
                 )
             case 'addEmployees':
                 return (
-                    <div className="user-profile">
+                    <div className="assignment-profile">
                         
                         <h2> Current List of Employees </h2>  
                         {showEmployees()}
@@ -329,7 +292,7 @@ const AssignmentDetails = () => {
             case 'showAssignmentDetails':
             default: 
                 return (
-                    <div className="user-profile">
+                    <div className="assignment-profile">
                         { assignment && (
                             <article>
                                 <h2>{ assignment.title }</h2>
