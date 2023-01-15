@@ -575,15 +575,20 @@ const assignFunction = async (tier, employees, projectThreshold, threshold, proj
         }
 
         // get employee info
-        const { _id: employeeID, email, project_assigned } = employees[i]
+        const { _id: employeeID, email } = employees[i]
         const employee = await User.findById({ _id: employeeID })
+        const { project_assigned } = employee
 
         let assignmentExistsInEmployee
         let assignmentIndex
 
+        console.log("project_assigned: ", project_assigned)
+
         if (project_assigned.length === 0) {
             assignmentExistsInEmployee = false
+            console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
         } else {
+            assignmentExistsInEmployee = false
             for (var j = 0; j < project_assigned.length; j++) {
                 if (project_assigned[j].assignment_id === assignmentID) {
                     assignmentExistsInEmployee = true
@@ -591,6 +596,7 @@ const assignFunction = async (tier, employees, projectThreshold, threshold, proj
                     break
                 }
             }
+            console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
         }
 
         if (assignmentExistsInEmployee && project_assigned[assignmentIndex].projects.length === threshold) {
@@ -628,6 +634,7 @@ const assignFunction = async (tier, employees, projectThreshold, threshold, proj
         // Employee
         // if assigment does not exist yet
         if (!assignmentExistsInEmployee) {
+            console.log("assignment does not exist in employee")
             // set assignment id
             employee.project_assigned = [...employee.project_assigned, { assignment_id: assignmentID, projects: [] }]
             assignmentIndex = 0 // set assignment index
