@@ -73,6 +73,11 @@ const ProjectDetails = () => {
                         <p>{ project.description }</p>
                     </div>
                     <div>
+                        <p><strong>Project Requirements: </strong></p>
+                        <p><pre>{ project.requirements }</pre></p>
+
+                    </div>
+                    <div>
                         <p><strong>Skills needed: </strong></p>
                         { project.skills.map(s => (
                             <p key={ s.skill }>{ s.skill } - { s.competency }</p>
