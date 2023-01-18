@@ -38,7 +38,7 @@ const getSingleProject = async (req, res) => {
 
 // CREATE new project
 const createProject = async (req, res) => {
-    const { title, description, projectSkills, projectCompetency, threshold } = req.body
+    const { title, description, requirements, projectSkills, projectCompetency, threshold } = req.body
 
     const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
     const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
@@ -51,6 +51,9 @@ const createProject = async (req, res) => {
     if (!description) {
       emptyFields.push('description')
     }
+    if (!requirements) {
+        emptyFields.push('requirements')
+      }
     if (projectSkills.length === 0 || projectCompetency.length === 0) {
         emptyFields.push('noSkill')
     }
@@ -104,7 +107,7 @@ const createProject = async (req, res) => {
         const created_by = req.user.name
 
         // create project
-        const project = await Project.create({ organisation_id, title, description, skills, threshold, created_by })
+        const project = await Project.create({ organisation_id, title, description, requirements, skills, threshold, created_by })
 
         res.status(200).json(project)
 
@@ -147,7 +150,7 @@ const updateProject = async (req, res) => {
         return res.status(404).json({ error: "Invalid Project ID" }) 
     }
 
-    const { title, description, projectSkills, projectCompetency, threshold } = req.body
+    const { title, description, requirements, projectSkills, projectCompetency, threshold } = req.body
 
     const projectSkillsWithoutDummy = projectSkills.filter(p => !p.includes("dummy")) // remove dummy values from projectSkills array
     const projectCompetencyWithoutDummy = projectCompetency.filter(p => !p.includes("dummy")) // remove dummy values from projectCompetency array
@@ -160,6 +163,9 @@ const updateProject = async (req, res) => {
     if (!description || description.trim() === "") {
       emptyFields.push('description')
     }
+    if (!requirements || requirements.trim() === "") {
+        emptyFields.push('requirements')
+      }
     if (projectSkills.length === 0 || projectCompetency.length === 0) {
         emptyFields.push('noSkill')
     }
@@ -207,7 +213,7 @@ const updateProject = async (req, res) => {
 
     // get the document
     const project = await Project.findOneAndUpdate({ _id: id }, {
-        title, description, skills, threshold
+        title, description, requirements, skills, threshold
     }) // store the response of findOneAndUpdate() into project variable
 
     // project DOES NOT exist

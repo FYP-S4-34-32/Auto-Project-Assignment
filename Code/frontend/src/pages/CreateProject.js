@@ -13,6 +13,7 @@ const CreateProject = () => {
 
     const [title, setTitle] = useState('') // default value = empty
     const [description, setDescription] = useState('') // default value = empty
+    const [requirements, setRequirements] = useState('') // default value = empty
     const [threshold, setThreshold] = useState(null) // default value = empty
     const [error, setError] = useState(null) // default value = no error
 
@@ -63,7 +64,7 @@ const CreateProject = () => {
             return
         }
 
-        const project = { title, description, projectSkills, projectCompetency, threshold }
+        const project = { title, description, requirements, projectSkills, projectCompetency, threshold }
 
         // fetch request to post new data
         const response = await fetch('/api/project/createproject', {
@@ -90,6 +91,7 @@ const CreateProject = () => {
             // reset the form
             setTitle('') // reset title
             setDescription('') // reset description
+            setRequirements('') // reset requirements
             setProjectSkills([]) // reset skills
             setProjectCompetency([]) // reset competency
             setThreshold(null) // reset threshold
@@ -154,6 +156,14 @@ const CreateProject = () => {
                 onChange={(e) => setDescription(e.target.value)} 
                 value={description}
                 className={ emptyFields?.includes('description') ? 'error': ''}
+            />
+
+            <label>Project Requirements:</label>
+            <textarea
+                type="text"
+                onChange={(e) => setRequirements(e.target.value)} 
+                value={requirements}
+                className={ emptyFields?.includes('requirements') ? 'error': ''}
             />
 
             <label>Skills Required:</label>

@@ -22,6 +22,10 @@ const projectSchema = new Schema({
         type: String,
         required: true
     },
+    requirements: {
+        type: String,
+        required: true
+    },
     skills: [{ // skills required by the project - set up to be an array of skills
         skill: String,
         competency: String

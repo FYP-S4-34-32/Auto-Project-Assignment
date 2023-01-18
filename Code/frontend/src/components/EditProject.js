@@ -17,6 +17,7 @@ const EditProject = () => {
 
     const [title, setTitle] = useState(null)
     const [description, setDescription] = useState(null)
+    const [requirements, setRequirements] = useState(null)
     const [originalSkills, setOriginalSkills] = useState([])
     const [originalCompetency, setOriginalCompetency] = useState([])
     const [threshold, setThreshold] = useState(null)
@@ -50,6 +51,7 @@ const EditProject = () => {
                 dispatch({ type: 'SET_ONE_PROJECT', payload: json})
                 setTitle(project.title)
                 setDescription(project.description)
+                setRequirements(project.requirements)
                 setThreshold(project.threshold)
 
                 const dummySkill = []
@@ -166,7 +168,8 @@ const EditProject = () => {
 
         const project = { 
             title, 
-            description, 
+            description,
+            requirements, 
             projectSkills: originalSkills.concat(projectSkills), 
             projectCompetency: originalCompetency.concat(projectCompetency), 
             threshold }
@@ -195,6 +198,7 @@ const EditProject = () => {
             // reset the form
             setTitle('') // reset title
             setDescription('') // reset description
+            setRequirements('') // reset requirements
             setOriginalSkills([])
             setOriginalCompetency([])
             setThreshold(null) // reset threshold
@@ -232,6 +236,14 @@ const EditProject = () => {
                         onChange={(e) => setDescription(e.target.value)} 
                         defaultValue={ description }
                         className={ emptyFields?.includes('description') ? 'error': ''}
+                    />
+
+                    <label>Project Requirements:</label>
+                    <textarea
+                        type="text"
+                        onChange={(e) => setRequirements(e.target.value)} 
+                        defaultValue={ requirements }
+                        className={ emptyFields?.includes('requirements') ? 'error': ''}
                     />
 
                     <label>Skills Required:</label>
@@ -301,67 +313,6 @@ const EditProject = () => {
                 </form>
             )}
         </div>
-        // <div className="create">
-        //     <h2>Edit Project Listing</h2>
-
-        //     <form onSubmit={ handleSubmit }>
-        //     <label>Project Title:</label>
-        //     <input 
-        //         type="text"
-        //         onChange={ (e) => setTitle(e.target.value) } // value of the target(input field) of the event e
-        //         value={ title } // reflect changes made outside the form e.g. resetting the form into empty string
-        //         className={ emptyFields?.includes('title') ? 'error': '' } // if empty, give it a className
-        //     />
-
-        //     <label>Project Description:</label>
-        //     <textarea
-        //         type="text"
-        //         onChange={(e) => setDescription(e.target.value)} 
-        //         value={description}
-        //         className={ emptyFields?.includes('description') ? 'error': ''}
-        //     />
-
-        //     <label>Skills Required:</label>
-        //     { selectFields.map((field) => (
-        //         <div key={ field.id }>
-        //             <select 
-        //                 value={ projectSkills[projectSkills.length] }
-        //                 onChange={(e) => addProjectSkills(selectFields.findIndex(x => x.id === field.id), e.target.value)}
-        //                 className={ (emptyFields?.includes('noSkill') || emptyFields?.includes('skillError')) ? 'error' : '' }
-        //                 >
-        //                 <option value="dummy">Please select a skill</option> {/* included this so that user will be forced to make a selection */}
-        //                 { skills?.map(s => (
-        //                     <option key={ s.skillName } value={ s.skillName }>{ s.skillName }</option>
-        //                 )) }
-        //             </select>
-        //             <select
-        //                 value={ projectCompetency[projectCompetency.length] }
-        //                 onChange={(e) => addProjectCompetency(selectFields.findIndex(x => x.id === field.id), e.target.value)}
-        //                 className={ (emptyFields?.includes('noSkill') || emptyFields?.includes('skillError')) ? 'error' : '' }
-        //                 >
-        //                 <option value="dummy">Please select a competency level</option> {/* included this so that user will be forced to make a selection */}
-        //                 { competency.map(c => (
-        //                     <option key={ c } value={ c }>{ c }</option>
-        //                 )) }
-        //             </select>
-        //             <span className="material-symbols-outlined" onClick = {() => handleRemoveField(field.id) }>delete</span>
-        //         </div>
-        //     )) }
-        //     <button className={ emptyFields?.includes('noSkill') ? 'error' : '' } type="button" onClick={ handleAddField }>Add Skills</button>
-        //     <br></br><br></br>
-
-        //     <label>Number of People Needed:</label>
-        //     <input 
-        //         type="number"
-        //         onChange={ (e) => setThreshold(e.target.value) }
-        //         value={ threshold }
-        //         className={ emptyFields?.includes('threshold') ? 'error' : '' }
-        //     />
-
-        //     <button>Add New Project Listing</button>
-        //     { error && <div className="error">{ error }</div> }
-        //     </form>
-        // </div>
     )
 }
 
