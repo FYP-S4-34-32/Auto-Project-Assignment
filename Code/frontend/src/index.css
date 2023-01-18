@@ -151,6 +151,7 @@ hr {
   grid-template-rows: auto;
   float: left;
   align-self: left;
+  position: fixed
 } 
 
 .profile-panel button { 
@@ -789,7 +790,7 @@ select.error {
     font-size: small;
 }
 
-.assignment-profile h3, h2, .employeeSelection, .submitBtn{
+.assignment-profile h3, .assignment-profile h2, .employeeSelection, .submitBtn{
   margin-left: 30px;
   margin-right: 30px;
 }
