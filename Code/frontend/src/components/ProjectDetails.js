@@ -74,7 +74,7 @@ const ProjectDetails = () => {
                     </div>
                     <div>
                         <p><strong>Project Requirements: </strong></p>
-                        <p><pre>{ project.requirements }</pre></p>
+                        <p>{ project.requirements }</p>
 
                     </div>
                     <div>

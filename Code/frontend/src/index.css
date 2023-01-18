@@ -706,6 +706,7 @@ form.signup, form.login, form.adminLoginForm, form.superAdminLoginForm, form.res
 /* project details page */
 .project-details {
     position: relative;
+    white-space: pre-wrap;
 }
 .project-details h2 {
     font-size: 30px;
