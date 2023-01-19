@@ -791,7 +791,7 @@ select.error {
     font-size: small;
 }
 
-.assignment-profile h3, .assignment-profile h2, .employeeSelection, .submitBtn{
+.assignment-profile h3, .assignment-profile h2, .employeeSelection, .projectSelection, .submitBtn{
   margin-left: 30px;
   margin-right: 30px;
 }
@@ -804,3 +804,22 @@ select.error {
   background-color: rgba(223, 223, 223, 0.228);
 }
 
+.editProjectsBtn {
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 30px;
+  font: inherit;
+  font-size: small;
+}
+
+.projectSelection {
+  height: 40px;
+  width: max-content;
+  border-radius: 4px;
+  border-color: rgba(168, 168, 168, 0.169);
+  background-color: rgba(223, 223, 223, 0.228);
+}

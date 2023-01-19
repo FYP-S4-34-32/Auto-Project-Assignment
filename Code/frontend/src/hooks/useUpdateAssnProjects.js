@@ -1,25 +1,25 @@
 //=======================================//
-// Handles updating assignment employees //
+// Handles updating assignment projects //
 //======================================//
 
 // imports
 import { useState } from 'react'
 
-export const useUpdateEmployees = () => {
-    const [updateEmployeesError, setError] = useState(null)
-    const [updateEmployeesIsLoading, setIsLoading] = useState(null)  
+export const useUpdateProjects = () => {
+    const [updateProjectsError, setError] = useState(null)
+    const [updateProjectsIsLoading, setIsLoading] = useState(null)  
 
-    const updateEmployees = async (user, id, employees) => {  
+    const updateProjects = async (user, id, projects) => {  
 
         setIsLoading(true)  
         setError(null) 
 
-        const response = await fetch('/api/assignment/updateEmployees/' + id, {
+        const response = await fetch('/api/assignment/updateProjects/' + id, {
             method: 'POST',
             headers: {'Content-Type': 'application/json',
             'Authorization': `Bearer ${ user.token}`},
 
-            body: JSON.stringify({employees})
+            body: JSON.stringify({projects})
         })
 
         const json = await response.json()  
@@ -37,5 +37,5 @@ export const useUpdateEmployees = () => {
         return json.assignment
     }
 
-    return { updateEmployees, updateEmployeesIsLoading, updateEmployeesError}
+    return { updateProjects, updateProjectsIsLoading, updateProjectsError}
 }

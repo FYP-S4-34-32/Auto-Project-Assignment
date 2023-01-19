@@ -205,18 +205,17 @@ const updateProjects = async (req, res) => {
     try {
         const assignment = await Assignment.findById({ _id: id })
 
-        for (var i = 0; i < projects.length; i++) {
-            assignment.projects = [...assignment.projects, projects[i]]
-        }
+        assignment.projects = projects;
         await assignment.save()
 
-        res.status(200).json({ assignment })
+        res.status(200).json( assignment )
 
     } catch (error) { // catch any error that pops up during the process
         res.status(400).json({error: error.message})
     }
 
 }
+
 
 // DELETE project from assignment
 const deleteProjects = async(req, res) => {
