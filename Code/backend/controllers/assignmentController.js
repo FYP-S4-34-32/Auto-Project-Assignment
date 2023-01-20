@@ -273,6 +273,41 @@ const autoAssign = async (req, res) => {
     // projects: a list of projects for this assignment phase
     const { threshold, employees, projects } = assignment
 
+    const errorFields = []
+
+    // project threshold not set
+    if (threshold === 0) {
+        errorFields.push("threshold")
+        return res.status(400).json({ error: "Project threshold cannot be less than 1", errorFields })
+    }
+
+    // no employees added
+    if (employees.length === 0) {
+        errorFields.push("employees")
+        return res.status(400).json({ error: "Please ensure that you have selected the employees for this assignment", errorFields })
+    }
+
+    // no projects added
+    if (projects.length === 0) {
+        errorFields.push("projects")
+        return res.status(400).json({ error: "Please ensure that you have selected the projects for this assignment", errorFields })
+    }
+
+    // employee have not indicated their preference
+    for (var i = 0; i < employees.length; i++) {
+        const employee = await User.findOne({ email: employees[i].email })
+
+        if (!employee) {
+            errorFields.push("employees")
+            return res.status(400).json({ error: "Some employees cannot be found in the system. Please re-add them into the assignment", errorFields })
+        }
+
+        if (!employee.firstChoice || !employee.secondChoice || !employee.thirdChoice) {
+            errorFields.push("employees")
+            return res.status(400).json({ error: "Please ensure that all the employees have indicated their preferences", errorFields })
+        }
+    }
+
     // get all employees' information
     const allEmployees = await getAllEmployees(employees)
     allEmployees.sort(() => Math.random() - 0.5) // shuffle employee array
@@ -712,7 +747,7 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
 
 // reset assignment
 const resetAssignment = async (req, res) => {
-    const assignment = await Assignment.findOne({ title: "Assignment 6"})
+    const assignment = await Assignment.findOne({ title: "Assignment MSFT 1"})
 
     if (!assignment) {
         return res.status(404).json({error: "Assignment cannot be found"})
@@ -738,6 +773,8 @@ const resetAssignment = async (req, res) => {
         project.secondChoice = null
         project.thirdChoice = null
         project.notSelected = null
+        project.skills_fulfilled = null
+        project.skills_and_competency_fulfilled = null
         project.save()
     }
 
@@ -839,9 +876,24 @@ const projectStats = async (_id) => {
     // go through each project
     for (var i = 0; i < projects.length; i++) {
         const project = await Project.findOne({ title: projects[i] })
-        const { assigned_to } = project // { assignment_id, employees: [] }
+        const { skills: projectSkills, assigned_to } = project // { assignment_id, employees: [] }
         const { employees } = assigned_to
+    
+        // get the names of the skill
+        const projectSkillsOnly = []
+        const projectCompetencyOnly = []
+        for (var j = 0; j < projectSkills.length; j++) {
+            projectSkillsOnly.push(projectSkills[j].skill)
+            projectCompetencyOnly.push(projectSkills[j].competency)
+        }
 
+        // percentage of project's skills fulfilled
+        const skills_fulfilled = []
+
+        // percentage of project's skills AND competency fulfilled
+        const skills_and_competency_fulfilled = []
+ 
+        // number of employees assigneed to preference
         const assignedFirst = []
         const assignedSecond = []
         const assignedThird = []
@@ -851,8 +903,9 @@ const projectStats = async (_id) => {
         for (var j = 0; j < employees.length; j++) {
             const employee = await User.findOne({ email: employees[j] })
 
-            const { firstChoice, secondChoice, thirdChoice } = employee
+            const { firstChoice, secondChoice, thirdChoice, skills: employeeSkills } = employee
 
+            // employees' preference
             if (project.title === firstChoice) {
                 assignedFirst.push(employee.email)
             } else if (project.title === secondChoice) {
@@ -862,12 +915,63 @@ const projectStats = async (_id) => {
             } else {
                 assignedNotSelected.push(employee.email)
             }
-        }
 
-        project.firstChoice = assignedFirst.length
-        project.secondChoice = assignedSecond.length
-        project.thirdChoice = assignedThird.length
-        project.notSelected = assignedNotSelected.length
+            
+            // % of project's skills fulfilled
+            const employeeSkillsOnly = []
+            const employeeCompetencyOnly = []
+            for (var k = 0; k < employeeSkills.length; k++) {
+                employeeSkillsOnly.push(employeeSkills[k].skill)
+                employeeCompetencyOnly.push(employeeSkills[k].competency)
+            }
+
+            const matchingSkills = findMatchingSkills(projectSkillsOnly, employeeSkillsOnly, employeeCompetencyOnly)
+
+            for (var k = 0; k < matchingSkills.length; k++) {
+                const { skill: matchingSkill, competency: userCompetency } = matchingSkills[k]
+                const index = projectSkillsOnly.indexOf(matchingSkill) // get the index of the skills in projectSkillsOnly array and use it to check in projectCompetencyOnly array
+                const projectCompetency = projectCompetencyOnly[index] // get the competency level of the specified skill
+                
+                // % of skills (ONLY) fulfilled
+                if (!skills_fulfilled.includes(matchingSkill)) {
+                    skills_fulfilled.push(matchingSkill)
+                }
+
+                // % of skills AND competency fulfilled
+                // compare competency
+                if (projectCompetency === "Beginner") { // scenario 1: projectCompetency === Beginner
+                    // minimum competency level === Beginner - competency level met
+                    if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                        skills_and_competency_fulfilled.push(matchingSkill)
+                    }
+                } else if (projectCompetency === "Intermediate") { // scenario 2: projectCompetency === Intermediate
+                    // if userCompetency === Beginner - competency level not met
+                    if (userCompetency === "Beginner") {
+                        continue
+                    } else if (userCompetency === "Intermediate" || userCompetency === "Advanced") { // competency level met
+                        if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                            skills_and_competency_fulfilled.push(matchingSkill)
+                        }
+                    }
+                } else if (projectCompetency === "Advanced") { // scenario 3: projectCompetency === Advanced
+                    // if userCompetency === Beginner || userCompetency === Intermediate - competency level not met
+                    if (userCompetency === "Beginner" || userCompetency === "Intermediate") {
+                        continue
+                    } else if (userCompetency === "Advanced") { // competency level met
+                        if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                            skills_and_competency_fulfilled.push(matchingSkill)
+                        }
+                    }
+                }
+            }
+        }
+        project.firstChoice = Math.round((assignedFirst.length / project.threshold * 100) * 100) / 100
+        project.secondChoice = Math.round((assignedSecond.length / project.threshold * 100) * 100) / 100
+        project.thirdChoice = Math.round((assignedThird.length / project.threshold * 100) * 100) / 100
+        project.notSelected = Math.round((assignedNotSelected.length / project.threshold * 100) * 100) / 100
+        project.skills_and_competency_fulfilled = Math.round((skills_and_competency_fulfilled.length / projectSkillsOnly.length * 100) * 100) / 100
+        project.skills_fulfilled = Math.round((skills_fulfilled.length / projectSkillsOnly.length * 100) * 100) / 100
+
         await project.save()
     }
 }

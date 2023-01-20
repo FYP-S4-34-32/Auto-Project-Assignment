@@ -39,16 +39,22 @@ const projectSchema = new Schema({
         assignment_id: String,
         employees: Array // employees who are working on the project
     },
-    firstChoice: {
+    firstChoice: { // employee selected this project as their first choice
         type: Number
     },
-    secondChoice: {
+    secondChoice: { // employee selected this project as their second choice
         type: Number
     },
-    thirdChoice: {
+    thirdChoice: { // employee selected this project as their third choice
         type: Number
     },
-    notSelected: {
+    notSelected: { // employee did not select this project as their top 3 preference
+        type: Number
+    },
+    skills_and_competency_fulfilled: { // percentage of skills AND competency fulfilled by the employees assigned to this project
+        type: Number
+    },
+    skills_fulfilled: { // percentage of skills fulfilled by the employees assigned to this project
         type: Number
     },
     created_by: { // who created the project listing
