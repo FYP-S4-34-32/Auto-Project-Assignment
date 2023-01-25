@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
 import { useProjectsContext } from '../hooks/useProjectsContext'
+import { useGetOrganisationSkills } from '../hooks/useGetOrgSkills'
 
 const EditProject = () => {
     const { user } = useAuthenticationContext()
@@ -24,6 +25,7 @@ const EditProject = () => {
     const [error, setError] = useState(null) // default value = no error
 
     // handle adding skills to project
+    const { getOrganisationSkills, allSkills } = useGetOrganisationSkills(); // fetch all skills defined for the organisation
     const [skills, setSkills] = useState([]) // all available skills
     const competency = ["Beginner", "Intermediate", "Advanced"] // the three levels of skill competency
     const [selectFields, setSelectFields] = useState([])
@@ -68,25 +70,25 @@ const EditProject = () => {
             }
         }
 
-        const fetchSkills = async () => {
-            const response = await fetch('/api/skill/', {
-                headers: {
-                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
-                }
-            }) // using fetch() api to fetch data and store in the variable
-            const json = await response.json() // response object into json object, in this case an array of skills objects
-            console.log(json)
+        // const fetchSkills = async () => {
+        //     const response = await fetch('/api/skill/', {
+        //         headers: {
+        //             'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
+        //         }
+        //     }) // using fetch() api to fetch data and store in the variable
+        //     const json = await response.json() // response object into json object, in this case an array of skills objects
+        //     console.log(json)
 
-            // response OK
-            if (response.ok) {
-                setSkills(json)
-            }
-        }
+        //     // response OK
+        //     if (response.ok) {
+        //         setSkills(json)
+        //     }
+        // }
+        getOrganisationSkills(user.organisation_id)
 
         // if there is an authenticated user
         if (user && user.role === "Admin") {
             fetchProject()
-            fetchSkills()
         } else {
             navigate('/')
         }
@@ -255,8 +257,8 @@ const EditProject = () => {
                                 className={ (emptyFields?.includes('noSkill') || emptyFields?.includes('skillError')) ? 'error' : '' }
                             >
                                 <option value={s.skill}>{s.skill}</option>
-                                { skills?.map(allSkills => (
-                                    <option key={allSkills.skillName} value={allSkills.skillName}>{allSkills.skillName}</option>
+                                { allSkills?.map(s => (
+                                    <option key={s.skillName} value={s.skillName}>{s.skillName}</option>
                                 ))}
                             </select>
                             <select
@@ -280,7 +282,7 @@ const EditProject = () => {
                                 className={ (emptyFields?.includes('noSkill') || emptyFields?.includes('skillError')) ? 'error' : '' }
                             >
                                 <option value="dummy">Please select a skill</option>
-                                { skills?.map(s => (
+                                { allSkills?.map(s => (
                                     <option key={ s.skillName } value={ s.skillName }>{ s.skillName }</option>
                                 ))}
                             </select>
