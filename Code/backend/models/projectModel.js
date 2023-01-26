@@ -9,20 +9,20 @@ const mongoose = require('mongoose'); // enforcing schema for mongodb
 const Schema = mongoose.Schema;
 
 const projectSchema = new Schema({
-    organisation_id: { // can be organisation name
+    organisation_id: { // which organisation the project belongs to
         type: String,
         default: null
     },
-    title: {
+    title: { // identifier
         type: String,
         required: true, // compulsory property i.e. cannot be null
         unique: true // unique project title
     },
-    description: {
+    description: { // project description
         type: String,
         required: true
     },
-    requirements: {
+    requirements: { // project requirements
         type: String,
         required: true
     },
@@ -30,35 +30,35 @@ const projectSchema = new Schema({
         skill: String,
         competency: String
     }],
-    threshold: { // number of people for this project
+    threshold: { // number of people required for this project
         type: Number,
         required: true,
         default: 0
     },
-    assignment: { // indicate which assignment each project is a part of
-        type: String,
+    assignment: { // indicate which assignment phase each project is a part of
+        type: String, // _id of assignment
         default: null
     },
     assigned_to: {
-        assignment_id: String,
+        assignment_id: String, // _id of assignment
         employees: Array // employees who are working on the project
     },
-    firstChoice: { // employee selected this project as their first choice
+    firstChoice: { // number of employees selected this project as their first choice
         type: Number
     },
-    secondChoice: { // employee selected this project as their second choice
+    secondChoice: { // number of employees selected this project as their second choice
         type: Number
     },
-    thirdChoice: { // employee selected this project as their third choice
+    thirdChoice: { // number of employees selected this project as their third choice
         type: Number
     },
-    notSelected: { // employee did not select this project as their top 3 preference
+    notSelected: { // number of employees who did not select this project as their top 3 preference
         type: Number
     },
-    skills_and_competency_fulfilled: { // percentage of skills AND competency fulfilled by the employees assigned to this project
+    skills_and_competency_fulfilled: { // number of skills AND competency fulfilled by the employees assigned to this project
         type: Number
     },
-    skills_fulfilled: { // percentage of skills fulfilled by the employees assigned to this project
+    skills_fulfilled: { // number of skills fulfilled by the employees assigned to this project
         type: Number
     },
     completed: { // track whether project has been completed
@@ -69,7 +69,7 @@ const projectSchema = new Schema({
         type: String,
         required: true
     },
-    active: {
+    active: { // follows the status of the assignment the project is a part of - true = employees can see the project; false = employees cannot see the project
         type: Boolean,
         default: false
     }

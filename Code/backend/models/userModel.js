@@ -23,7 +23,7 @@ const userSchema = new Schema({
         type: Number,
         default: null
     },
-    email: {
+    email: { // identifier
         type: String,
         required: true, // compulsory property i.e. cannot be null
         unique: true // unique email
@@ -40,35 +40,34 @@ const userSchema = new Schema({
         skill: String,
         competency: String
     }],
-    organisation_id: { // can be organisation name
-        type: String, // can be String/Number
+    organisation_id: { // the organisation the user belongs to
+        type: String,
         default: null
     },
-    current_assignment: { // track which assignment the employee is a part of
-        type: String, // title of assignment
+    current_assignment: { // track which assignment phase the employee is a part of
+        type: String, // _id of assignment
         default: null
     },
-    firstChoice: {
+    firstChoice: { // employee's first choice
         type: String,
         default: ""
     },
-    secondChoice: {
+    secondChoice: { // employee's second choice
         type: String,
         default: ""
     },
-    thirdChoice: {
+    thirdChoice: { // employee's third choice
         type: String,
         default: ""
     },
-    project_assigned: [{ // the project assigned to the user
-        assignment_id: String,
-        projects: Array
+    project_assigned: [{ // an array of object including the two fields below
+        assignment_id: String, // _id of assignment
+        projects: Array // array of project(s) assigned to the user
     }],
     resetPasswordToken: {
         type: String,
         default: ""
     } // token for password reset
-    // MIGHT NEED TO INCLUDE A COUPLE MORE FIELDS TO TRACK PASSWORD CHANGE e.g. how many days till password has to be changed
 }, {timestamps: true}); // datetime created and updated
 
 //=================================================================================================================================//

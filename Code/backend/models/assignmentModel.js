@@ -11,9 +11,7 @@ const mongoose = require('mongoose'); // enforcing schema for mongodb
 const Schema = mongoose.Schema;
 
 const assignmentSchema = new Schema({
-    // admin must insert a title for a particular assignment phase to differentiate OR
-    // auto-increment id everytime a new assignment phase is created
-    title: {
+    title: { // identifier
         type: String,
         required: true,
         unique: true
@@ -32,30 +30,30 @@ const assignmentSchema = new Schema({
             return new Date(this.start_date.getTime() + 7 * 24 * 60 * 60 * 1000)
         }
     },
-    projects: [{ // project title as identifier
-        type: String,
+    projects: [{ // projects that are a part of this assignment phase
+        type: String, // project title
     }],
     threshold: { // number of projects each employee can take
         type: Number,
         required: true
     },
-    employees: [{ // can use email as identifier
-        name: String,
-        email: String
+    employees: [{ // employees who are a part of this assignment phase
+        name: String, // employee name
+        email: String // employee email
     }],
-    employee_got_first_choice: { // employees who are assigned to their first choice project
+    employee_got_first_choice: { // number of employees who are assigned to their first choice project
         type: Number
     },
-    employee_got_second_choice: { // employees who are assigned to their second choice project
+    employee_got_second_choice: { // number of employees who are assigned to their second choice project
         type: Number
     },
-    employee_got_third_choice: { // employees who are assigned to their third choice project
+    employee_got_third_choice: { // number of employees who are assigned to their third choice project
         type: Number
     },
-    employee_got_not_selected: { // employees who are assigned to projects they did not select as any of their preference
+    employee_got_not_selected: { // number of employees who are assigned to projects they did not select as any of their preference
         type: Number
     },
-    employee_without_project: { // number of employees who are not assigned to any projects
+    employee_without_project: { // number of number of employees who are not assigned to any projects
         type: Number
     },
     project_filled: { // number of projects that have been assigned to their respective threshold
@@ -67,7 +65,7 @@ const assignmentSchema = new Schema({
     project_without_employee: { // number of projects that have not been assigned any employees
         type: Number
     },
-    created_by: { // who created the assignment phase - admin email OR _id
+    created_by: { // who created the assignment phase - admin email
         type: String,
         required: true
     },
