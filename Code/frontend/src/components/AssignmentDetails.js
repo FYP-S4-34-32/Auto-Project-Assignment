@@ -418,8 +418,8 @@ const AssignmentDetails = () => {
                 return (
                     <div className="selection-panel" style={{height:'150px'}}>
                         <button onClick={() => setSelectedInfo('showAssignmentDetails')}> Assignment Details </button>
-                        <button onClick={() => setSelectedInfo('addProjects') }> Add Projects </button>
-                        <button onClick={() => setSelectedInfo('addEmployees')} > Add Employees </button>
+                        <button onClick={() => setSelectedInfo('addProjects') }> Projects </button>
+                        <button onClick={() => setSelectedInfo('addEmployees')} > Employees </button>
                     </div>
             )
         }

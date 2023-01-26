@@ -35,6 +35,10 @@ const projectSchema = new Schema({
         required: true,
         default: 0
     },
+    assignment: { // indicate which assignment each project is a part of
+        type: String,
+        default: null
+    },
     assigned_to: {
         assignment_id: String,
         employees: Array // employees who are working on the project
@@ -57,9 +61,17 @@ const projectSchema = new Schema({
     skills_fulfilled: { // percentage of skills fulfilled by the employees assigned to this project
         type: Number
     },
+    completed: { // track whether project has been completed
+        type: Boolean,
+        default: false
+    },
     created_by: { // who created the project listing
         type: String,
         required: true
+    },
+    active: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true}); // datetime created and updated
 

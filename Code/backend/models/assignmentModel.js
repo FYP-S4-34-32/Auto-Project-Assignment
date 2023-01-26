@@ -43,19 +43,28 @@ const assignmentSchema = new Schema({
         name: String,
         email: String
     }],
-    first_choice: {
+    employee_got_first_choice: { // employees who are assigned to their first choice project
         type: Number
     },
-    second_choice: {
+    employee_got_second_choice: { // employees who are assigned to their second choice project
         type: Number
     },
-    third_choice: {
+    employee_got_third_choice: { // employees who are assigned to their third choice project
         type: Number
     },
-    not_selected: {
+    employee_got_not_selected: { // employees who are assigned to projects they did not select as any of their preference
         type: Number
     },
-    not_assigned: {
+    employee_without_project: { // number of employees who are not assigned to any projects
+        type: Number
+    },
+    project_filled: { // number of projects that have been assigned to their respective threshold
+        type: Number
+    },
+    project_not_filled: { // number of projects that have been assigned less than its respective threshold
+        type: Number
+    },
+    project_without_employee: { // number of projects that have not been assigned any employees
         type: Number
     },
     created_by: { // who created the assignment phase - admin email OR _id

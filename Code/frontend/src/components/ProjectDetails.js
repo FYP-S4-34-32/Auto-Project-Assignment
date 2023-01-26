@@ -2,7 +2,7 @@
 // Project Details page for an individual project //
 //================================================//
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext";
 import { useProjectsContext } from "../hooks/useProjectsContext";
@@ -15,6 +15,8 @@ const ProjectDetails = () => {
     const { id } = useParams()
 
     const navigate = useNavigate()
+
+    const [assigned, setAssigned] = useState(false)
     
     // fires when the component is rendered
     useEffect(() => {
@@ -31,6 +33,20 @@ const ProjectDetails = () => {
             if (response.ok) {
                 dispatch({ type: 'SET_ONE_PROJECT', payload: json})
             }
+
+            // if (user.role === "Employee") {
+            //     const { project_assigned } = user // get the projects the user is assigned
+                
+            //     if (project_assigned.length > 0) {
+            //         for (var i = 0; i < project_assigned.length; i++) {
+            //             if (project_assigned[i].assignment_id === json.assignment) {
+            //                 if (project_assigned[i].projects.includes(json.title)) {
+            //                     setAssigned(true)
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
         // if there is an authenticated user
@@ -61,12 +77,23 @@ const ProjectDetails = () => {
         }
     }
 
+    // close project
+    const handleCloseProject = async () => {
+        const response = await fetch('/api/assignment/closeProject/' + id, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${ user.token }`
+            }
+        })
+    }
+
     return (
         <div className="project-details">
             { project && (
                 <article>
                     <h2>{ project.title }</h2>
-                    { user.role === "Admin" && <Link to={`/projects/editproject/` + id} className="material-symbols-outlined">edit</Link>}
+                    { user.role === "Admin" && <Link to={`/projects/editproject/` + id } className="material-symbols-outlined">edit</Link>}
+                    {/* { user.role === "Admin" && <p onClick={ handleClick } className="material-symbols-outlined">Delete</p>} */}
                     <p>Created { formatDistanceToNow(new Date(project.createdAt), { addSuffix: true }) } by { project.created_by }</p>
                     <div>
                         <p><strong>Project Description: </strong></p>
@@ -85,6 +112,7 @@ const ProjectDetails = () => {
                     </div>
                     { user.role === 'Admin' && <div><p><strong>Number of People Needed: </strong>{ project.threshold }</p></div> }
                     { user.role === 'Admin' && <button onClick={ handleClick }>Delete</button> }
+                    { user.role === 'Admin' && <button onClick={ handleCloseProject }>Close Project</button>}
                 </article>
             )}
         </div>

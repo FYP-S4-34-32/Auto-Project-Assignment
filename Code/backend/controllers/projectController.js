@@ -8,7 +8,9 @@ const mongoose = require('mongoose') // mongoose package for mongodb
 
 // GET all projects
 const getProjects = async (req, res) => {
-    const projects = await Project.find({}).sort({createdAt: -1}) // descending order
+    const organisation_id = req.user.organisation_id
+
+    const projects = await Project.find({organisation_id}).sort({createdAt: -1}) // descending order
 
     res.status(200).json(projects)
 }

@@ -44,6 +44,10 @@ const userSchema = new Schema({
         type: String, // can be String/Number
         default: null
     },
+    current_assignment: { // track which assignment the employee is a part of
+        type: String, // title of assignment
+        default: null
+    },
     firstChoice: {
         type: String,
         default: ""
