@@ -11,6 +11,9 @@ import { useGetAllProjects } from "../hooks/useGetAllProjects";
 import { useUpdateEmployees } from '../hooks/useUpdateAssnEmployees'
 import { useUpdateProjects } from "../hooks/useUpdateAssnProjects";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { Bar } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 const AssignmentDetails = () => {
     const { user } = useAuthenticationContext()
@@ -22,6 +25,8 @@ const AssignmentDetails = () => {
     const [ProjectsForm, setShowProjectsForm] = useState(false);
     const { updateEmployees, updateEmployeesError, updateEmployeesIsLoading } = useUpdateEmployees()
     const { updateProjects } = useUpdateProjects()
+    const uniqueKey = Date.now();
+
 
     const { id } = useParams()
 
@@ -251,6 +256,38 @@ const AssignmentDetails = () => {
 
         setShowProjectsForm('showProjects');
     }
+    
+    const showData = () => {
+    console.count('showData function call')
+    const first_choice = JSON.parse(assignment.employee_got_first_choice);
+    const second_choice = JSON.parse(assignment.employee_got_second_choice);
+    const third_choice = JSON.parse(assignment.employee_got_third_choice);
+    const not_assigned = JSON.parse(assignment.employee_without_project);
+    const not_selected = JSON.parse(assignment.employee_got_not_selected);
+
+    return {
+        labels: ['first_choice', 'second_choice', 'third_choice', 'not_assigned', 'not_selected'],
+        datasets: [{
+            label: 'Assignment Data',
+            data: [first_choice, second_choice, third_choice, not_assigned, not_selected],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+};  
 
     // ========================================================================================================
     // PAGE CONTENT
@@ -412,6 +449,20 @@ const AssignmentDetails = () => {
                 )
         }
     }
+
+    //To render the overview statistics
+    const showStatistics = () => {
+        return (
+            <div className="showStatistics">
+            {selectedInfo === 'showData' && assignment ? 
+            <Bar key={uniqueKey} data={showData()} /> : 
+            null
+            }
+            </div>
+        );
+    }
+
+
     // LEFT DIVIDER: INFO PANEL
     // where user can select what info to view
     const infoPanel = () => {
@@ -420,6 +471,7 @@ const AssignmentDetails = () => {
                         <button onClick={() => setSelectedInfo('showAssignmentDetails')}> Assignment Details </button>
                         <button onClick={() => setSelectedInfo('addProjects') }> Add Projects </button>
                         <button onClick={() => setSelectedInfo('addEmployees')} > Add Employees </button>
+                        <button onClick={() => setSelectedInfo('showData')} > View Statistics </button>
                     </div>
             )
         }
@@ -444,6 +496,14 @@ const AssignmentDetails = () => {
                         {showEmployees()}
                     </div> 
                 ) 
+            case 'showData':
+                return (
+                    <div className="assignment-profile">
+
+                        <h2> Overview Statistics </h2>
+                        {showStatistics()}
+                    </div>
+                )
             // DEFAULT: DISPLAY USER INFORMATION
             case 'showAssignmentDetails':
             default: 
@@ -477,7 +537,7 @@ const AssignmentDetails = () => {
     return (
     <div>
         {infoPanel()}
-        {showSelectedInfo()}  
+        {showSelectedInfo()}
     </div>    
         
     );

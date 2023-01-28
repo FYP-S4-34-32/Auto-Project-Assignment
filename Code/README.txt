@@ -51,3 +51,6 @@ npm install date-fns
 
 // nodemailer - for sending automated emails
 npm install nodemailer
+
+//react-chartjs-2 - for viewing statistics
+npm install react-chartjs-2
