@@ -471,6 +471,7 @@ const AssignmentDetails = () => {
                         <button onClick={() => setSelectedInfo('showAssignmentDetails')}> Assignment Details </button>
                         <button onClick={() => setSelectedInfo('addProjects') }> Projects </button>
                         <button onClick={() => setSelectedInfo('addEmployees')} > Employees </button>
+                        <button onClick={() => setSelectedInfo('showData')} > View Statistics </button>
                     </div>
             )
         }
