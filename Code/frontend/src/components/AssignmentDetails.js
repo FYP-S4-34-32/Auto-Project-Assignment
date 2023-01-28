@@ -264,25 +264,28 @@ const AssignmentDetails = () => {
     const third_choice = JSON.parse(assignment.employee_got_third_choice);
     const not_assigned = JSON.parse(assignment.employee_without_project);
     const not_selected = JSON.parse(assignment.employee_got_not_selected);
+    const total_count = JSON.parse(assignment.employees.length);
 
     return {
-        labels: ['first_choice', 'second_choice', 'third_choice', 'not_assigned', 'not_selected'],
+        labels: ['first choice', 'second choice', 'third choice', 'not assigned', 'non-selected choice', 'total employee count'],
         datasets: [{
             label: 'Assignment Data',
-            data: [first_choice, second_choice, third_choice, not_assigned, not_selected],
+            data: [first_choice, second_choice, third_choice, not_assigned, not_selected, total_count],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
                 'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)'
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 255, 0, 0.2)' 
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
                 'rgba(54, 162, 235, 1)',
                 'rgba(255, 206, 86, 1)',
                 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 255, 0, 1)'
             ],
             borderWidth: 1
         }]
