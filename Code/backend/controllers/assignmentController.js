@@ -100,6 +100,39 @@ const deleteAssignment = async (req, res) => {
     // delete the assignment object
     try {
         const assignment = await Assignment.findOneAndDelete({ _id: id })
+
+        const { projects, employees } = assignment
+
+        // reset project
+        if (projects.length > 0) {
+            for (var i = 0; i < projects.length; i++) {
+                const project = await Project.findOne({ title: projects[i] })
+                
+                project.assignment = null
+                project.completed = false
+                project.active = false
+                await project.save()
+            }
+        }
+
+        // reset employee
+        if (employees.length > 0) {
+            for (var i = 0; i < employees.length; i++) {
+                const employee = await User.findOne({ email: employees[i].email })
+                const { project_assigned } = employee
+
+                // loop through an array of assignments the employee has went through
+                for (var j = 0; j < project_assigned.length; j++) {
+                    // get matching assignment id
+                    if (project_assigned[j].assignment_id === id) {
+                        project_assigned.splice(j, 1) // remove assignment object from the employee
+                        break
+                    }
+                }
+                employee.current_assignment = null
+                await employee.save()
+            }
+        }
         
         res.status(200).json(assignment)
     } catch (error) { // catch any error that pops up during the process
@@ -143,12 +176,26 @@ const updateEmployees = async (req, res) => {
         return res.status(404).json({error: "Invalid Assignment ID"})
     }
 
-    // update assignment object
     try {
+        // find assignment object
         const assignment = await Assignment.findById({ _id: id })
 
-        assignment.set({employees});
-        await assignment.save()
+        // find employees
+        for (var i = 0; i < employees.length; i++) {
+            const employee = await User.findOne({ email: employees[i].email })
+
+            if (employee.current_assignment !== null) {
+                console.log("Some employee(s) are already part of another assignment")
+                return res.status(400).json({error:"Some employee(s) are already part of another assignment"})
+            } else {
+                assignment.set({employees});
+                await assignment.save()
+
+                // set current_assignment field
+                employee.current_assignment = assignment._id
+                await employee.save()
+            }
+        }
 
         res.status(200).json({ assignment })
 
@@ -169,8 +216,8 @@ const deleteEmployees = async(req, res) => {
         return res.status(404).json({error: "Invalid Assignment ID"})
     }
 
-    // update assignment object
     try {
+        // update assignment object
         const assignment = await Assignment.findById({ _id: id })
 
         for (var i = 0; i < employees.length; i++) {
@@ -179,6 +226,13 @@ const deleteEmployees = async(req, res) => {
 
                 // remove employee
                 assignment.employees.splice(index, 1)
+
+                // update employee object
+                const employee = await User.findOne({ email: employees[i].email })
+
+                // set current_assignment field back to null
+                employee.current_assignment = null
+                await employee.save()
             }
         }
         await assignment.save()
@@ -201,12 +255,28 @@ const updateProjects = async (req, res) => {
         return res.status(404).json({error: "Invalid Assignment ID"})
     }
 
-    // update assignment object
     try {
+        // update assignment object
         const assignment = await Assignment.findById({ _id: id })
 
         assignment.projects = projects;
         await assignment.save()
+
+        for (var i = 0; i < projects.length; i++) {
+            // find project object
+            const project = await Project.findOne({ title: projects[i] })
+
+            if (project.assignment !== null) {
+                return res.status(400).json("Some project(s) are already part of another assignment")
+            } else {
+                assignment.projects = projects
+                await assignment.save()
+
+                // update assignment field in the project object
+                project.assignment = assignment._id
+                await project.save()
+            }
+        }
 
         res.status(200).json( assignment )
 
@@ -228,8 +298,8 @@ const deleteProjects = async(req, res) => {
         return res.status(404).json({error: "Invalid Assignment ID"})
     }
 
-    // update assignment object
     try {
+        // update assignment object
         const assignment = await Assignment.findById({ _id: id })
 
         for (var i = 0; i < projects.length; i++) {
@@ -238,6 +308,13 @@ const deleteProjects = async(req, res) => {
 
                 // remove project
                 assignment.projects.splice(index, 1)
+
+                // find project object
+                const project = await Project.findOne({ title: projects[i] })
+
+                // uipdate assignment field in the project object
+                project.assignment = null
+                await project.save()
             }
         }
         await assignment.save()
@@ -246,6 +323,130 @@ const deleteProjects = async(req, res) => {
 
     } catch (error) { // catch any error that pops up during the process
         res.status(400).json({error: error.message})
+    }
+}
+
+// set assignment to be active or inactive
+const setActiveStatus = async (req, res) => {
+    // req should include id of assignment object in parameter
+    const { id } = req.params
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Assignment ID"})
+    }
+
+    // find the assignment object using id
+    const assignment = await Assignment.findById(id)
+
+    // if document does not exist
+    if (!assignment) {
+        return res.status(404).json({error: "No such assignment"});
+    }
+
+    // get list of projects and set their active status to true
+    const { projects } = assignment
+
+    if (assignment.active === false) {
+        assignment.active = true
+        await assignment.save()
+
+        for (var i = 0; i < projects.length; i++) {
+            // find project object
+            const project = await Project.findOne({ title: projects[i] })
+
+            project.active = true
+            await project.save()
+        }
+
+        return res.status(200).json("Assignment is now active")
+    } else if (assignment.active === true) {
+        assignment.active = false
+        await assignment.save()
+
+        for (var i = 0; i < projects.length; i++) {
+            // find project object
+            const project = await Project.findOne({ title: projects[i] })
+
+            project.active = false
+            await project.save()
+        }
+
+        return res.status(200).json("Assignment is now inactive")
+    }
+}
+
+// close/reopen project - project completed
+const closeProject = async (req, res) => {
+    // req should include id of project object in parameter
+    const { id } = req.params
+
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: "Invalid Project ID"})
+    }
+
+    // find the project object using id
+    const project = await Project.findById(id)
+
+    // if document does not exist
+    if (!project) {
+        return res.status(404).json({error: "No such project"});
+    }
+
+    // set project completed status to true - project is now closed
+    project.completed = true
+    await project.save()
+
+    // destructure assignment title and employees from the project object
+    const { assigned_to } = project
+
+    // call function to go through employees to check whether all their projects are closed
+    allProjectCompleted(assigned_to)
+
+    return res.status(200).json("Project is now closed")
+}
+
+// check whether employee has completed all the projects
+const allProjectCompleted = async (assigned_to) => {
+    // loop through every employee
+    for (var i = 0; i < assigned_to.employees.length; i++) {
+        // track whether employee has completed all projects
+        let completed = true
+
+        // find employee object
+        const employee = await User.findOne({ email: assigned_to.employees[i] })
+
+        // get the projects assigned to the employee
+        const { project_assigned } = employee
+
+        // find index of the assignment object
+        for (var j = 0; j < project_assigned.length; j++) {
+            if (project_assigned[j].assignment_id === assigned_to.assignment_id) {
+                index = j
+            }
+        }
+
+        // get the list of projects from the project_assigned object based on the index gotten above
+        const projects = project_assigned[index].projects
+
+        // loop through all the projects obtained
+        for (var j = 0; j < projects.length; j++) {
+            // find project object
+            const project = await Project.findOne({ title: projects[j] })
+
+            // if any of the project is not completed, set the variable to false
+            if (project.completed === false) {
+                completed = false
+                break
+            }
+        }
+
+        // will not run if any of the employee's projects are incomplete
+        if (completed === true) {
+            employee.current_assignment = null
+            await employee.save()
+        }
     }
 }
 
@@ -272,6 +473,41 @@ const autoAssign = async (req, res) => {
     // employees: a list of employees for this assignment phase
     // projects: a list of projects for this assignment phase
     const { threshold, employees, projects } = assignment
+
+    const errorFields = []
+
+    // project threshold not set
+    if (threshold === 0) {
+        errorFields.push("threshold")
+        return res.status(400).json({ error: "Project threshold cannot be less than 1", errorFields })
+    }
+
+    // no employees added
+    if (employees.length === 0) {
+        errorFields.push("employees")
+        return res.status(400).json({ error: "Please ensure that you have selected the employees for this assignment", errorFields })
+    }
+
+    // no projects added
+    if (projects.length === 0) {
+        errorFields.push("projects")
+        return res.status(400).json({ error: "Please ensure that you have selected the projects for this assignment", errorFields })
+    }
+
+    // employee have not indicated their preference
+    for (var i = 0; i < employees.length; i++) {
+        const employee = await User.findOne({ email: employees[i].email })
+
+        if (!employee) {
+            errorFields.push("employees")
+            return res.status(400).json({ error: "Some employees cannot be found in the system. Please re-add them into the assignment", errorFields })
+        }
+
+        if (!employee.firstChoice || !employee.secondChoice || !employee.thirdChoice) {
+            errorFields.push("employees")
+            return res.status(400).json({ error: "Please ensure that all the employees have indicated their preferences", errorFields })
+        }
+    }
 
     // get all employees' information
     const allEmployees = await getAllEmployees(employees)
@@ -444,10 +680,10 @@ const autoAssign = async (req, res) => {
     } // end of assignment
 
     // update stats
-    updateStats(id)
+    const { employee_without_project, project_without_employee  } = updateStats(id) // get a list of employees without project and a list of projects without employees
     projectStats(id)
 
-    return res.status(200).json("Auto assignment is complete")
+    return res.status(200).json({"message": "Auto assignment is complete", employee_without_project, project_without_employee})
 }
 
 /* Supporting Functions for Assignment */
@@ -712,18 +948,30 @@ const processEmployees = (tier, employees, projectSkillOnly, projectCompetencyOn
 
 // reset assignment
 const resetAssignment = async (req, res) => {
-    const assignment = await Assignment.findOne({ title: "Assignment 6"})
+    // get id from address bar
+    const { id } = req.params
 
+    // check whether id is a mongoose type object
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({error: 'Invalid Assignment ID'})
+    }
+
+    const assignment = await Assignment.findById(id)
+
+    // if document does not exist
     if (!assignment) {
-        return res.status(404).json({error: "Assignment cannot be found"})
+        return res.status(404).json({error: "No such assignment"});
     }
 
     // reset assignment stats
-    assignment.first_choice = null
-    assignment.second_choice = null
-    assignment.third_choice = null
-    assignment.not_selected = null
-    assignment.not_assigned = null
+    assignment.employee_got_first_choice = null
+    assignment.employee_got_second_choice = null
+    assignment.employee_got_third_choice = null
+    assignment.employee_got_not_selected = null
+    assignment.employee_without_project = null
+    assignment.project_filled = null
+    assignment.project_not_filled = null
+    assignment.project_without_employee = null
     await assignment.save()
 
     const { projects, employees } = assignment
@@ -738,18 +986,28 @@ const resetAssignment = async (req, res) => {
         project.secondChoice = null
         project.thirdChoice = null
         project.notSelected = null
-        project.save()
+        project.skills_fulfilled = null
+        project.skills_and_competency_fulfilled = null
+        await project.save()
     }
 
     // reset employees
     for (var i = 0; i < employees.length; i++) {
         const employee = await User.findOne({ email: employees[i].email })
+        const { project_assigned } = employee
 
-        employee.project_assigned = []
-        employee.save()
+        // loop through an array of assignments the employee has went through
+        for (var j = 0; j < project_assigned.length; j++) {
+            // get matching assignment id
+            if (project_assigned[j].assignment_id === id) {
+                project_assigned.splice(j, 1) // remove assignment object from the employee
+                break
+            }
+        }
+        await employee.save()
     }
 
-    return res.status(200).json("Assignment resetted")
+    return res.status(200).json("Assignment has been resetted")
 }
 
 // stats
@@ -757,13 +1015,14 @@ const resetAssignment = async (req, res) => {
 const updateStats = async (_id) => {
     // get _id for assignment
     const assignment = await Assignment.findById({ _id })
-    const employees = assignment.employees
+    const { employees, projects } = assignment
 
+    // track preference
     const assignedFirst = []
     const assignedSecond = []
     const assignedThird = []
     const assignedNotSelected = []
-    const notAssigned = []
+    const employee_without_project = []
 
     // go through each employee
     for (var i = 0; i < employees.length; i++) {
@@ -776,7 +1035,7 @@ const updateStats = async (_id) => {
     
         // no project assigned
         if (project_assigned.length === 0) {
-            notAssigned.push(employee.email)
+            employee_without_project.push(employee.email)
             continue
         }
 
@@ -806,28 +1065,66 @@ const updateStats = async (_id) => {
         console.log()
     }
 
-    // % of employees assigned their first choice - 2dp
-    const firstChoicePercentage = Math.round((assignedFirst.length / employees.length * 100) * 100) / 100
+    // track number of employees assigned
+    const threshold_reached = []
+    const threshold_unreached = []
+    const project_without_employee = []
 
-    // % of employees assigned their second choice
-    const secondChoicePercentage = Math.round((assignedSecond.length / employees.length * 100) * 100) / 100
+    // go through each project
+    for (var i = 0; i < projects.length; i++) {
+        const project = await Project.findOne({ title: projects[i] })
+        const { threshold, assigned_to } = project
 
-    // % of employees assigned their third choice
-    const thirdChoicePercentage = Math.round((assignedThird.length / employees.length * 100) * 100) / 100
+        console.log("inside updateStats, threshold: ", threshold)
+        console.log("inside updateStats, assigned_to: ", assigned_to)
 
-    // % of employees not assigned to any of their choices
-    const notSelectedPercentage = Math.round((assignedNotSelected.length / employees.length * 100) * 100) / 100
+        if (assigned_to.employees.length === threshold) {
+            threshold_reached.push(project)
+        } else if (assigned_to.employees.length > 0 && assigned_to.employees.length < threshold) {
+            threshold_unreached.push(project)
+        } else if (assigned_to.employees.length === 0) {
+            project_without_employee.push(project)
+        }
+    }
 
-    // % of employees not assigned to any projects
-    const notAssignedPercentage = Math.round((notAssigned.length / employees.length * 100) * 100) / 100
+    // go through each employee without any assigned project
+    for (var i = 0; i < employee_without_project.length; i++) {
+        // get employee info
+        const employee = await User.findOne({ email: employee_without_project[i] })
+
+        employee.assignment = null
+        await employee.save()
+    }
+
+    // // % of employees assigned their first choice - 2dp
+    // const firstChoicePercentage = Math.round((assignedFirst.length / employees.length * 100) * 100) / 100
+
+    // // % of employees assigned their second choice
+    // const secondChoicePercentage = Math.round((assignedSecond.length / employees.length * 100) * 100) / 100
+
+    // // % of employees assigned their third choice
+    // const thirdChoicePercentage = Math.round((assignedThird.length / employees.length * 100) * 100) / 100
+
+    // // % of employees not assigned to any of their choices
+    // const notSelectedPercentage = Math.round((assignedNotSelected.length / employees.length * 100) * 100) / 100
+
+    // // % of employees not assigned to any projects
+    // const notAssignedPercentage = Math.round((notAssigned.length / employees.length * 100) * 100) / 100
 
     // update assignment object
-    assignment.first_choice = firstChoicePercentage
-    assignment.second_choice = secondChoicePercentage
-    assignment.third_choice = thirdChoicePercentage
-    assignment.not_selected = notSelectedPercentage
-    assignment.not_assigned = notAssignedPercentage
+    assignment.employee_got_first_choice = assignedFirst.length
+    assignment.employee_got_second_choice = assignedSecond.length
+    assignment.employee_got_third_choice = assignedThird.length
+    assignment.employee_got_not_selected = assignedNotSelected.length
+    assignment.employee_without_project = employee_without_project.length
+
+    assignment.project_filled = threshold_reached.length
+    assignment.project_not_filled = threshold_unreached.length
+    assignment.project_without_employee = project_without_employee.length
+
     await assignment.save()
+
+    return { employee_without_project, project_without_employee }
 }
 
 // update stats for each project after the assignment phase
@@ -839,9 +1136,24 @@ const projectStats = async (_id) => {
     // go through each project
     for (var i = 0; i < projects.length; i++) {
         const project = await Project.findOne({ title: projects[i] })
-        const { assigned_to } = project // { assignment_id, employees: [] }
+        const { skills: projectSkills, assigned_to } = project // { assignment_id, employees: [] }
         const { employees } = assigned_to
+    
+        // get the names of the skill
+        const projectSkillsOnly = []
+        const projectCompetencyOnly = []
+        for (var j = 0; j < projectSkills.length; j++) {
+            projectSkillsOnly.push(projectSkills[j].skill)
+            projectCompetencyOnly.push(projectSkills[j].competency)
+        }
 
+        // percentage of project's skills fulfilled
+        const skills_fulfilled = []
+
+        // percentage of project's skills AND competency fulfilled
+        const skills_and_competency_fulfilled = []
+ 
+        // number of employees assigneed to preference
         const assignedFirst = []
         const assignedSecond = []
         const assignedThird = []
@@ -851,8 +1163,9 @@ const projectStats = async (_id) => {
         for (var j = 0; j < employees.length; j++) {
             const employee = await User.findOne({ email: employees[j] })
 
-            const { firstChoice, secondChoice, thirdChoice } = employee
+            const { firstChoice, secondChoice, thirdChoice, skills: employeeSkills } = employee
 
+            // employees' preference
             if (project.title === firstChoice) {
                 assignedFirst.push(employee.email)
             } else if (project.title === secondChoice) {
@@ -862,12 +1175,63 @@ const projectStats = async (_id) => {
             } else {
                 assignedNotSelected.push(employee.email)
             }
-        }
 
+            
+            // % of project's skills fulfilled
+            const employeeSkillsOnly = []
+            const employeeCompetencyOnly = []
+            for (var k = 0; k < employeeSkills.length; k++) {
+                employeeSkillsOnly.push(employeeSkills[k].skill)
+                employeeCompetencyOnly.push(employeeSkills[k].competency)
+            }
+
+            const matchingSkills = findMatchingSkills(projectSkillsOnly, employeeSkillsOnly, employeeCompetencyOnly)
+
+            for (var k = 0; k < matchingSkills.length; k++) {
+                const { skill: matchingSkill, competency: userCompetency } = matchingSkills[k]
+                const index = projectSkillsOnly.indexOf(matchingSkill) // get the index of the skills in projectSkillsOnly array and use it to check in projectCompetencyOnly array
+                const projectCompetency = projectCompetencyOnly[index] // get the competency level of the specified skill
+                
+                // % of skills (ONLY) fulfilled
+                if (!skills_fulfilled.includes(matchingSkill)) {
+                    skills_fulfilled.push(matchingSkill)
+                }
+
+                // % of skills AND competency fulfilled
+                // compare competency
+                if (projectCompetency === "Beginner") { // scenario 1: projectCompetency === Beginner
+                    // minimum competency level === Beginner - competency level met
+                    if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                        skills_and_competency_fulfilled.push(matchingSkill)
+                    }
+                } else if (projectCompetency === "Intermediate") { // scenario 2: projectCompetency === Intermediate
+                    // if userCompetency === Beginner - competency level not met
+                    if (userCompetency === "Beginner") {
+                        continue
+                    } else if (userCompetency === "Intermediate" || userCompetency === "Advanced") { // competency level met
+                        if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                            skills_and_competency_fulfilled.push(matchingSkill)
+                        }
+                    }
+                } else if (projectCompetency === "Advanced") { // scenario 3: projectCompetency === Advanced
+                    // if userCompetency === Beginner || userCompetency === Intermediate - competency level not met
+                    if (userCompetency === "Beginner" || userCompetency === "Intermediate") {
+                        continue
+                    } else if (userCompetency === "Advanced") { // competency level met
+                        if (!skills_and_competency_fulfilled.includes(matchingSkill)) {
+                            skills_and_competency_fulfilled.push(matchingSkill)
+                        }
+                    }
+                }
+            }
+        }
         project.firstChoice = assignedFirst.length
         project.secondChoice = assignedSecond.length
         project.thirdChoice = assignedThird.length
         project.notSelected = assignedNotSelected.length
+        project.skills_and_competency_fulfilled = skills_and_competency_fulfilled.length
+        project.skills_fulfilled = skills_fulfilled.length
+
         await project.save()
     }
 }
@@ -883,6 +1247,8 @@ module.exports = {
     deleteEmployees,
     updateProjects,
     deleteProjects,
+    setActiveStatus,
+    closeProject,
     autoAssign,
     resetAssignment
 }

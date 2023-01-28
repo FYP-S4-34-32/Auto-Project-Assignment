@@ -15,6 +15,7 @@ const SelectPreference = () => {
     // get the list of available project
     const { projects, dispatch } = useProjectsContext()
 
+    const [userProjects, setUserProjects] = useState([]) // default value = empty array
     const [firstChoice, setFirstChoice] = useState('') // default value = empty
     const [secondChoice, setSecondChoice] = useState('') // default value = empty
     const [thirdChoice, setThirdChoice] = useState('') // default value = empty
@@ -47,6 +48,17 @@ const SelectPreference = () => {
             if (response.ok) {
                 dispatch({ type: 'SET_PROJECTS', payload: json})
             }
+
+            const p = []
+
+            for (var i = 0; i < json.length; i++) {
+                const { assignment } = json[i]
+
+                if (assignment === user.current_assignment) {
+                    p.push(json[i])
+                }
+            }
+            setUserProjects(p)
         }
 
         // if there is an authenticated user
@@ -111,7 +123,7 @@ const SelectPreference = () => {
                 <label>First Choice:</label>
                 <select value={ firstChoice } onChange={(e) => { setFirstChoice(e.target.value) }} className={ errorFields.includes('firstChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
-                    { projects?.map(p => (
+                    { userProjects?.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>
                     )) }
                 </select>
@@ -121,7 +133,7 @@ const SelectPreference = () => {
                 <label>Second Choice:</label>
                 <select value={ secondChoice } onChange={(e) => { setSecondChoice(e.target.value) }} className={ errorFields.includes('secondChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
-                    { projects?.map(p => (
+                    { userProjects?.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>
                     )) }
                 </select>
@@ -131,7 +143,7 @@ const SelectPreference = () => {
                 <label>Third Choice:</label>
                 <select value={ thirdChoice } onChange={(e) => { setThirdChoice(e.target.value) }} className={ errorFields.includes('thirdChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
-                    { projects?.map(p => (
+                    { userProjects?.map(p => (
                         <option key={ p.title } value={ p.title }>{ p.title }</option>
                     )) }
                 </select>

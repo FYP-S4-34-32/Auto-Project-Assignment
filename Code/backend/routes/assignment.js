@@ -10,7 +10,7 @@ const express = require('express')
 |   folder these functions will be invoked and handled in the controller file      |
 |   whenever the routes are requested.                                             |
 \* ============================================================================== */
-const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign, resetAssignment, updateEmployees, updateProjects, deleteEmployees, deleteProjects } = require('../controllers/assignmentController')
+const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign, resetAssignment, updateEmployees, updateProjects, deleteEmployees, deleteProjects, setActiveStatus, closeProject } = require('../controllers/assignmentController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -46,11 +46,20 @@ router.post('/updateProjects/:id', updateProjects)
 // UPDATE an assignment object @ /api/assignment/updateProjects/:id
 router.delete('/updateProjects/:id', deleteProjects)
 
-// GET an assignment object - testing
-router.get('/test/:id', autoAssign)
+// UPDATE an assignment object @ /api/assignment/updateActiveStatus/:id
+router.patch('/updateActiveStatus/:id', setActiveStatus)
 
-// reset assignment results - testing
-router.patch('/test/test', resetAssignment)
+// UPDATE an assignment object @ /api/assignment/updateActiveStatus/:id
+router.patch('/updateActiveStatus/:id', setActiveStatus)
+
+// UPDATE a project object @ /api/assignment/closeProject/:id
+router.patch('/closeProject/:id', closeProject)
+
+// GET an assignment object @ /api/assignment/autoAssign/:id
+router.get('/autoAssign/:id', autoAssign)
+
+// reset assignment results @ /api/assignment/resetAssignment/:id
+router.patch('/resetAssignment/:id', resetAssignment)
 
 // EXPORT router
 module.exports = router

@@ -32,8 +32,6 @@ export const useGetOrganisationSkills = () => {
             setIsLoading(false);
             setAllSkills(json);
         }
-
-        console.log(json)
     }
 
     return { getOrganisationSkills, getOrganisationSkillsIsLoading, getOrganisationSkillsError, allSkills};

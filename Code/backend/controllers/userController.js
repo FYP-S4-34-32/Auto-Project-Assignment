@@ -43,17 +43,13 @@ const loginUser = async (req, res) => {
         // invoke login function and store return value(user document)
         const user = await User.login(email, password)
         
-        const role = user.role // user's role
-        const name = user.name // user's name 
-        const contact = user.contact // user's contact number
-        const skills = user.skills // user's skills
-        const organisation_id = user.organisation_id // user's organisation id
+        const { role, name, contact, skills, organisation_id, current_assignment, project_assigned } = user
 
         // create a jsonwebtoken
         const token = createToken(user._id)
 
         // return the user's email, role, and the token we just generated in json format
-        res.status(200).json({email, token, role, name, contact, skills, organisation_id})
+        res.status(200).json({email, token, role, name, contact, skills, organisation_id, current_assignment, project_assigned })
     } catch (error) { // catch any error that pops up during the login process - refer to the login function in userModel.js
         // return the error message in json
         res.status(400).json({error: error.message})

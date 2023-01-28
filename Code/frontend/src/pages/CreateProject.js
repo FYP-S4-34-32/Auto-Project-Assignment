@@ -5,7 +5,7 @@
 // imports
 import { useAuthenticationContext } from "../hooks/useAuthenticationContext"
 import { useNavigate } from "react-router-dom"
-
+import { useGetOrganisationSkills } from '../hooks/useGetOrgSkills'
 const { useState, useEffect } = require("react")
 
 const CreateProject = () => {
@@ -18,6 +18,7 @@ const CreateProject = () => {
     const [error, setError] = useState(null) // default value = no error
 
     // handle adding skills to project
+    const { getOrganisationSkills, allSkills } = useGetOrganisationSkills(); // fetch all skills defined for the organisation
     const [skills, setSkills] = useState([]) // all available skills
     const competency = ["Beginner", "Intermediate", "Advanced"] // the three levels of skill competency
     const [selectFields, setSelectFields] = useState([])
@@ -29,31 +30,35 @@ const CreateProject = () => {
     // state for empty fields validation
     const [emptyFields, setEmptyFields] = useState([]) // empty array by default
 
-
-    // fires when component is rendered
     useEffect(() => {
-        const fetchSkills = async () => {
-            const response = await fetch('/api/skill/', {
-                headers: {
-                    'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
-                }
-            }) // using fetch() api to fetch data and store in the variable
-            const json = await response.json() // response object into json object, in this case an array of skills objects
-            console.log(json)
+        getOrganisationSkills(user.organisation_id)
+    }, [])
 
-            // response OK
-            if (response.ok) {
-                setSkills(json)
-            }
-        }
 
-        // if there is an authenticated user
-        if (user && user.role === "Admin") {
-            fetchSkills()
-        } else {
-            navigate('/')
-        }
-    }, [user, navigate])
+    // // fires when component is rendered
+    // useEffect(() => {
+    //     const fetchSkills = async () => {
+    //         const response = await fetch('/api/skill/', {
+    //             headers: {
+    //                 'Authorization': `Bearer ${ user.token }` // sends authorisation header with the uer's token -> backend will validate token -> if valid, grant access to API
+    //             }
+    //         }) // using fetch() api to fetch data and store in the variable
+    //         const json = await response.json() // response object into json object, in this case an array of skills objects
+    //         console.log(json)
+
+    //         // response OK
+    //         if (response.ok) {
+    //             setSkills(json)
+    //         }
+    //     }
+
+    //     // if there is an authenticated user
+    //     if (user && user.role === "Admin") {
+    //         fetchSkills()
+    //     } else {
+    //         navigate('/')
+    //     }
+    // }, [user, navigate])
 
     const handleSubmit = async (e) => { // will be reaching out to the api
         e.preventDefault() // prevent the page from refreshing upon submit
@@ -175,7 +180,7 @@ const CreateProject = () => {
                         className={ (emptyFields?.includes('noSkill') || emptyFields?.includes('skillError')) ? 'error' : '' }
                         >
                         <option value="dummy">Please select a skill</option> {/* included this so that user will be forced to make a selection */}
-                        { skills?.map(s => (
+                        { allSkills?.map(s => (
                             <option key={ s.skillName } value={ s.skillName }>{ s.skillName }</option>
                         )) }
                     </select>

@@ -21,22 +21,29 @@ const OrganisationSkills = () => {
             getOrganisationSkills(organisation_id);
     }, []) 
 
+    console.log("allSkills", allSkills);
+
     // Check if skill has already been aded
-    const validateSkill = (skillName) => {
-        allSkills.forEach(skill => {
-            if (skill.skillName === skillName) {
-                return false;
-            }
-        })
-        return true; 
+    const validateSkill = (skillName) => { 
+
+        const skillToCheck = allSkills.find((skill) => skill.skillName === skillName); 
+        if (skillToCheck !== undefined) {
+            console.log(skillName + " already exists");
+            return false;
+        }
+
+        if (skillToCheck === undefined)
+            return true;
     }
 
     const addNewSkill = async(e) => {
         e.preventDefault();  
         let skillsArr = JSON.parse(JSON.stringify(allSkills));
+        validateSkill(skillName) 
 
-        if (skillName !== "" || !validateSkill(skillName)) {
-            console.log("skill can be added");
+        // only add the skill if it doesn't already exist
+        if (skillName !== "" && skillName !== " " && skillName.trim().length !== 0 && validateSkill(skillName) ) { 
+            console.log(skillName + " can be added");
             skillsArr.push({skillName}); 
             await updateOrgSkill(organisation_id, skillsArr);
 
@@ -97,7 +104,7 @@ const OrganisationSkills = () => {
             
 
             <h3>Add New Skill</h3>
-            <form onSubmit={addNewSkill}>
+            <form className="addOrgSkillsForm" onSubmit={addNewSkill}>
                 <input type="skillName" placeholder="Add a new skill" onChange={(e) => {setSkillName(e.target.value)}} value={skillName}/>
                 <button type="submit">Add</button>
             </form> 
