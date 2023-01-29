@@ -15,7 +15,7 @@ export const useUpdateEmployees = () => {
         setError(null) 
 
         const response = await fetch('/api/assignment/updateEmployees/' + id, {
-            method: 'PATCH',
+            method: 'POST',
             headers: {'Content-Type': 'application/json',
             'Authorization': `Bearer ${ user.token}`},
 

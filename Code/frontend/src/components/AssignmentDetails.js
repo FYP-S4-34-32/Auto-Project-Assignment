@@ -39,7 +39,6 @@ const AssignmentDetails = () => {
     const [tempAssignmentProjectsArr, setTempAssignmentProjects] = useState([]);
     const [tempAssignmentEmployeesArr, setTempAssignmentEmployees] = useState([]);
     const [addEmployeeArr, setAddEmployeeArr ] = useState([]);
-    const [addEmployeeArrTwo, setAddEmployeeArrTwo ] = useState([]);
     const [addProjectArr, setAddProjectArr ] = useState([]);
 
     var availEmployeesArray = []; // available list of employees for admin to select from
@@ -94,7 +93,7 @@ const AssignmentDetails = () => {
     // will change based on current list of added employees
     const initialiseAvailEmployeesArray = () => {
         var temp = [];
-        temp.push({name: "0", label: "Select an employee"});
+        temp.push({name: "0", label: "Select an Employee"});
 
         for (var i = 0; i < tempAssignmentEmployeesArr.length; i++) {
             temp.push({name: tempAssignmentEmployeesArr[i].name, email: tempAssignmentEmployeesArr[i].email  });
@@ -182,43 +181,30 @@ const AssignmentDetails = () => {
     // ADD A NEW EMPLOYEE
     const addEmployees = (e) => { 
         let temp = ([...addEmployeeArr]); 
-        let tempTwo = ([...addEmployeeArrTwo]);
         let selectedOption = JSON.parse(e.target.value);
         let newEmployee = {name: selectedOption.name, email: selectedOption.email};
         temp.push(newEmployee); 
         setAddEmployeeArr([...temp]);
-        tempTwo.push(newEmployee);
-        setAddEmployeeArrTwo([...tempTwo]);
     } 
 
     // DELETE AN EMPLOYEE
     const deleteEmployees = (index) => { 
         let temp = [...addEmployeeArr]; 
-        let tempTwo = [...addEmployeeArrTwo];
-        let deletedEmployee = tempTwo.splice(index, 1);  
-        setAddEmployeeArrTwo([...tempTwo]);
-
-        // Find the index of the deleted employee in the addEmployeeArr
-        let deletedEmployeeIndex = temp.findIndex(employee => employee.email === deletedEmployee[0].email);
-        console.log(deletedEmployeeIndex);
-
-        // Remove the deleted employee from addEmployeeArr
-        temp.splice(deletedEmployeeIndex, 1);
+        let deletedEmployee = temp.splice(index, 1);  
         setAddEmployeeArr([...temp]);
+        //setTempAssignmentEmployees([...addEmployeeArr])    
 
-        // Push the deleted employee back to the availEmployeesArray if the name property is not equal to 0
-        availEmployeesArray = availEmployeesArray.filter(deletedEmployee => deletedEmployee.name !== "0");
-        availEmployeesArray.push(deletedEmployee[0]);
+        // Move the deleted employee back to the availEmployeesArray
+        availEmployeesArray = availEmployeesArray.filter(employee => employee.name !== '0')
+        availEmployeesArray.push(deletedEmployee[0])
         setTempAssignmentEmployees([...availEmployeesArray]);
     }
-
-
 
     // HANDLE SUBMITTING OF EMPLOYEES 
     const handleSubmitEmployees = async(e) => {
         e.preventDefault();    
         
-        await updateEmployees(user, id, addEmployeeArrTwo);  // to update employees
+        await updateEmployees(user, id, addEmployeeArr);  // to update employees
         fetchAssignment() // to fetch Assignments since it was updated
 
         setShowEmployeesForm('showEmployees');
@@ -339,7 +325,7 @@ const AssignmentDetails = () => {
         }) 
 
         // editing list of employees
-        var editingEmployeeList = addEmployeeArrTwo.map((employee, index) => {
+        var editingEmployeeList = addEmployeeArr.map((employee, index) => {
 
             return (
                 <li key={ index }>{ employee.name } - {employee.email}   
