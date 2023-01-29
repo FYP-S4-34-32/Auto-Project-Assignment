@@ -166,7 +166,7 @@ const updateAssignment = async (req, res) => {
 }
 
 // ADD employees into assignment object
-const updateEmployees = async (req, res) => {
+const addEmployees = async (req, res) => {
     const { id } = req.params
 
     const { employees } = req.body
@@ -188,7 +188,7 @@ const updateEmployees = async (req, res) => {
                 console.log("Some employee(s) are already part of another assignment")
                 return res.status(400).json({error:"Some employee(s) are already part of another assignment"})
             } else {
-                assignment.set({employees});
+                assignment.employees = [...assignment.employees, employees[i]]
                 await assignment.save()
 
                 // set current_assignment field
@@ -220,9 +220,24 @@ const deleteEmployees = async(req, res) => {
         // update assignment object
         const assignment = await Assignment.findById({ _id: id })
 
+        const assignment_employees = []
+
+        for (var i = 0; i < assignment.employees.length; i++) {
+            assignment_employees.push(assignment.employees[i].email)
+        }
+        console.log("assignment_employees", assignment_employees)
+
+        const deleting_employees = []
+
         for (var i = 0; i < employees.length; i++) {
-            if (assignment.employees.includes(employees[i])) {
-                const index = assignment.employees.indexOf(employees[i])
+            deleting_employees.push(employees[i].email)
+        }
+        console.log("deleting_employees", deleting_employees)
+
+        for (var i = 0; i < deleting_employees.length; i++) {
+            if (assignment_employees.includes(deleting_employees[i])) {
+                const index = assignment_employees.indexOf(deleting_employees[i])
+                console.log("inside if block, index: ", index)
 
                 // remove employee
                 assignment.employees.splice(index, 1)
@@ -245,7 +260,7 @@ const deleteEmployees = async(req, res) => {
 }
 
 // ADD projects into assignment object
-const updateProjects = async (req, res) => {
+const addProjects = async (req, res) => {
     const { id } = req.params
 
     const { projects } = req.body
@@ -259,9 +274,6 @@ const updateProjects = async (req, res) => {
         // update assignment object
         const assignment = await Assignment.findById({ _id: id })
 
-        assignment.projects = projects;
-        await assignment.save()
-
         for (var i = 0; i < projects.length; i++) {
             // find project object
             const project = await Project.findOne({ title: projects[i] })
@@ -269,7 +281,7 @@ const updateProjects = async (req, res) => {
             if (project.assignment !== null) {
                 return res.status(400).json("Some project(s) are already part of another assignment")
             } else {
-                assignment.projects = projects
+                assignment.projects = [...assignment.projects, projects[i]]
                 await assignment.save()
 
                 // update assignment field in the project object
@@ -1243,9 +1255,9 @@ module.exports = {
     createAssignment,
     deleteAssignment,
     updateAssignment,
-    updateEmployees,
+    addEmployees,
     deleteEmployees,
-    updateProjects,
+    addProjects,
     deleteProjects,
     setActiveStatus,
     closeProject,
