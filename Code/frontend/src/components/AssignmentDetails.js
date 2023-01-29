@@ -10,6 +10,7 @@ import { useGetAllUsers } from '../hooks/useGetAllUsers'
 import { useGetAllProjects } from "../hooks/useGetAllProjects";
 import { useUpdateEmployees } from '../hooks/useUpdateAssnEmployees'
 import { useUpdateProjects } from "../hooks/useUpdateAssnProjects";
+import { useUpdateActiveStatus } from "../hooks/useUpdateAssignmentStatus";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -24,6 +25,7 @@ const AssignmentDetails = () => {
     const [EmployeesForm, setShowEmployeesForm] = useState(false);
     const [ProjectsForm, setShowProjectsForm] = useState(false);
     const { updateEmployees, updateEmployeesError, updateEmployeesIsLoading } = useUpdateEmployees()
+    const { updateActiveStatus, updateStatusIsLoading, updateStatusError} = useUpdateActiveStatus()
     const { updateProjects } = useUpdateProjects()
     const uniqueKey = Date.now();
 
@@ -74,13 +76,13 @@ const AssignmentDetails = () => {
         getAllProjects(user);
     }, []) 
 
-    //filter users to match with current organisation id
+    //filter users to match with current organisation id and ensure they are not enrolled in an assignment already
     const filterOrganisationUsers = () => {
         if (user.organisation_id !== undefined) {
             allUsersArray = allUsers
             if (user.role !== "Employee") {
                 for (var i = 0; i < allUsersArray.length; i++) {
-                    if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === assignment.organisation_id) {
+                    if (allUsersArray[i].role === "Employee" && allUsersArray[i].organisation_id === assignment.organisation_id && allUsersArray[i].current_assignment == null) {
                         organisationUsersArray.push(allUsers[i])
                     }
                 }
@@ -118,13 +120,13 @@ const AssignmentDetails = () => {
         availEmployeesArray = JSON.parse(JSON.stringify(tempAssnEmployeesArr));  
     }
 
-    //filter projectss to match with current organisation id
+    //filter projects to match with current organisation id and are not already assigned 
     const filterOrganisationProjects = () => {
         if (user.organisation_id !== undefined) {
             allProjectsArray = allProjects
             if (user.role !== "Employee") {
                 for (var i = 0; i < allProjectsArray.length; i++) {
-                    if (allProjectsArray[i].organisation_id === assignment.organisation_id) {
+                    if (allProjectsArray[i].organisation_id === assignment.organisation_id && allProjectsArray[i].assignment == null) {
                         organisationProjectsArray.push(allProjects[i].title)
                     }
                 }
@@ -253,6 +255,16 @@ const AssignmentDetails = () => {
         
         await updateProjects(user, id, addProjectArr);  // to update projects
         fetchAssignment() // to fetch Projects since it was updated
+
+        setShowProjectsForm('showProjects');
+    }
+
+    // HANDLE CHANGING OF ASSIGNMENT STATUS
+    const changeActiveStatus = async(e) => {
+        e.preventDefault();
+
+        await updateActiveStatus(user, id); // to change assignment active status
+        fetchAssignment()
 
         setShowProjectsForm('showProjects');
     }
@@ -530,7 +542,9 @@ const AssignmentDetails = () => {
                                                 if (user.organisation_id === assignment.organisation_id)
                                                 return(<li key={index}>{employee.name} - {employee.email}</li>)})}
                                         </p>
-
+                                    </div>
+                                    <div>
+                                        <button className="setActiveStatusBtn" onClick={changeActiveStatus}>Update Assignment Status</button>
                                     </div>
                             </article>
                          )}

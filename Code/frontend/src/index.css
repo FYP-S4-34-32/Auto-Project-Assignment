@@ -804,7 +804,7 @@ select.error {
   background-color: rgba(223, 223, 223, 0.228);
 }
 
-.editProjectsBtn {
+.editProjectsBtn, .setActiveStatusBtn {
   background: var(--primary);
   color: #fff;
   border: 0;
