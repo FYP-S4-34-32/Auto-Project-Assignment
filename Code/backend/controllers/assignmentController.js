@@ -166,11 +166,12 @@ const updateAssignment = async (req, res) => {
 }
 
 // ADD employees into assignment object
-const addEmployees = async (req, res) => {
+const updateEmployees = async (req, res) => {
     const { id } = req.params
 
     const { employees } = req.body
 
+    // console.log("employees:", employees)
     // check whether id is a mongoose type object
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: "Invalid Assignment ID"})
@@ -180,32 +181,42 @@ const addEmployees = async (req, res) => {
         // find assignment object
         const assignment = await Assignment.findById({ _id: id })
 
-        // find employees
-        for (var i = 0; i < employees.length; i++) {
-            const employee = await User.findOne({ email: employees[i].email })
+        // already have employees prior to the current function call
+        for (var i = 0; i < assignment.employees.length; i++) {
+            const employee = await User.findOne({ email: assignment.employees[i].email })
 
-            if (employee.current_assignment !== null) {
-                console.log("Some employee(s) are already part of another assignment")
-                return res.status(400).json({error:"Some employee(s) are already part of another assignment"})
-            } else {
-                assignment.employees = [...assignment.employees, employees[i]]
-                await assignment.save()
-
-                // set current_assignment field
-                employee.current_assignment = assignment._id
-                await employee.save()
-            }
+            // reset the current_assignment field for every existing employee assigned
+            employee.current_assignment = null
+            await employee.save()
+            // console.log(employee.email, "employee.current_assignment:", employee.current_assignment)
         }
 
-        res.status(200).json({ assignment })
+        // reset assignment.employees
+        assignment.employees = []
+        
+        // populate assignment.employees
+        assignment.set({employees})
+        await assignment.save()
 
+        // console.log("assignment.employees after re-populating: ", assignment.employees)
+
+        // loop through the updated list of employees
+        for (var i = 0; i < assignment.employees.length; i++) {
+            const employee = await User.findOne({ email: assignment.employees[i].email })
+
+            // set the current_assignment field for the updated employees
+            employee.current_assignment = assignment._id
+            await employee.save()
+            // console.log(employee.email, "employee.current_assignment:", employee.current_assignment)
+        }
+        res.status(200).json({ assignment })
     } catch (error) { // catch any error that pops up during the process
         res.status(400).json({error: error.message})
     }
 }
 
 
-// DELETE employee from assignment
+// DELETE employee from assignment - not using
 const deleteEmployees = async(req, res) => {
     const { id } = req.params
 
@@ -260,38 +271,50 @@ const deleteEmployees = async(req, res) => {
 }
 
 // ADD projects into assignment object
-const addProjects = async (req, res) => {
+const updateProjects = async (req, res) => {
     const { id } = req.params
 
     const { projects } = req.body
 
+    console.log("projects:", projects)
     // check whether id is a mongoose type object
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: "Invalid Assignment ID"})
     }
 
     try {
-        // update assignment object
+        // find assignment object
         const assignment = await Assignment.findById({ _id: id })
 
-        for (var i = 0; i < projects.length; i++) {
-            // find project object
-            const project = await Project.findOne({ title: projects[i] })
+        // already have projects prior to the current function call
+        for (var i = 0; i < assignment.projects.length; i++) {
+            const project = await Project.findOne({ title: assignment.projects[i] })
 
-            if (project.assignment !== null) {
-                return res.status(400).json("Some project(s) are already part of another assignment")
-            } else {
-                assignment.projects = [...assignment.projects, projects[i]]
-                await assignment.save()
-
-                // update assignment field in the project object
-                project.assignment = assignment._id
-                await project.save()
-            }
+            // reset the assignment field for every existing projects assigned
+            project.assignment = null
+            await project.save()
+            console.log(project.title, "project.assignment:", project.assignment)
         }
 
-        res.status(200).json( assignment )
+        // reset assignment.projects
+        assignment.projects = []
+        
+        // populate assignment.projects
+        assignment.set({projects})
+        await assignment.save()
 
+        console.log("assignment.projects after re-populating: ", assignment.projects)
+
+        // loop through the updated list of projects
+        for (var i = 0; i < assignment.projects.length; i++) {
+            const project = await Project.findOne({ title: assignment.projects[i] })
+
+            // set the assignment field for the updated projects
+            project.assignment = assignment._id
+            await project.save()
+            console.log(project.title, "project.assignment:", project.assignment)
+        }
+        res.status(200).json( assignment )
     } catch (error) { // catch any error that pops up during the process
         res.status(400).json({error: error.message})
     }
@@ -1255,9 +1278,9 @@ module.exports = {
     createAssignment,
     deleteAssignment,
     updateAssignment,
-    addEmployees,
+    updateEmployees,
     deleteEmployees,
-    addProjects,
+    updateProjects,
     deleteProjects,
     setActiveStatus,
     closeProject,
