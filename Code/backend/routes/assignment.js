@@ -10,7 +10,7 @@ const express = require('express')
 |   folder these functions will be invoked and handled in the controller file      |
 |   whenever the routes are requested.                                             |
 \* ============================================================================== */
-const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign, resetAssignment, updateEmployees, updateProjects, deleteEmployees, deleteProjects, setActiveStatus, closeProject } = require('../controllers/assignmentController')
+const { getAssignments, getSingleAssignment, createAssignment, deleteAssignment, updateAssignment, autoAssign, resetAssignment, deleteEmployees, deleteProjects, setActiveStatus, closeProject, addEmployees, addProjects } = require('../controllers/assignmentController')
 const requireAuthentication = require('../middleware/requireAuthentication')
 
 // invoke express router object
@@ -35,13 +35,13 @@ router.delete('/:id', deleteAssignment)
 router.patch('/:id', updateAssignment)
 
 // UPDATE an assignment object @ /api/assignment/updateEmployees/:id
-router.patch('/updateEmployees/:id', updateEmployees)
+router.patch('/updateEmployees/:id', addEmployees)
 
 // UPDATE an assignment object @ /api/assignment/updateEmployees/:id
 router.delete('/updateEmployees/:id', deleteEmployees)
 
 // UPDATE an assignment object @ /api/assignment/updateProjects/:id
-router.post('/updateProjects/:id', updateProjects)
+router.patch('/updateProjects/:id', addProjects)
 
 // UPDATE an assignment object @ /api/assignment/updateProjects/:id
 router.delete('/updateProjects/:id', deleteProjects)
