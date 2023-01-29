@@ -42,6 +42,7 @@ const AssignmentDetails = () => {
     const [tempAssignmentEmployeesArr, setTempAssignmentEmployees] = useState([]);
     const [addEmployeeArr, setAddEmployeeArr ] = useState([]);
     const [addProjectArr, setAddProjectArr ] = useState([]);
+    const [message, setMessage] = useState("");
 
     var availEmployeesArray = []; // available list of employees for admin to select from
     var availProjectsArray = []; // available list of projects for the admin to select from
@@ -267,7 +268,7 @@ const AssignmentDetails = () => {
         fetchAssignment()
 
         setShowProjectsForm('showProjects');
-        window.alert('Assignment status changed!');
+        setMessage("Assignment status changed successfully!");
     }
     
     const showData = () => {
@@ -484,10 +485,10 @@ const AssignmentDetails = () => {
     const infoPanel = () => {
                 return (
                     <div className="selection-panel" style={{height:'150px'}}>
-                        <button onClick={() => setSelectedInfo('showAssignmentDetails')}> Assignment Details </button>
-                        <button onClick={() => setSelectedInfo('addProjects') }> Projects </button>
-                        <button onClick={() => setSelectedInfo('addEmployees')} > Employees </button>
-                        <button onClick={() => setSelectedInfo('showData')} > View Statistics </button>
+                        <button onClick={() => {setSelectedInfo('showAssignmentDetails'); setMessage("");}}> Assignment Details </button>
+                        <button onClick={() => {setSelectedInfo('addProjects'); setMessage("");}}> Projects </button>
+                        <button onClick={() => {setSelectedInfo('addEmployees'); setMessage("");}} > Employees </button>
+                        <button onClick={() => {setSelectedInfo('showData'); setMessage("");}} > View Statistics </button>
                     </div>
             )
         }
@@ -546,6 +547,8 @@ const AssignmentDetails = () => {
                                     </div>
                                     <div>
                                         <button className="setActiveStatusBtn" onClick={changeActiveStatus}>Update Assignment Status</button>
+                                        <br></br><br></br>
+                                        {message && <div>{message}</div>}
                                     </div>
                             </article>
                          )}
