@@ -267,6 +267,7 @@ const AssignmentDetails = () => {
         fetchAssignment()
 
         setShowProjectsForm('showProjects');
+        window.alert('Assignment status changed!');
     }
     
     const showData = () => {
