@@ -49,9 +49,6 @@ router.delete('/updateProjects/:id', deleteProjects)
 // UPDATE an assignment object @ /api/assignment/updateActiveStatus/:id
 router.patch('/updateActiveStatus/:id', setActiveStatus)
 
-// UPDATE an assignment object @ /api/assignment/updateActiveStatus/:id
-router.patch('/updateActiveStatus/:id', setActiveStatus)
-
 // UPDATE a project object @ /api/assignment/closeProject/:id
 router.patch('/closeProject/:id', closeProject)
 
