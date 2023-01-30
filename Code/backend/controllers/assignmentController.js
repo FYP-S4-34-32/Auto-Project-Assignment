@@ -215,61 +215,6 @@ const updateEmployees = async (req, res) => {
     }
 }
 
-
-// DELETE employee from assignment - not using
-const deleteEmployees = async(req, res) => {
-    const { id } = req.params
-
-    const { employees } = req.body
-
-    // check whether id is a mongoose type object
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: "Invalid Assignment ID"})
-    }
-
-    try {
-        // update assignment object
-        const assignment = await Assignment.findById({ _id: id })
-
-        const assignment_employees = []
-
-        for (var i = 0; i < assignment.employees.length; i++) {
-            assignment_employees.push(assignment.employees[i].email)
-        }
-        console.log("assignment_employees", assignment_employees)
-
-        const deleting_employees = []
-
-        for (var i = 0; i < employees.length; i++) {
-            deleting_employees.push(employees[i].email)
-        }
-        console.log("deleting_employees", deleting_employees)
-
-        for (var i = 0; i < deleting_employees.length; i++) {
-            if (assignment_employees.includes(deleting_employees[i])) {
-                const index = assignment_employees.indexOf(deleting_employees[i])
-                console.log("inside if block, index: ", index)
-
-                // remove employee
-                assignment.employees.splice(index, 1)
-
-                // update employee object
-                const employee = await User.findOne({ email: employees[i].email })
-
-                // set current_assignment field back to null
-                employee.current_assignment = null
-                await employee.save()
-            }
-        }
-        await assignment.save()
-
-        res.status(200).json({ assignment })
-
-    } catch (error) { // catch any error that pops up during the process
-        res.status(400).json({error: error.message})
-    }
-}
-
 // ADD projects into assignment object
 const updateProjects = async (req, res) => {
     const { id } = req.params
@@ -292,7 +237,10 @@ const updateProjects = async (req, res) => {
 
             // reset the assignment field for every existing projects assigned
             project.assignment = null
+            project.active = false
+
             await project.save()
+
             console.log(project.title, "project.assignment:", project.assignment)
         }
 
@@ -311,6 +259,10 @@ const updateProjects = async (req, res) => {
 
             // set the assignment field for the updated projects
             project.assignment = assignment._id
+
+            if (assignment.active === true) {
+                project.active = true
+            }
             await project.save()
             console.log(project.title, "project.assignment:", project.assignment)
         }
@@ -319,46 +271,6 @@ const updateProjects = async (req, res) => {
         res.status(400).json({error: error.message})
     }
 
-}
-
-
-// DELETE project from assignment
-const deleteProjects = async(req, res) => {
-    const { id } = req.params
-
-    const { projects } = req.body
-
-    // check whether id is a mongoose type object
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: "Invalid Assignment ID"})
-    }
-
-    try {
-        // update assignment object
-        const assignment = await Assignment.findById({ _id: id })
-
-        for (var i = 0; i < projects.length; i++) {
-            if (assignment.projects.includes(projects[i])) {
-                const index = assignment.projects.indexOf(projects[i])
-
-                // remove project
-                assignment.projects.splice(index, 1)
-
-                // find project object
-                const project = await Project.findOne({ title: projects[i] })
-
-                // uipdate assignment field in the project object
-                project.assignment = null
-                await project.save()
-            }
-        }
-        await assignment.save()
-
-        res.status(200).json({ assignment })
-
-    } catch (error) { // catch any error that pops up during the process
-        res.status(400).json({error: error.message})
-    }
 }
 
 // set assignment to be active or inactive
@@ -1279,9 +1191,7 @@ module.exports = {
     deleteAssignment,
     updateAssignment,
     updateEmployees,
-    deleteEmployees,
     updateProjects,
-    deleteProjects,
     setActiveStatus,
     closeProject,
     autoAssign,
