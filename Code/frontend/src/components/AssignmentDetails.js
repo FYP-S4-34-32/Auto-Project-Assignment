@@ -484,7 +484,7 @@ const AssignmentDetails = () => {
     // where user can select what info to view
     const infoPanel = () => {
                 return (
-                    <div className="selection-panel" style={{height:'150px'}}>
+                    <div className="selection-panel" style={{height:'200px'}}>
                         <button onClick={() => {setSelectedInfo('showAssignmentDetails'); setMessage("");}}> Assignment Details </button>
                         <button onClick={() => {setSelectedInfo('addProjects'); setMessage("");}}> Projects </button>
                         <button onClick={() => {setSelectedInfo('addEmployees'); setMessage("");}} > Employees </button>
