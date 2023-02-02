@@ -625,6 +625,7 @@ const autoAssign = async (req, res) => {
             }
         }
     } // end of assignment
+ 
 
     // update stats
     const { employee_without_project, project_without_employee  } = updateStats(id) // get a list of employees without project and a list of projects without employees
@@ -1110,6 +1111,16 @@ const projectStats = async (_id) => {
         for (var j = 0; j < employees.length; j++) {
             const employee = await User.findOne({ email: employees[j] })
 
+            // add project to employee's projects_assigned array
+            const assignedProjectsArray = await User.findOne({ email: employees[j] }).select('projects_assigned')
+            const { projects_assigned } = assignedProjectsArray
+
+            // add project to employee's projects_assigned array if not already in there
+            if (!projects_assigned.includes(project.title)) {
+                projects_assigned.push(project.title)
+                await User.findOneAndUpdate({ email: employees[j] }, { projects_assigned })
+            }
+
             const { firstChoice, secondChoice, thirdChoice, skills: employeeSkills } = employee
 
             // employees' preference
@@ -1178,6 +1189,8 @@ const projectStats = async (_id) => {
         project.notSelected = assignedNotSelected.length
         project.skills_and_competency_fulfilled = skills_and_competency_fulfilled.length
         project.skills_fulfilled = skills_fulfilled.length
+
+        
 
         await project.save()
     }
