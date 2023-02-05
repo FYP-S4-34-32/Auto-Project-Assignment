@@ -29,7 +29,6 @@ const AssignmentDetails = () => {
     const { updateProjects } = useUpdateProjects()
     const uniqueKey = Date.now();
 
-
     const { id } = useParams()
 
     var allUsersArray = []
@@ -529,6 +528,7 @@ const AssignmentDetails = () => {
                         { assignment && (
                             <article>
                                 <h2>{ assignment.title }</h2>
+                                <p>Status: {assignment.active ? "Active" : "Inactive"}</p>
                                 <p>Created { formatDistanceToNow(new Date(assignment.createdAt), { addSuffix: true }) } by { assignment.created_by }</p>
                                     <div>
                                         <p><strong>Projects in this assignment: </strong></p>
