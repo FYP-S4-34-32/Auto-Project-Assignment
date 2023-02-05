@@ -815,6 +815,20 @@ select.error {
   font-size: small;
 }
 
+.automaticAssignmentBtn {
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+  font: inherit;
+  font-size: small;
+  float: right;
+}
+
+
 .projectSelection {
   height: 40px;
   width: max-content;
@@ -842,4 +856,8 @@ select.error {
   padding: 20px;
   position: relative;
   box-shadow: 2px 2px 5px rgba(0,0,0,0,0.05);
+}
+
+h2 {
+  display: inline-block;
 }

@@ -11,6 +11,7 @@ import { useGetAllProjects } from "../hooks/useGetAllProjects";
 import { useUpdateEmployees } from '../hooks/useUpdateAssnEmployees'
 import { useUpdateProjects } from "../hooks/useUpdateAssnProjects";
 import { useUpdateActiveStatus } from "../hooks/useUpdateAssignmentStatus";
+import { useAutomaticAssignment } from "../hooks/useAutomaticAssignment";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -27,6 +28,7 @@ const AssignmentDetails = () => {
     const { updateEmployees, updateEmployeesError, updateEmployeesIsLoading } = useUpdateEmployees()
     const { updateActiveStatus, updateStatusIsLoading, updateStatusError} = useUpdateActiveStatus()
     const { updateProjects } = useUpdateProjects()
+    const { automaticAssignment } = useAutomaticAssignment();
     const uniqueKey = Date.now();
 
     const { id } = useParams()
@@ -269,41 +271,60 @@ const AssignmentDetails = () => {
         setShowProjectsForm('showProjects');
         setMessage("Assignment status changed successfully!");
     }
+
+    // AUTOMATIC ASSIGNMENT BUTTON
+    const processAutomaticAssignment = async(e) => {
+        e.preventDefault();
+
+        await automaticAssignment(user, id); 
+        fetchAssignment()
+
+        setShowProjectsForm('showProjects');
+        setMessage("Automatic assignment for employees has been processed!");
+    }
     
     const showData = () => {
-    console.count('showData function call')
-    const first_choice = JSON.parse(assignment.employee_got_first_choice);
-    const second_choice = JSON.parse(assignment.employee_got_second_choice);
-    const third_choice = JSON.parse(assignment.employee_got_third_choice);
-    const not_assigned = JSON.parse(assignment.employee_without_project);
-    const not_selected = JSON.parse(assignment.employee_got_not_selected);
-    const total_count = JSON.parse(assignment.employees.length);
-
-    return {
-        labels: ['first choice', 'second choice', 'third choice', 'not assigned', 'non-selected choice', 'total employee count'],
-        datasets: [{
-            label: 'Assignment Data',
-            data: [first_choice, second_choice, third_choice, not_assigned, not_selected, total_count],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 255, 0, 0.2)' 
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 255, 0, 1)'
-            ],
-            borderWidth: 1
-        }]
-    };
-};  
+        console.count('showData function call')
+        let first_choice, second_choice, third_choice, not_assigned, not_selected, total_count;
+            try {
+                first_choice = JSON.parse(assignment.employee_got_first_choice);
+                second_choice = JSON.parse(assignment.employee_got_second_choice);
+                third_choice = JSON.parse(assignment.employee_got_third_choice);
+                not_assigned = JSON.parse(assignment.employee_without_project);
+                not_selected = JSON.parse(assignment.employee_got_not_selected);
+                total_count = JSON.parse(assignment.employees.length);
+                } catch (error) {
+                console.error(error);
+            return {
+            error: "The automatic assignment has not been processed for this assignment, please run the process to view the overview statistics"
+                }
+            } 
+        return {
+            labels: ['first choice', 'second choice', 'third choice', 'not assigned', 'non-selected choice', 'total employee count'],
+            datasets: [{
+                label: 'Assignment Data',
+                data: [first_choice, second_choice, third_choice, not_assigned, not_selected, total_count],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 255, 0, 0.2)' 
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 255, 0, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+    }
+        
 
     // ========================================================================================================
     // PAGE CONTENT
@@ -468,10 +489,11 @@ const AssignmentDetails = () => {
 
     //To render the overview statistics
     const showStatistics = () => {
+        const { error } =showData();
         return (
             <div className="showStatistics">
-            {selectedInfo === 'showData' && assignment ? 
-            <Bar key={uniqueKey} data={showData()} /> : 
+            {selectedInfo === 'showData' && assignment ?
+            error ? <p>{error}</p> : <Bar key={uniqueKey} data={showData()} /> :
             null
             }
             </div>
@@ -528,6 +550,7 @@ const AssignmentDetails = () => {
                         { assignment && (
                             <article>
                                 <h2>{ assignment.title }</h2>
+                                <button className="automaticAssignmentBtn" onClick={processAutomaticAssignment}>Process Automatic Assignment</button>
                                 <p>Status: {assignment.active ? "Active" : "Inactive"}</p>
                                 <p>Created { formatDistanceToNow(new Date(assignment.createdAt), { addSuffix: true }) } by { assignment.created_by }</p>
                                     <div>
