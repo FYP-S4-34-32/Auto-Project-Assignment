@@ -124,7 +124,7 @@ const SelectPreference = () => {
                 <select value={ firstChoice } onChange={(e) => { setFirstChoice(e.target.value) }} className={ errorFields.includes('firstChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { userProjects?.map(p => (
-                        <option key={ p.title } value={ p.title }>{ p.title }</option>
+                        (p.active === true && <option key={ p.title } value={ p.title }>{ p.title }</option>)
                     )) }
                 </select>
                 
@@ -134,7 +134,7 @@ const SelectPreference = () => {
                 <select value={ secondChoice } onChange={(e) => { setSecondChoice(e.target.value) }} className={ errorFields.includes('secondChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { userProjects?.map(p => (
-                        <option key={ p.title } value={ p.title }>{ p.title }</option>
+                        (p.active === true && <option key={ p.title } value={ p.title }>{ p.title }</option>)
                     )) }
                 </select>
                 
@@ -144,7 +144,7 @@ const SelectPreference = () => {
                 <select value={ thirdChoice } onChange={(e) => { setThirdChoice(e.target.value) }} className={ errorFields.includes('thirdChoice') ? 'error': '' }>
                     <option value="">Please choose one</option> {/* included this so that user will be forced to make a selection otherwise function returns role=null */}
                     { userProjects?.map(p => (
-                        <option key={ p.title } value={ p.title }>{ p.title }</option>
+                        (p.active === true && <option key={ p.title } value={ p.title }>{ p.title }</option>)
                     )) }
                 </select>
 
