@@ -3,7 +3,8 @@
 //==============================================================//
 
 // imports
-const Organisation = require('../models/organisationModel') // MongoDB model created in projectModel.js in the models folder
+const Organisation = require('../models/organisationModel') // MongoDB model
+const Skill = require('../models/skillModel') // Skill model
 const mongoose = require('mongoose') // mongoose package for mongodb
 
 // GET all organisations
@@ -39,6 +40,8 @@ const createOrganisation = async (req, res) => {
     const { orgname, organisation_id, detail } = req.body
     // const { orgName, code, detail } = req.body
 
+    const skills = await Skill.find({});
+
     let emptyFields = []
   
     if (!orgname) {
@@ -59,7 +62,7 @@ const createOrganisation = async (req, res) => {
 
         const created_by = req.user.name // access to this is from the middleware requireAuthentication.js return value
 
-        const organisation_skills = []
+        const organisation_skills = skills
 
       const organisation = await Organisation.create({ orgname, organisation_id, detail, created_by,  organisation_skills })
     //   const organisation = await Organisation.create({ orgName, code, detail, created_by })
