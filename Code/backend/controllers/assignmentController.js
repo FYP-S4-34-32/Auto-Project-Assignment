@@ -739,7 +739,7 @@ const compareCompetency = (projectSkillOnly, projectCompetencyOnly, matchingSkil
 
 // updated assign function
 const assignFunction = async (tier, employees, projectThreshold, threshold, projectID, assignmentID) => {
-    console.log("inside assignFunction")
+    // console.log("inside assignFunction")
 
     const project = await Project.findById({ _id: projectID })
 
@@ -765,11 +765,11 @@ const assignFunction = async (tier, employees, projectThreshold, threshold, proj
         let assignmentExistsInEmployee
         let assignmentIndex
 
-        console.log("project_assigned: ", project_assigned)
+        // console.log("project_assigned: ", project_assigned)
 
         if (project_assigned.length === 0) {
             assignmentExistsInEmployee = false
-            console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
+            // console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
         } else {
             assignmentExistsInEmployee = false
             for (var j = 0; j < project_assigned.length; j++) {
@@ -779,11 +779,11 @@ const assignFunction = async (tier, employees, projectThreshold, threshold, proj
                     break
                 }
             }
-            console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
+            // console.log("assignmentExistsInEmployee: ", assignmentExistsInEmployee)
         }
 
         if (assignmentExistsInEmployee && project_assigned[assignmentIndex].projects.length === threshold) {
-            console.log("employee already has max number of projects")
+            console.log(employee.email, "already has max number of projects")
             continue // to next employee
         }
 
@@ -997,7 +997,7 @@ const updateStats = async (_id) => {
             }
         }
 
-        console.log(employees[i], "assigned to: ")
+        console.log(employee.email, "assigned to: ")
         for (var j = 0; j < employeeProjects.length; j++) {
             console.log(employeeProjects[j])
             if (employeeProjects[j] === firstChoice) {
@@ -1111,15 +1111,15 @@ const projectStats = async (_id) => {
         for (var j = 0; j < employees.length; j++) {
             const employee = await User.findOne({ email: employees[j] })
 
-            // add project to employee's projects_assigned array
-            const assignedProjectsArray = await User.findOne({ email: employees[j] }).select('projects_assigned')
-            const { projects_assigned } = assignedProjectsArray
+            // // add project to employee's projects_assigned array
+            // const assignedProjectsArray = await User.findOne({ email: employees[j] }).select('projects_assigned')
+            // const { projects_assigned } = assignedProjectsArray
 
-            // add project to employee's projects_assigned array if not already in there
-            if (!projects_assigned.includes(project.title)) {
-                projects_assigned.push(project.title)
-                await User.findOneAndUpdate({ email: employees[j] }, { projects_assigned })
-            }
+            // // add project to employee's projects_assigned array if not already in there
+            // if (!projects_assigned.includes(project.title)) {
+            //     projects_assigned.push(project.title)
+            //     await User.findOneAndUpdate({ email: employees[j] }, { projects_assigned })
+            // }
 
             const { firstChoice, secondChoice, thirdChoice, skills: employeeSkills } = employee
 
