@@ -110,6 +110,14 @@ const ProjectDetails = () => {
                             <p key={ s.skill }>{ s.skill } - { s.competency }</p>
                         )) }
                     </div>
+                    { project.assigned_to.employees.length > 0 && (
+                        <div>
+                            <p><strong>Assigned to:</strong></p>
+                            { project.assigned_to.employees.map(e => (
+                                <p key={e}>{e}</p>
+                            )) }
+                        </div>
+                    )}
                     { user.role === 'Admin' && <div><p><strong>Number of People Needed: </strong>{ project.threshold }</p></div> }
                     { user.role === 'Admin' && <button onClick={ handleClick }>Delete</button> }
                     { user.role === 'Admin' && <button onClick={ handleCloseProject }>Close Project</button>}
