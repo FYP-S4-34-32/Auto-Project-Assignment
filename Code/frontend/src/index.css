@@ -426,7 +426,7 @@ input::placeholder {
   border-radius: 4px;   
   margin-left: 10px;
   width: 97%;
-  height: 320px;
+  height: max-content;
   float: left;
   display: table-cell;
 }

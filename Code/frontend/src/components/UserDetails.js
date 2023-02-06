@@ -24,6 +24,7 @@ const UserDetails = () => {
     const pathname = location.pathname
     const [editContactForm, setEditContactForm] = useState(false) 
     const [editRoleForm, setEditRoleForm] = useState(false) 
+    var assignedProjectsArray = [];
 
     useEffect(() => {
         // get profile of the user
@@ -44,14 +45,25 @@ const UserDetails = () => {
         )
     }) 
 
+    const getAssignedProjects = () => { 
+        
+        for (var i = 0; i < userDetails.project_assigned.length; i++) {
+            
+            for (var j = 0; j < userDetails.project_assigned[i].projects.length; j++) {
+                assignedProjectsArray.push(userDetails.project_assigned[i].projects[j])
+            }
+        }
+    }
+    getAssignedProjects();
+    
 
-    // const displayProjects = userDetails.project_assigned.map((project) => {
-    //     return (
-    //         <div key={project._id}>
-    //             <p> {project.name} </p>
-    //         </div>
-    //     )
-    // })  
+    const displayProjects = assignedProjectsArray.map((project) => {
+        return (
+            <div key={project}>
+                <p> {project} </p>
+            </div>
+        )
+    })  
 
     const handleSubmitContactInfo = async(e) => {
         e.preventDefault(); 
@@ -213,6 +225,7 @@ const UserDetails = () => {
 
                         <div className='userDetails-projectsDiv'>
                             <h4>Projects</h4>
+                            {displayProjects}
                         </div> 
                     </div> 
                 </div>
@@ -223,6 +236,7 @@ const UserDetails = () => {
     return (
         <div className="user-Details">
             <Link to="/AllUsers"> Back to Users</Link>
+            <br/>
             <h2>User Details</h2>  
             
             {displayUserDetails()}     
