@@ -4,6 +4,7 @@
 
 // imports
 const Project = require('../models/projectModel') // MongoDB model created in projectModel.js in the models folder
+const Assignment = require('../models/assignmentModel')
 const mongoose = require('mongoose') // mongoose package for mongodb
 
 // GET all projects
@@ -131,6 +132,19 @@ const deleteProject = async (req, res) => {
     }
   
     const project = await Project.findOneAndDelete({_id: id})
+
+    if (project.assignment !== null) {
+        const assignment = await Assignment.findOne({ _id: project.assignment })
+
+        const { projects } = assignment;
+
+        const index = projects.indexOf(project.title)
+
+        projects.splice(index, 1)
+
+        assignment.projects = projects
+        await assignment.save()
+    }
   
     // check to see whether a project is found
     if (!project) {
