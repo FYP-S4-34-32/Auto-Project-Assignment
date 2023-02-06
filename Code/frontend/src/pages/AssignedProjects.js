@@ -11,7 +11,6 @@ const AssignedProjects = () => {
     const { user } = useAuthenticationContext() // get the user object from the context
 
     const getAssignedProjects = () => { 
-        
         for (var i = 0; i < user.project_assigned.length; i++) {
             
             for (var j = 0; j < user.project_assigned[i].projects.length; j++) {
