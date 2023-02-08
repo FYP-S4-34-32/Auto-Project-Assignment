@@ -29,6 +29,8 @@ const AssignmentDetails = () => {
     const { updateActiveStatus, updateStatusIsLoading, updateStatusError} = useUpdateActiveStatus()
     const { updateProjects } = useUpdateProjects()
     const { automaticAssignment } = useAutomaticAssignment();
+    const [error, setError] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
     const uniqueKey = Date.now();
 
     const { id } = useParams()
@@ -275,13 +277,40 @@ const AssignmentDetails = () => {
     // AUTOMATIC ASSIGNMENT BUTTON
     const processAutomaticAssignment = async(e) => {
         e.preventDefault();
+        setMessage("Process is running, please be patient.");
+    
+        const { automaticAssignmentError } = await automaticAssignment(user, id);
+        console.log("automaticAssignmentError", automaticAssignmentError)
 
-        await automaticAssignment(user, id); 
         fetchAssignment()
-
+    
         setShowProjectsForm('showProjects');
-        setMessage("Automatic assignment for employees has been processed!");
+
+        if (automaticAssignmentError) {
+            setError(automaticAssignmentError)
+            setMessage("")
+        }
+
+        if (!automaticAssignmentError) {
+            setMessage("Auto Assignment is complete!")
+        }
+
+            // setMessage("Automatic assignment for employees has been processed!");
+         
+            // if (automaticAssignmentError) {
+            //     // Check if the error is from automaticAssignment hook
+            //     setMessage(automaticAssignmentError);
+            //     console.log("in catch block:", automaticAssignmentError)
+            // } else {
+            //     // If not, assign the general error message
+            //     setMessage("Failed to load resource: the server responded with a status of 400 (Bad Request)");
+            // }
+            
+        
     }
+    
+    
+      
     
     const showData = () => {
         console.count('showData function call')
@@ -551,6 +580,7 @@ const AssignmentDetails = () => {
                             <article>
                                 <h2>{ assignment.title }</h2>
                                 <button className="automaticAssignmentBtn" onClick={processAutomaticAssignment}>Process Automatic Assignment</button>
+                                {error && <div className="error">{ error }</div>}
                                 <p>Status: {assignment.active ? "Active" : "Inactive"}</p>
                                 <p>Created { formatDistanceToNow(new Date(assignment.createdAt), { addSuffix: true }) } by { assignment.created_by }</p>
                                     <div>
