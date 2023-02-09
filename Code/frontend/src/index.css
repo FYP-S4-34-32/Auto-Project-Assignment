@@ -115,7 +115,7 @@ header a {
   text-align: auto; 
   float: right;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-  height: 800px;
+  height: max-content;
   width: 58%;  
 }
 
@@ -433,14 +433,16 @@ input::placeholder {
 
 /* Organisation SKills Page */
 .allSkills-div {
-  grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 10px; /* space between columns, change as needed */
-  grid-row-gap: 10px; /* space between rows, change as needed */
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto;
+  grid-column-gap: 5px; /* space between columns, change as needed */
+  grid-row-gap: 5px; /* space between rows, change as needed */ 
+  align-content: start;
 }
 
 .skill-div { 
   display: block;
-  height: 2%;
+  height: fit-content;
   width: fit-content;
   background-color: #fff;
   margin: 2%;
